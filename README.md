@@ -26,8 +26,11 @@ Khi gặp vấn đề về lỗi, hay có đóng góp về ý tưởng, nội du
 
 ##Kho mã nguồn
 Cập nhật 31/5/2014:
+
 docs: Chứa tài liệu về thiết kế, quản lí dự án của dự án
+
 README.md
+
 gpl-2.0.txt: giấy phép dự án
 
 
