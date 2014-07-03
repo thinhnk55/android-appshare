@@ -30,7 +30,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="10"
                 android:ems="10"
-                android:text="Search" >
+                android:hint="Search">
 
                 <requestFocus
                     android:layout_width="wrap_content"
