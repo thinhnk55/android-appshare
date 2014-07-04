@@ -7,3 +7,6 @@
 1404401943939	Rename type 'BaiHatActivity'
 1404401954159	Rename type 'HinhAnhActivity'
 1404401963669	Rename type 'PhimAnhActivity'
+1404486769700	Rename field 'TABLE_MusicsData'
+1404486842321	Rename type 'SongData'
+1404488361895	Rename type 'MusicData'

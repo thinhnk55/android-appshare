@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<qualifiedTypeNameHistroy/>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="android.widget.TabHost"/>
+<fullyQualifiedTypeName name="android.app.TabActivity"/>
+<fullyQualifiedTypeName name="vn.vfossa.shareapp.AppActivity"/>
+<fullyQualifiedTypeName name="java.io.FilenameFilter"/>
+</qualifiedTypeNameHistroy>

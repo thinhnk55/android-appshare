@@ -1,0 +1,37 @@
+package vn.vfossa.database;
+
+public class AppData {
+	int _id;
+	String _name;
+	String _path;
+	byte[] _image;
+	float _size;
+	
+	
+	public AppData(int _id, String _name, String _path, byte[] _image,
+			float _size) {
+		super();
+		this._id = _id;
+		this._name = _name;
+		this._path = _path;
+		this._image = _image;
+		this._size = _size;
+	}
+
+
+	public AppData(String _name, String _path, byte[] _image, float _size) {
+		super();
+		this._name = _name;
+		this._path = _path;
+		this._image = _image;
+		this._size = _size;
+	}
+
+
+	public AppData() {
+		
+	}
+
+	
+	
+}

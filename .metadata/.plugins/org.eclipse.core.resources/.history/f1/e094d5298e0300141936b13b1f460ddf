@@ -1,0 +1,5 @@
+package vn.vfossa.database;
+
+public class AppData {
+
+}

@@ -1,0 +1,10 @@
+package vn.vfossa.database;
+
+public class AppData {
+	int _id;
+	String _name;
+	String _path;
+	byte[] _image;
+	float _size;
+
+}
