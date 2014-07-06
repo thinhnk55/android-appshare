@@ -1,0 +1,178 @@
+package vn.vfossa.database;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+public class DatabaseHandler extends SQLiteOpenHelper {
+
+	// tạo biến static cho cơ sở dữ liệu
+	private static final int DATABASE_VERSION = 1;
+	private static final String DATABASE_NAME = "FileDatasManager";
+	private static final String TABLE_FILESDATA = "FilesData";
+
+	// tạo các key cho các trường của bảng cơ sở dữ liệu
+	private static final String KEY_ID = "id"; // id của từng dữ liệu
+	private static final String KEY_TYPE = "type"; // loại của dữ liệu (app,
+													// music, image..)
+	private static final String KEY_NAME = "name"; // tên của tệp
+	private static final String KEY_PATH = "path"; // đường dẫn đến tệp
+	private static final String KEY_IMAGE = "image"; // ảnh đặc trưng của từng
+														// tệp
+	private static final String KEY_SIZE = "size"; // kích cỡ của tệp
+
+	public DatabaseHandler(Context context) {
+		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+	}
+
+	/*
+	 * hàm tạo cơ sở dữ liệu cho ứng dụng
+	 */
+	@Override
+	public void onCreate(SQLiteDatabase db) {
+
+		// tạo chuỗi lệnh SQLite
+		String CREATE_FILESDATA_TABLE = "CREATE TABLE " + TABLE_FILESDATA + "("
+				+ KEY_ID + " INTEGER PRIMARY KEY," + KEY_TYPE + " CHAR,"
+				+ KEY_NAME + " TEXT," + KEY_PATH + " TEXT," + KEY_IMAGE
+				+ " BLOB, " + KEY_SIZE + " FLOAT )";
+
+		// thực thi lệnh SQLite
+		db.execSQL(CREATE_FILESDATA_TABLE);
+	}
+
+	/*
+	 * Hàm tạo lại bảng khi bảng đã tồn tại trong cơ sở dữ liệu đó
+	 */
+	@Override
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_FILESDATA);
+		onCreate(db);
+	}
+
+	/*
+	 * Hàm thêm một trường dữ liệu mới vào bảng dữ liệu
+	 */
+	public void addFileData(FilesData fileData) {
+		// lấy quyền ghi vào cơ sở dữ liệu
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		// Tạo biến để lưu dữ liệu và đưa dữ liệu vào bảng
+		ContentValues values = new ContentValues();
+		values.put(KEY_TYPE, fileData.getType());
+		values.put(KEY_NAME, fileData.getName());
+		values.put(KEY_PATH, fileData.getPath());
+		values.put(KEY_IMAGE, fileData.getImage());
+		values.put(KEY_SIZE, fileData.getSize());
+
+		// Thêm biến mới được tạo ra vào bảng
+		db.insert(TABLE_FILESDATA, null, values);
+
+		// Đóng cơ sở dữ liệu
+		db.close();
+	}
+
+	/*
+	 * Hàm lấy một trường dữ liệu từ bảng dữ liệu bằng ID của nó
+	 */
+	public FilesData getSongData(int id) {
+
+		// Lấy quyền đọc từ cơ sở dữ liệu
+		SQLiteDatabase db = this.getReadableDatabase();
+
+		// Tạo ra một con trỏ chỉ đến tất cả các kết quả được lọc ra từ cơ sỡ dữ
+		// liệu với ID là ID cho trước
+		Cursor cursor = db.query(TABLE_FILESDATA, new String[] { KEY_ID,
+				KEY_TYPE, KEY_NAME, KEY_PATH, KEY_IMAGE, KEY_SIZE }, KEY_ID
+				+ "=?", new String[] { String.valueOf(id) }, null, null,
+				null, null);
+		if (cursor != null)
+			cursor.moveToFirst();
+
+		FilesData songData = new FilesData(
+				Integer.parseInt(cursor.getString(0)), cursor.getString(1),
+				cursor.getString(2), cursor.getBlob(4), cursor.getFloat(5));
+		return songData;
+	}
+
+	public List<FilesData> getAllSongDatas() {
+		List<FilesData> SongDataList = new ArrayList<FilesData>();
+		String selectQuery = "SELECT  * FROM " + TABLE_FILESDATA;
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+
+		if (cursor.moveToFirst()) {
+			do {
+				FilesData songData = new FilesData();
+				songData.setID(Integer.parseInt(cursor.getString(0)));
+				songData.setName(cursor.getString(1));
+				songData.setPath(cursor.getString(2));
+				songData.setImage(cursor.getBlob(5));
+				SongDataList.add(songData);
+			} while (cursor.moveToNext());
+		}
+		db.close();
+		return SongDataList;
+	}
+
+	public int updateSongData(FilesData songData) {
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		ContentValues values = new ContentValues();
+		values.put(KEY_NAME, songData.getName());
+		values.put(KEY_PATH, songData.getPath());
+		values.put(KEY_IMAGE, songData.getImage());
+
+		return db.update(TABLE_FILESDATA, values, KEY_ID + " = ?",
+				new String[] { String.valueOf(songData.getID()) });
+	}
+
+	public void deleteSongData(FilesData songData) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.delete(TABLE_FILESDATA, KEY_ID + " = ?",
+				new String[] { String.valueOf(songData.getID()) });
+		db.close();
+	}
+
+	public int getSongDatasCount() {
+		String countQuery = "SELECT * FROM " + TABLE_FILESDATA;
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(countQuery, null);
+		cursor.moveToFirst();
+		int result = cursor.getCount();
+		cursor.close();
+		db.close();
+
+		return result;
+	}
+
+	public void deleteAll() {
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.delete(TABLE_FILESDATA, null, null);
+		db.close();
+	}
+
+	public boolean checkSongPath(String songPath) {
+		String checkQuery = "SELECT  * FROM " + TABLE_FILESDATA + " WHERE "
+				+ KEY_PATH + " = \"" + songPath + "\"";
+
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(checkQuery, null);
+		cursor.moveToFirst();
+		db.close();
+		if (cursor.getCount() == 0) {
+			cursor.close();
+			return true;
+		} else {
+			cursor.close();
+			return false;
+		}
+	}
+
+}

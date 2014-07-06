@@ -11,105 +11,171 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
+	// tạo biến static cho cơ sở dữ liệu
 	private static final int DATABASE_VERSION = 1;
-	private static final String DATABASE_NAME = "SongDatasManager";
-	private static final String TABLE_MUSICSDATA = "MusicsData";
+	private static final String DATABASE_NAME = "FileDatasManager";
+	private static final String TABLE_FILESDATA = "FilesData";
 
-	private static final String KEY_ID = "id";
-	private static final String KEY_NAME = "name";
-	private static final String KEY_PATH = "path";
-	private static final String KEY_IMAGE = "image";
-	private static final String KEY_SIZE = "size";
+	// tạo các key cho các trường của bảng cơ sở dữ liệu
+	private static final String KEY_ID = "id"; // id của từng dữ liệu
+	private static final String KEY_TYPE = "type"; // loại của dữ liệu (app,
+													// music, image..)
+	private static final String KEY_NAME = "name"; // tên của tệp
+	private static final String KEY_PATH = "path"; // đường dẫn đến tệp
+	private static final String KEY_IMAGE = "image"; // ảnh đặc trưng của từng
+														// tệp
+	private static final String KEY_SIZE = "size"; // kích cỡ của tệp
 
 	public DatabaseHandler(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
+	/*
+	 * hàm tạo cơ sở dữ liệu cho ứng dụng
+	 */
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		String CREATE_MusicsData_TABLE = "CREATE TABLE " + TABLE_MUSICSDATA + "("
-				+ KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT,"
-				+ KEY_PATH + " TEXT," + KEY_IMAGE + " BLOB, "+ KEY_SIZE + " FLOAT )";
-		db.execSQL(CREATE_MusicsData_TABLE);
+
+		// tạo chuỗi lệnh SQLite
+		String CREATE_FILESDATA_TABLE = "CREATE TABLE " + TABLE_FILESDATA + "("
+				+ KEY_ID + " INTEGER PRIMARY KEY," + KEY_TYPE + " CHAR,"
+				+ KEY_NAME + " TEXT," + KEY_PATH + " TEXT," + KEY_IMAGE
+				+ " BLOB, " + KEY_SIZE + " FLOAT )";
+
+		// thực thi lệnh SQLite
+		db.execSQL(CREATE_FILESDATA_TABLE);
 	}
 
+	/*
+	 * Hàm tạo lại bảng khi bảng đã tồn tại trong cơ sở dữ liệu đó
+	 */
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_MUSICSDATA);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_FILESDATA);
 		onCreate(db);
 	}
 
-	public void addSongData(FilesData songData) {
+	/*
+	 * Hàm thêm một hàng mới vào bảng dữ liệu
+	 */
+	public void addFileData(FilesData fileData) {
+		// lấy quyền ghi vào cơ sở dữ liệu
 		SQLiteDatabase db = this.getWritableDatabase();
 
+		// Tạo biến để lưu dữ liệu và đưa dữ liệu vào bảng
 		ContentValues values = new ContentValues();
-		values.put(KEY_NAME, songData.getName());
-		values.put(KEY_PATH, songData.getPath());
-		values.put(KEY_IMAGE, songData.getImage());
+		values.put(KEY_TYPE, fileData.getType());
+		values.put(KEY_NAME, fileData.getName());
+		values.put(KEY_PATH, fileData.getPath());
+		values.put(KEY_IMAGE, fileData.getImage());
+		values.put(KEY_SIZE, fileData.getSize());
 
-		db.insert(TABLE_MUSICSDATA, null, values);
+		// Thêm biến mới được tạo ra vào bảng
+		db.insert(TABLE_FILESDATA, null, values);
+
+		// Đóng cơ sở dữ liệu
 		db.close();
 	}
 
-	public FilesData getSongData(int id) {
+	/*
+	 * Hàm lấy một hàng từ bảng dữ liệu bằng ID của nó
+	 */
+	public FilesData getFileData(int id) {
+
+		// Lấy quyền đọc từ cơ sở dữ liệu
 		SQLiteDatabase db = this.getReadableDatabase();
 
-		Cursor cursor = db.query(TABLE_MUSICSDATA, new String[] { KEY_ID,
-				KEY_NAME, KEY_PATH, KEY_IMAGE, KEY_SIZE}, KEY_ID + "=?",
-				new String[] { String.valueOf(id) }, null, null, null, null);
+		// Tạo ra một con trỏ chỉ đến tất cả các kết quả được lọc ra từ cơ sỡ dữ
+		// liệu với ID là ID cho trước
+		Cursor cursor = db.query(TABLE_FILESDATA, new String[] { KEY_ID,
+				KEY_TYPE, KEY_NAME, KEY_PATH, KEY_IMAGE, KEY_SIZE }, KEY_ID
+				+ "=?", new String[] { String.valueOf(id) }, null, null, null,
+				null);
+
+		// Kiểm tra kết quả trả về có giá trị hay không
 		if (cursor != null)
 			cursor.moveToFirst();
 
-		FilesData songData = new FilesData(Integer.parseInt(cursor.getString(0)),
-				cursor.getString(1), cursor.getString(2),cursor.getBlob(4), cursor.getFloat(5));
-		return songData;
+		// Tạo biến chứa hàng trả về
+		FilesData fileData = new FilesData(
+				Integer.parseInt(cursor.getString(0)), cursor.getString(1),
+				cursor.getString(2), cursor.getString(3), cursor.getBlob(4),
+				cursor.getFloat(5));
+		return fileData;
 	}
 
-	public List<FilesData> getAllSongDatas() {
-		List<FilesData> SongDataList = new ArrayList<FilesData>();
-		String selectQuery = "SELECT  * FROM " + TABLE_MUSICSDATA;
+	/*
+	 * Hàm để lấy tất cả các dữ liệu hiện có trong cơ sở dữ liệu
+	 */
+	public List<FilesData> getAllFileDatas() {
+
+		// Tạo list để chứa dữ liệu
+		List<FilesData> fileDataList = new ArrayList<FilesData>();
+
+		// Tạo lệnh SQLite
+		String selectQuery = "SELECT  * FROM " + TABLE_FILESDATA;
 
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 
+		// Xét dữ liệu thu được và đưa từng hàng vào list
 		if (cursor.moveToFirst()) {
 			do {
-				FilesData songData = new FilesData();
-				songData.setID(Integer.parseInt(cursor.getString(0)));
-				songData.setName(cursor.getString(1));
-				songData.setPath(cursor.getString(2));
-				songData.setImage(cursor.getBlob(5));
-				SongDataList.add(songData);
+				FilesData fileData = new FilesData();
+				fileData.setID(Integer.parseInt(cursor.getString(0)));
+				fileData.setType(cursor.getString(1));
+				fileData.setName(cursor.getString(2));
+				fileData.setPath(cursor.getString(3));
+				fileData.setImage(cursor.getBlob(4));
+				fileData.setSize(cursor.getFloat(5));
+				
+				fileDataList.add(fileData);
 			} while (cursor.moveToNext());
 		}
+
+		// đóng cơ sở dữ liệu
 		db.close();
-		return SongDataList;
+		return fileDataList;
 	}
 
-	public int updateSongData(FilesData songData) {
+	/*
+	 * Hàm để sửa đổi dữ liệu của một hàng
+	 */
+	public int updateFileData(FilesData fileData) {
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		ContentValues values = new ContentValues();
-		values.put(KEY_NAME, songData.getName());
-		values.put(KEY_PATH, songData.getPath());
-		values.put(KEY_IMAGE, songData.getImage());
+		values.put(KEY_TYPE, fileData.getType());
+		values.put(KEY_NAME, fileData.getName());
+		values.put(KEY_PATH, fileData.getPath());
+		values.put(KEY_IMAGE, fileData.getImage());
+		values.put(KEY_SIZE, fileData.getSize());
 
-		return db.update(TABLE_MUSICSDATA, values, KEY_ID + " = ?",
-				new String[] { String.valueOf(songData.getID()) });
+		return db.update(TABLE_FILESDATA, values, KEY_ID + " = ?",
+				new String[] { String.valueOf(fileData.getID()) });
 	}
 
-	public void deleteSongData(FilesData songData) {
+	/*
+	 * Hàm để xóa một hàng
+	 */
+	public void deleteFileData(FilesData fileData) {
 		SQLiteDatabase db = this.getWritableDatabase();
-		db.delete(TABLE_MUSICSDATA, KEY_ID + " = ?",
-				new String[] { String.valueOf(songData.getID()) });
+		//Xóa hàng bằng ID của dữ liệu
+		db.delete(TABLE_FILESDATA, KEY_ID + " = ?",
+				new String[] { String.valueOf(fileData.getID()) });
 		db.close();
 	}
 
-	public int getSongDatasCount() {
-		String countQuery = "SELECT * FROM " + TABLE_MUSICSDATA;
+	/*
+	 * Hàm đếm số hàng trong bảng dữ liệu
+	 */
+	public int getFileDatasCount() {
+		String countQuery = "SELECT * FROM " + TABLE_FILESDATA;
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(countQuery, null);
 		cursor.moveToFirst();
+
+		// tạo biến result và tính toán bằng hàm getCount()
 		int result = cursor.getCount();
 		cursor.close();
 		db.close();
@@ -117,21 +183,29 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return result;
 	}
 
+	/*
+	 * Hàm xóa toàn bộ bảng dữ liệu
+	 */
 	public void deleteAll() {
 		SQLiteDatabase db = this.getWritableDatabase();
-		db.delete(TABLE_MUSICSDATA, null, null);
+		db.delete(TABLE_FILESDATA, null, null);
 		db.close();
 	}
 
-
+	/*
+	 * Hàm kiểm tra một file đã tồn tại trong cơ sở dữ liệu hay chưa. Sử dụng
+	 * đường dẫn của file để kiểm tra
+	 */
 	public boolean checkSongPath(String songPath) {
-		String checkQuery = "SELECT  * FROM " + TABLE_MUSICSDATA + " WHERE "
+		String checkQuery = "SELECT  * FROM " + TABLE_FILESDATA + " WHERE "
 				+ KEY_PATH + " = \"" + songPath + "\"";
 
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(checkQuery, null);
 		cursor.moveToFirst();
 		db.close();
+		
+		//Kiểm tra xem nó có tồn tại hay không
 		if (cursor.getCount() == 0) {
 			cursor.close();
 			return true;

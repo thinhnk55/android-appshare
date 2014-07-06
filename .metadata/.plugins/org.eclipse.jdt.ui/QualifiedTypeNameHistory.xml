@@ -4,4 +4,8 @@
 <fullyQualifiedTypeName name="android.app.TabActivity"/>
 <fullyQualifiedTypeName name="vn.vfossa.shareapp.AppActivity"/>
 <fullyQualifiedTypeName name="java.io.FilenameFilter"/>
+<fullyQualifiedTypeName name="android.util.Log"/>
+<fullyQualifiedTypeName name="vn.vfossa.database.DatabaseHandler"/>
+<fullyQualifiedTypeName name="vn.vfossa.music.MusicFilter"/>
+<fullyQualifiedTypeName name="android.content.Context"/>
 </qualifiedTypeNameHistroy>

@@ -11,6 +11,7 @@ import android.media.MediaMetadataRetriever;
 public class MusicFilter {
 	
 	private Context context;
+	private String type = "music";
 	
 	public MusicFilter(Context context){
 		this.context = context;
@@ -58,7 +59,7 @@ public class MusicFilter {
 			byte[] data = media.getEmbeddedPicture();
 			float size = (float)file.length()/(1024*1024);
 			media.release();
-			db.addSongData(new FilesData(songName, songPath, data,size));
+			db.addFileData(new FilesData(type, songName, songPath, data,size));
 			db.close();
 		}
 	}

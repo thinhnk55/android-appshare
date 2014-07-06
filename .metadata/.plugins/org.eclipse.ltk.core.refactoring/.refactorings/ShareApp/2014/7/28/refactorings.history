@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename method &apos;vn.vfossa.database.DatabaseHandler.addSongData(...)&apos; to &apos;addFileData&apos;&#x0D;&#x0A;- Original project: &apos;ShareApp&apos;&#x0D;&#x0A;- Original element: &apos;vn.vfossa.database.DatabaseHandler.addSongData(...)&apos;&#x0D;&#x0A;- Renamed element: &apos;vn.vfossa.database.DatabaseHandler.addFileData(...)&apos;&#x0D;&#x0A;- Update references to refactored element" delegate="false" deprecate="false" description="Rename method &apos;addSongData&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.method" input="/src&lt;vn.vfossa.database{DatabaseHandler.java[DatabaseHandler~addSongData~QFilesData;" name="addFileData" references="true" stamp="1404660142687" version="1.0"/>
+</session>

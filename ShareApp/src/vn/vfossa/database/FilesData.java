@@ -2,20 +2,23 @@ package vn.vfossa.database;
 
 public class FilesData {
 	private int _id;
+	private String _type;
 	private String _name;
 	private String _path;
 	private byte[] _image;
 	private float _size;
 
-	public FilesData(String _name, String _path, byte[] _image, float _size) {
+	public FilesData(String _type, String _name, String _path, byte[] _image, float _size) {
+		this._type =_type ;
 		this._name = _name;
 		this._path = _path;
 		this._image = _image;
 		this._size = _size;
 	}
 
-	public FilesData(int _id, String _name, String _path,byte[] _image,  float _size) {
+	public FilesData(int _id,String _type, String _name, String _path,byte[] _image,  float _size) {
 		this._id = _id;
+		this._type =_type ;
 		this._name = _name;
 		this._path = _path;
 		this._image = _image;
@@ -32,6 +35,14 @@ public class FilesData {
 
 	public void setID(int id) {
 		this._id = id;
+	}
+	
+	public String getType() {
+		return _type;
+	}
+
+	public void setType(String _type) {
+		this._type = _type;
 	}
 
 	public String getName() {
@@ -58,11 +69,11 @@ public class FilesData {
 		this._image = _image;
 	}
 
-	public float get_size() {
+	public float getSize() {
 		return _size;
 	}
 
-	public void set_size(float _size) {
+	public void setSize(float _size) {
 		this._size = _size;
 	}
 
