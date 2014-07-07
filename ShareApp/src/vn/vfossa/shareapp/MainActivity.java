@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
@@ -12,6 +14,7 @@ import android.widget.TabHost.TabSpec;
 public class MainActivity extends TabActivity {
 
 	private TabHost tabHost;
+	private ViewGroup appView;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +49,8 @@ public class MainActivity extends TabActivity {
   		tabHost.addTab(photospec);
   		tabHost.addTab(songspec);
   		tabHost.addTab(videospec);
+  		
+  		LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
     }
 
 
