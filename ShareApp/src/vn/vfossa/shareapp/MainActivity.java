@@ -50,7 +50,6 @@ public class MainActivity extends TabActivity {
   		tabHost.addTab(songspec);
   		tabHost.addTab(videospec);
   		
-  		LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
     }
 
 

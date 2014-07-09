@@ -1,0 +1,19 @@
+package vn.vfossa.shareapp;
+
+import android.app.Activity;
+import android.graphics.LightingColorFilter;
+import android.os.Bundle;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+
+public class AppActivity extends Activity {
+	
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.apps_activity);
+		
+		LinearLayout appList = new LinearLayout(this);
+		
+	}
+
+}

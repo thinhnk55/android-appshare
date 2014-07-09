@@ -7,5 +7,19 @@
 <fullyQualifiedTypeName name="android.util.Log"/>
 <fullyQualifiedTypeName name="vn.vfossa.database.DatabaseHandler"/>
 <fullyQualifiedTypeName name="vn.vfossa.music.MusicFilter"/>
+<fullyQualifiedTypeName name="android.view.ViewGroup.LayoutParams"/>
+<fullyQualifiedTypeName name="vn.vfossa.shareapp.R.layout"/>
 <fullyQualifiedTypeName name="android.content.Context"/>
+<fullyQualifiedTypeName name="android.graphics.Bitmap"/>
+<fullyQualifiedTypeName name="java.lang.Float"/>
+<fullyQualifiedTypeName name="android.widget.ImageView"/>
+<fullyQualifiedTypeName name="android.widget.TextView"/>
+<fullyQualifiedTypeName name="vn.vfossa.shareapp.FragmentListFile"/>
+<fullyQualifiedTypeName name="android.view.ViewGroup"/>
+<fullyQualifiedTypeName name="android.graphics.LightingColorFilter"/>
+<fullyQualifiedTypeName name="java.lang.LinkageError"/>
+<fullyQualifiedTypeName name="android.widget.ScrollView"/>
+<fullyQualifiedTypeName name="vn.vfossa.shareapp.R.id"/>
+<fullyQualifiedTypeName name="android.widget.HorizontalScrollView"/>
+<fullyQualifiedTypeName name="android.widget.LinearLayout"/>
 </qualifiedTypeNameHistroy>

@@ -5,17 +5,17 @@
     android:orientation="vertical" >
 
     <HorizontalScrollView
-        android:id="@+id/horizontalScrollView1"
+        android:id="@+id/appList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
 
         <LinearLayout
-            android:id="@+id/appContainer"
+            android:id="@+id/appListLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal" >
+            android:layout_height="match_parent" >
 
         </LinearLayout>
+
     </HorizontalScrollView>
 
 </LinearLayout>
