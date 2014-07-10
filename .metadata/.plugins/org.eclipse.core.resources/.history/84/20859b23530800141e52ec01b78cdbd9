@@ -53,13 +53,8 @@ public class AppActivity extends Activity {
 				appList.addView(image);
 				continue;
 	    	}
-	    	else {
-	    		image.setImageResource(R.drawable.music);
-	    		appList.addView(image);
-				continue;
-	    	}
 	    	
-	    	//appList.addView(tv);
+	    	appList.addView(tv);
 	    	
 	    }
 	    

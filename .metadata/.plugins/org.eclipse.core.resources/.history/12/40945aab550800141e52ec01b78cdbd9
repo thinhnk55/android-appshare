@@ -26,6 +26,7 @@ public class AppActivity extends Activity {
 		LinearLayout appList = (LinearLayout) findViewById(R.id.appListLayout);
 		
 		appList.setOrientation(LinearLayout.HORIZONTAL);
+		
 	    
 	    File home = new File(MEDIA_PATH);
 	    
