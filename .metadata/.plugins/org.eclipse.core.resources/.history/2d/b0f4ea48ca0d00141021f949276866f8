@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ShareApp</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="device">Thiết bị</string>
+    <string name="share">Chia sẻ</string>
+    <string name="progress">Quá trình</string>
+    <string name="search">Tìm kiếm</string>
+    <string name="scan">Dò thiết bị</string>
+
+</resources>
