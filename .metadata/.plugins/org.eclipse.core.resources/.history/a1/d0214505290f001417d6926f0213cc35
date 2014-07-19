@@ -1,0 +1,12 @@
+package vn.vfossa.shareapp;
+
+import android.content.Context;
+import android.widget.LinearLayout;
+
+public class rowFileList extends LinearLayout {
+
+	public rowFileList(Context context) {
+		super(context);
+	}
+
+}

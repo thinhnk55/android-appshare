@@ -137,6 +137,40 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		db.close();
 		return fileDataList;
 	}
+	
+	/*
+	 * Hàm để lấy tất cả các dữ liệu hiện có trong cơ sở dữ liệu
+	 */
+	public List<FilesData> getAllFileWithType(String type) {
+
+		// Tạo list để chứa dữ liệu
+		List<FilesData> fileDataList = new ArrayList<FilesData>();
+
+		// Tạo lệnh SQLite
+		String selectQuery = "SELECT  * FROM " + TABLE_FILESDATA +" WHERE " + KEY_TYPE +" = '" + type+"'";
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+
+		// Xét dữ liệu thu được và đưa từng hàng vào list
+		if (cursor.moveToFirst()) {
+			do {
+				FilesData fileData = new FilesData();
+				fileData.setID(Integer.parseInt(cursor.getString(0)));
+				fileData.setType(cursor.getString(1));
+				fileData.setName(cursor.getString(2));
+				fileData.setPath(cursor.getString(3));
+				fileData.setImage(cursor.getBlob(4));
+				fileData.setSize(cursor.getFloat(5));
+				
+				fileDataList.add(fileData);
+			} while (cursor.moveToNext());
+		}
+
+		// đóng cơ sở dữ liệu
+		db.close();
+		return fileDataList;
+	}
 
 	/*
 	 * Hàm để sửa đổi dữ liệu của một hàng

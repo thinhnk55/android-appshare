@@ -1,8 +1,14 @@
 package vn.vfossa.shareapp;
 
+import java.io.File;
+
+import vn.vfossa.database.DatabaseHandler;
+import vn.vfossa.database.FilesData;
+
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.ViewGroup;
@@ -15,6 +21,7 @@ public class MainActivity extends TabActivity {
 
 	private TabHost tabHost;
 	private ViewGroup appView;
+	private static final String MEDIA_PATH = "/sdcard/";
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +29,11 @@ public class MainActivity extends TabActivity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        
+
+		File home = new File(MEDIA_PATH);
+
+		scanDirectory(home);
         
         tabHost = getTabHost();
         
@@ -59,5 +71,43 @@ public class MainActivity extends TabActivity {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+    
+    private void scanDirectory(File directory) {
+		if (directory != null) {
+			File[] listFiles = directory.listFiles();
+			if (listFiles != null && listFiles.length > 0) {
+				for (File file : listFiles) {
+					if (file.isDirectory()) {
+						scanDirectory(file);
+					} else {
+						addSongToList(file);
+					}
+
+				}
+			}
+		}
+	}
+
+	private void addSongToList(File file) {
+		DatabaseHandler db = new DatabaseHandler(MainActivity.this);
+		if (file.getName().endsWith(".mp3")) {
+			if (db.checkSongPath(file.getPath())) {
+				String songName = file.getName().substring(0,
+						(file.getName().length() - 4));
+				String songPath = file.getPath();
+				MediaMetadataRetriever media = new MediaMetadataRetriever();
+				media.setDataSource(songPath);
+				byte[] data = media.getEmbeddedPicture();
+				String songArtist = media
+						.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+				String songAlbum = media
+						.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+				media.release();
+				db.addFileData(new FilesData("music", songName, songPath, data,
+						0));
+				db.close();
+			}
+		}
+	}
     
 }

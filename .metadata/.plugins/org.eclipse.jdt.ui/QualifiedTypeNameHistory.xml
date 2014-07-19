@@ -15,7 +15,6 @@
 <fullyQualifiedTypeName name="java.lang.LinkageError"/>
 <fullyQualifiedTypeName name="android.widget.ScrollView"/>
 <fullyQualifiedTypeName name="android.widget.HorizontalScrollView"/>
-<fullyQualifiedTypeName name="android.widget.LinearLayout"/>
 <fullyQualifiedTypeName name="android.util.Log"/>
 <fullyQualifiedTypeName name="vn.vfossa.shareapp.AppActivity"/>
 <fullyQualifiedTypeName name="vn.vfossa.database.DatabaseHandler"/>
@@ -27,4 +26,6 @@
 <fullyQualifiedTypeName name="vn.vfossa.shareapp.R.id"/>
 <fullyQualifiedTypeName name="android.graphics.BitmapFactory"/>
 <fullyQualifiedTypeName name="vn.vfossa.shareapp.R.drawable"/>
+<fullyQualifiedTypeName name="android.widget.LinearLayout"/>
+<fullyQualifiedTypeName name="android.view.Gravity"/>
 </qualifiedTypeNameHistroy>
