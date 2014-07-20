@@ -230,9 +230,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	 * Hàm kiểm tra một file đã tồn tại trong cơ sở dữ liệu hay chưa. Sử dụng
 	 * đường dẫn của file để kiểm tra
 	 */
-	public boolean checkSongPath(String songPath) {
+	public boolean checkPath(String path) {
 		String checkQuery = "SELECT  * FROM " + TABLE_FILESDATA + " WHERE "
-				+ KEY_PATH + " = \"" + songPath + "\"";
+				+ KEY_PATH + " = \"" + path + "\"";
 
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.rawQuery(checkQuery, null);

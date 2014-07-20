@@ -2,8 +2,12 @@ package vn.vfossa.shareapp;
 
 import java.io.File;
 
+import vn.vfossa.app.AppActivity;
 import vn.vfossa.database.DatabaseHandler;
 import vn.vfossa.database.FilesData;
+import vn.vfossa.image.ImageActivity;
+import vn.vfossa.music.MusicActivity;
+import vn.vfossa.video.VideoActivity;
 
 import android.app.TabActivity;
 import android.content.Intent;
@@ -11,8 +15,6 @@ import android.content.pm.ActivityInfo;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
@@ -20,7 +22,6 @@ import android.widget.TabHost.TabSpec;
 public class MainActivity extends TabActivity {
 
 	private TabHost tabHost;
-	private ViewGroup appView;
 	private static final String MEDIA_PATH = "/sdcard/";
 	
     @Override
@@ -80,7 +81,7 @@ public class MainActivity extends TabActivity {
 					if (file.isDirectory()) {
 						scanDirectory(file);
 					} else {
-						addSongToList(file);
+						addFileToList(file);
 					}
 
 				}
@@ -88,22 +89,34 @@ public class MainActivity extends TabActivity {
 		}
 	}
 
-	private void addSongToList(File file) {
+	private void addFileToList(File file) {
 		DatabaseHandler db = new DatabaseHandler(MainActivity.this);
+		
 		if (file.getName().endsWith(".mp3")) {
-			if (db.checkSongPath(file.getPath())) {
+			if (db.checkPath(file.getPath())) {
 				String songName = file.getName().substring(0,
 						(file.getName().length() - 4));
 				String songPath = file.getPath();
 				MediaMetadataRetriever media = new MediaMetadataRetriever();
 				media.setDataSource(songPath);
 				byte[] data = media.getEmbeddedPicture();
-				String songArtist = media
-						.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-				String songAlbum = media
-						.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
 				media.release();
 				db.addFileData(new FilesData("music", songName, songPath, data,
+						0));
+				db.close();
+			}
+		}
+		
+		if (file.getName().endsWith(".apk")) {
+			if (db.checkPath(file.getPath())) {
+				String songName = file.getName().substring(0,
+						(file.getName().length() - 4));
+				String songPath = file.getPath();
+				MediaMetadataRetriever media = new MediaMetadataRetriever();
+				media.setDataSource(songPath);
+				byte[] data = media.getEmbeddedPicture();
+				media.release();
+				db.addFileData(new FilesData("app", songName, songPath, data,
 						0));
 				db.close();
 			}

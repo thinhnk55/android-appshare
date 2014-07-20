@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
+	<section name="DialogBounds_OverrideMethodDialog">
+		<item value="527" key="DIALOG_WIDTH"/>
+		<item value="62" key="DIALOG_Y_ORIGIN"/>
+		<item value="428" key="DIALOG_X_ORIGIN"/>
+		<item value="466" key="DIALOG_HEIGHT"/>
+		<item value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI" key="DIALOG_FONT_NAME"/>
+	</section>
 	<section name="OptionalMessageDialog.hide.">
 		<item value="true" key="org.eclipse.jdt.ui.typecomment.deprecated"/>
+	</section>
+	<section name="OverrideMethodDialog">
+		<item value="true" key="showtypes"/>
 	</section>
 	<section name="SourceActionDialog.constructors">
 		<item value="1" key="VisibilityModifier"/>
@@ -59,6 +69,7 @@
 	<section name="RenameInformationPopup">
 	</section>
 	<section name="org.eclipse.ltk.ui.refactoring.settings">
+		<item value="false" key="renameSubpackages"/>
 		<item value="*" key="patterns"/>
 		<item value="false" key="updateQualifiedNames"/>
 		<item value="1" key="updateSimilarElementsMatchStrategy"/>
