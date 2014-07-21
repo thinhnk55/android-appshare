@@ -4,19 +4,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <ScrollView
-        android:id="@+id/ScrollView01"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent" >
-
-        <LinearLayout
-            android:id="@+id/fileList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" >
-
-        </LinearLayout>
-
-    </ScrollView>
+    <GridView
+        android:id="@+id/gridViewApp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:horizontalSpacing="10dp"
+        android:verticalSpacing="10dp"
+        android:numColumns="3" >
+    </GridView>
 
 </LinearLayout>

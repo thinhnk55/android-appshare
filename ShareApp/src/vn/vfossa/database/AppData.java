@@ -1,14 +1,16 @@
 package vn.vfossa.database;
 
+import android.graphics.Bitmap;
+
 public class AppData {
 	private int _id;
 	private String _name;
 	private String _path;
-	private byte[] _image;
+	private Bitmap _image;
 	private float _size;
 	
 	
-	public AppData(int _id, String _name, String _path, byte[] _image,
+	public AppData(int _id, String _name, String _path, Bitmap _image,
 			float _size) {
 		super();
 		this._id = _id;
@@ -19,7 +21,7 @@ public class AppData {
 	}
 
 
-	public AppData(String _name, String _path, byte[] _image, float _size) {
+	public AppData(String _name, String _path, Bitmap _image, float _size) {
 		super();
 		this._name = _name;
 		this._path = _path;
@@ -63,12 +65,12 @@ public class AppData {
 	}
 
 
-	public byte[] get_image() {
+	public Bitmap get_image() {
 		return _image;
 	}
 
 
-	public void set_image(byte[] _image) {
+	public void set_image(Bitmap _image) {
 		this._image = _image;
 	}
 
