@@ -6,86 +6,63 @@ import java.util.List;
 import vn.vfossa.database.DatabaseHandler;
 import vn.vfossa.database.FilesData;
 import vn.vfossa.shareapp.R;
-import vn.vfossa.shareapp.R.drawable;
-import vn.vfossa.shareapp.R.id;
-import vn.vfossa.shareapp.R.layout;
-import android.app.Activity;
+import android.app.ListActivity;
+import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.GridView;
-import android.widget.Toast;
+import android.widget.ListView;
 
-public class MusicActivity extends Activity {
+public class MusicActivity extends ListActivity {
 
 	private MusicAdapter adapter;
-	private ArrayList<Bitmap> listImage;
-	private GridView gridView;
+	private ArrayList<FilesData> listMusics = new ArrayList<FilesData>();
+	private ListView listView;
 	private int[] checkedState;
+	private Context context;
 	private static final String type = "music";
 
-	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.musics_activity);
+		context = this;
+		
+		DatabaseHandler db = new DatabaseHandler(context);
 
-		setList();
-
-		checkedState = new int[listImage.size()];
-		for (int i = 0; i < listImage.size(); i++) {
+		List<FilesData> listSongs = db.getAllFileWithType(type);
+		checkedState = new int[listSongs.size()];
+		for (int i =0 ;i <listSongs.size();i++){
 			checkedState[i] = 0;
 		}
+		db.close();
+		setList(listSongs);
+		listView.setItemsCanFocus(false);
+		listView.setOnItemClickListener(new OnItemClickListener() {
 
-		adapter = new MusicAdapter(this, listImage, checkedState);
-
-		// Set custom adapter to gridview
-		gridView = (GridView) findViewById(R.id.gridViewMusic);
-		gridView.setAdapter(adapter);
-
-		// Implement On Item click listener
-		gridView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1,
-					int position, long arg3) {
-//				Toast.makeText(MusicActivity.this, "check",
-//				Toast.LENGTH_SHORT).show();
-				//notifyDataSetChanged();
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				if (checkedState[position]==0)
+					checkedState[position]=1;
+				else
+					checkedState[position]=0;
 			}
 		});
 
 	}
 
-	public void setList() {
-		listImage = new ArrayList<Bitmap>();
-
-		DatabaseHandler db = new DatabaseHandler(this);
-		List<FilesData> listApps = db.getAllFileWithType(type);
-
-		for (FilesData file : listApps) {
-			if (file.getImage() != null) {
-				BitmapFactory.Options options = new BitmapFactory.Options();
-				options.inPurgeable = true;
-
-				Bitmap bitmap = BitmapFactory.decodeByteArray(file.getImage(),
-						0, file.getImage().length, options);
-
-				Bitmap itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
-						true);
-
-				listImage.add(itemImage);
-			} else {
-
-				Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
-						R.drawable.music);
-				Bitmap itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
-						true);
-
-				listImage.add(itemImage);
-			}
-
+	public void setList(List<FilesData> listSongs) {
+		
+		for (FilesData song: listSongs){
+			listMusics.add(song);
 		}
+		if (listSongs.size() > 0) {
+			adapter = new MusicAdapter(MusicActivity.this, listMusics,checkedState);
+		}
+
+		listView = getListView();
+		listView.setAdapter(adapter);
 	}
 }

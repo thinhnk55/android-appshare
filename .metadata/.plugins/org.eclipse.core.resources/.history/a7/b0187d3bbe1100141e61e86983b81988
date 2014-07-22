@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants"
+    android:background="@drawable/list_selector" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="100" >
+
+        <TableRow
+            android:id="@+id/TableRow"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="85" >
+
+            <ImageView
+                android:id="@+id/image_music"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginRight="10dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/songTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="Song Title"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textView1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Artist : "
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="#6bb579"
+                        android:textStyle="italic" />
+
+                    <TextView
+                        android:id="@+id/songArtist"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="Small Text"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="#6bb579"
+                        android:textStyle="italic" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Album : "
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="#fa9825"
+                        android:textStyle="italic" />
+
+                    <TextView
+                        android:id="@+id/songAlbum"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="Small Text"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="#fa9825"
+                        android:textStyle="italic" />
+                </LinearLayout>
+            </LinearLayout>
+        </TableRow>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="15"
+            android:gravity="center"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:orientation="vertical" >
+
+            <ImageButton
+                android:id="@+id/btn_favorite"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/no_favorite"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:scaleType="fitCenter"
+                android:src="@drawable/no_favorite" />
+        </LinearLayout>
+    </LinearLayout>
+
+</TableLayout>

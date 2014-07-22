@@ -2,7 +2,6 @@ package vn.vfossa.video;
 
 import java.util.ArrayList;
 
-import vn.vfossa.music.MusicAdapter.ViewHolder;
 import vn.vfossa.shareapp.R;
 import android.app.Activity;
 import android.graphics.Bitmap;

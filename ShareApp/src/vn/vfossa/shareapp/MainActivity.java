@@ -115,10 +115,10 @@ public class MainActivity extends TabActivity {
 				MediaMetadataRetriever media = new MediaMetadataRetriever();
 				media.setDataSource(songPath);
 				byte[] data = media.getEmbeddedPicture();
-
 				media.release();
+				float size =(float) (file.length())/(1024*1024);
 				db.addFileData(new FilesData("music", songName, songPath, data,
-						0));
+						size));
 				db.close();
 			}
 		}
