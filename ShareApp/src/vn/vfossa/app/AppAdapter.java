@@ -3,7 +3,6 @@ package vn.vfossa.app;
 import java.util.ArrayList;
 
 import vn.vfossa.shareapp.R;
-import vn.vfossa.video.VideoAdapter.ViewHolder;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;

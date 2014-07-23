@@ -25,7 +25,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class AppActivity extends Activity {
 
-	private VideoAdapter adapter;
+	private AppAdapter adapter;
 	private ArrayList<Bitmap> listImage;
 	private GridView gridView;
 	private int[] checkedState;
@@ -43,7 +43,7 @@ public class AppActivity extends Activity {
 			checkedState[i] = 0;
 		}
 
-		adapter = new VideoAdapter(this, listImage, checkedState);
+		adapter = new AppAdapter(this, listImage, checkedState);
 
 		// Set custom adapter to gridview
 		gridView = (GridView) findViewById(R.id.gridViewApp);

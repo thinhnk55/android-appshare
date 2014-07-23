@@ -21,13 +21,12 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 	private Activity context;
 	private ArrayList<FilesData> song;
 	private SongHolder holder;
-	private int[] checkedState;
+	private static int[] checkedState;
 
-	public MusicAdapter(Activity context, ArrayList<FilesData> song,int[] checkedState) {
+	public MusicAdapter(Activity context, ArrayList<FilesData> song) {
 		super(context, R.layout.media_item_layout, song);
 		this.context = context;
 		this.song = song;
-		this.checkedState = checkedState;
 
 	}
 
@@ -38,12 +37,12 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 			LayoutInflater inflater = context.getLayoutInflater();
 			rowView = inflater.inflate(R.layout.media_item_layout, null, true);
 			holder = new SongHolder();
-			holder.songTitle = (TextView) rowView.findViewById(R.id.songTitle);
-			holder.size = (TextView) rowView.findViewById(R.id.songSize);
+			holder.songTitle = (TextView) rowView.findViewById(R.id.mediaTitle);
+			holder.size = (TextView) rowView.findViewById(R.id.mediaSize);
 			holder.checkBox = (CheckBox) rowView
 					.findViewById(R.id.checkBoxItem);
 			holder.imageView = (ImageView) rowView
-					.findViewById(R.id.image_music);
+					.findViewById(R.id.image_media);
 			rowView.setTag(holder);
 		} else {
 			holder = (SongHolder) rowView.getTag();
@@ -51,29 +50,30 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 
 		holder.songTitle.setText(song.get(position).getName());
 		DecimalFormat dec = new DecimalFormat("0.00");
-		holder.size.setText(dec.format(song.get(position).getSize()).concat(" MB"));
+		holder.size.setText(dec.format(song.get(position).getSize()).concat(
+				" MB"));
 
 		if (song.get(position).getImage() != null) {
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inPurgeable = true;
 
-			Bitmap bitmap = BitmapFactory.decodeByteArray(song.get(position).getImage(),
-					0, song.get(position).getImage().length, options);
+			Bitmap bitmap = BitmapFactory.decodeByteArray(song.get(position)
+					.getImage(), 0, song.get(position).getImage().length,
+					options);
 
-			Bitmap itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
-					true);
+			Bitmap itemImage = Bitmap
+					.createScaledBitmap(bitmap, 100, 100, true);
 			holder.imageView.setImageBitmap(itemImage);
 		} else {
 			holder.imageView.setImageResource(R.drawable.music);
 		}
-		
-		if (checkedState[position]==0){
+
+		if (checkedState[position] == 0) {
 			holder.checkBox.setChecked(false);
-		}
-		else {
+		} else {
 			holder.checkBox.setChecked(true);
 		}
-		
+
 		return rowView;
 	}
 
@@ -82,6 +82,25 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 		TextView size;
 		TextView songTitle;
 		ImageView imageView;
+	}
+	
+	public void createCheckedState(int size){
+		checkedState = new int[size];
+		for (int i = 0; i < size; i++) {
+			checkedState[i] = 0;
+		}
+	}
+
+	public int getCheckedState(int position) {
+		return checkedState[position];
+	}
+
+	public void changeCheckedState(int position) {
+		if (checkedState[position] == 0) {
+			checkedState[position] = 1;
+		} else {
+			checkedState[position] = 0;
+		}
 	}
 
 }

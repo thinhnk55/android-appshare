@@ -20,7 +20,6 @@ public class MusicActivity extends ListActivity {
 	private MusicAdapter adapter;
 	private ArrayList<FilesData> listMusics = new ArrayList<FilesData>();
 	private ListView listView;
-	private int[] checkedState;
 	private Context context;
 	private static final String type = "music";
 
@@ -28,14 +27,11 @@ public class MusicActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.musics_activity);
 		context = this;
-		
+
 		DatabaseHandler db = new DatabaseHandler(context);
 
 		List<FilesData> listSongs = db.getAllFileWithType(type);
-		checkedState = new int[listSongs.size()];
-		for (int i =0 ;i <listSongs.size();i++){
-			checkedState[i] = 0;
-		}
+		
 		db.close();
 		setList(listSongs);
 		listView.setItemsCanFocus(false);
@@ -44,24 +40,22 @@ public class MusicActivity extends ListActivity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				if (checkedState[position]==0)
-					checkedState[position]=1;
-				else
-					checkedState[position]=0;
+				adapter.changeCheckedState(position);
 			}
 		});
 
 	}
 
 	public void setList(List<FilesData> listSongs) {
+
 		
-		for (FilesData song: listSongs){
+		for (FilesData song : listSongs) {
 			listMusics.add(song);
 		}
 		if (listSongs.size() > 0) {
-			adapter = new MusicAdapter(MusicActivity.this, listMusics,checkedState);
+			adapter = new MusicAdapter(MusicActivity.this, listMusics);
+			adapter.createCheckedState(listSongs.size());
 		}
-
 		listView = getListView();
 		listView.setAdapter(adapter);
 	}
