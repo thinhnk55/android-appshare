@@ -9,6 +9,16 @@ package vn.vfossa.shareapp;
 
 public final class R {
     public static final class attr {
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int dividerWidth=0x7f010000;
     }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
@@ -29,16 +39,16 @@ public final class R {
         public static final int action_settings=0x7f080010;
         public static final int autoCompleteTextView1=0x7f080000;
         public static final int btScan=0x7f080002;
-        public static final int button2=0x7f080005;
-        public static final int button3=0x7f080006;
+        public static final int button2=0x7f080004;
+        public static final int button3=0x7f080005;
         public static final int checkBoxItem=0x7f08000b;
-        public static final int deviceImage=0x7f080008;
-        public static final int deviceList=0x7f080004;
-        public static final int deviceScroll=0x7f080003;
-        public static final int gridViewApp=0x7f080007;
+        public static final int deviceImage=0x7f080007;
+        public static final int deviceName=0x7f080008;
+        public static final int gridViewApp=0x7f080006;
         public static final int gridViewImage=0x7f080009;
         public static final int imageItem=0x7f08000a;
         public static final int image_media=0x7f08000d;
+        public static final int listDevice=0x7f080003;
         public static final int mediaSize=0x7f08000f;
         public static final int mediaTitle=0x7f08000e;
         public static final int textView1=0x7f080001;
@@ -94,4 +104,59 @@ public final class R {
          */
         public static final int AppTheme=0x7f060001;
     }
+    public static final class styleable {
+        /**  Defines the custom XML attributes supported for a HorizontalListView 
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #HorizontalListView_android_divider vn.vfossa.shareapp:android_divider}</code></td><td></td></tr>
+           <tr><td><code>{@link #HorizontalListView_android_fadingEdgeLength vn.vfossa.shareapp:android_fadingEdgeLength}</code></td><td></td></tr>
+           <tr><td><code>{@link #HorizontalListView_android_requiresFadingEdge vn.vfossa.shareapp:android_requiresFadingEdge}</code></td><td></td></tr>
+           <tr><td><code>{@link #HorizontalListView_dividerWidth vn.vfossa.shareapp:dividerWidth}</code></td><td></td></tr>
+           </table>
+           @see #HorizontalListView_android_divider
+           @see #HorizontalListView_android_fadingEdgeLength
+           @see #HorizontalListView_android_requiresFadingEdge
+           @see #HorizontalListView_dividerWidth
+         */
+        public static final int[] HorizontalListView = {
+            0x010100e0, 0x01010129, 0x010103a5, 0x7f010000
+        };
+        /**
+          <p>This symbol is the offset where the {@link vn.vfossa.shareapp.R.attr#android_divider}
+          attribute's value can be found in the {@link #HorizontalListView} array.
+          @attr name android:android_divider
+        */
+        public static final int HorizontalListView_android_divider = 1;
+        /**
+          <p>This symbol is the offset where the {@link vn.vfossa.shareapp.R.attr#android_fadingEdgeLength}
+          attribute's value can be found in the {@link #HorizontalListView} array.
+          @attr name android:android_fadingEdgeLength
+        */
+        public static final int HorizontalListView_android_fadingEdgeLength = 0;
+        /**
+          <p>This symbol is the offset where the {@link vn.vfossa.shareapp.R.attr#android_requiresFadingEdge}
+          attribute's value can be found in the {@link #HorizontalListView} array.
+          @attr name android:android_requiresFadingEdge
+        */
+        public static final int HorizontalListView_android_requiresFadingEdge = 2;
+        /**
+          <p>This symbol is the offset where the {@link vn.vfossa.shareapp.R.attr#dividerWidth}
+          attribute's value can be found in the {@link #HorizontalListView} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name android:dividerWidth
+        */
+        public static final int HorizontalListView_dividerWidth = 3;
+    };
 }

@@ -77,20 +77,12 @@
 
             </LinearLayout>
 
-            <HorizontalScrollView
-                android:id="@+id/deviceScroll"
-                android:layout_width="match_parent"
+            <com.meetme.android.horizontallistview.HorizontalListView
+                android:id="@+id/listDevice"
+                android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="25" >
-
-                <LinearLayout
-                    android:id="@+id/deviceList"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal" >
-
-                </LinearLayout>
-            </HorizontalScrollView>
+            </com.meetme.android.horizontallistview.HorizontalListView>
 
             <LinearLayout
                 android:layout_width="match_parent"

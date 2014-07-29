@@ -2,13 +2,18 @@ package vn.vfossa.shareapp;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.meetme.android.horizontallistview.HorizontalListView;
+
 import vn.vfossa.app.AppActivity;
 import vn.vfossa.database.DatabaseHandler;
 import vn.vfossa.database.FilesData;
+import vn.vfossa.device.Device;
+import vn.vfossa.device.DeviceAdapter;
 import vn.vfossa.image.ImageActivity;
 import vn.vfossa.music.MusicActivity;
 import vn.vfossa.video.VideoActivity;
@@ -44,7 +49,9 @@ public class MainActivity extends TabActivity {
 	private static final String MEDIA_PATH = "/sdcard/";
 	private Button btScan;
 	private BluetoothAdapter bluetoothAdapter;
-	private LinearLayout listDevice;
+	private DeviceAdapter deviceAdapter;
+	private ArrayList<Device> arrayListDevice = new ArrayList<Device>();;
+	private HorizontalListView listDevice;
 	private static final int REQUEST_ENABLE_BT = 1;
 
 	@Override
@@ -55,7 +62,7 @@ public class MainActivity extends TabActivity {
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 		btScan = (Button) findViewById(R.id.btScan);
-		listDevice = (LinearLayout) findViewById(R.id.deviceList);
+		listDevice = (HorizontalListView) findViewById(R.id.listDevice);
 		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
 		File home = new File(MEDIA_PATH);
@@ -174,7 +181,10 @@ public class MainActivity extends TabActivity {
 
 					Bitmap bitmap = BitmapFactory.decodeFile(imgFile
 							.getAbsolutePath());
-
+					if (bitmap == null) {
+						db.close();
+						return;
+					}
 					itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
 							true);
 				}
@@ -244,8 +254,13 @@ public class MainActivity extends TabActivity {
 		@Override
 		public void onClick(View arg0) {
 			// TODO Auto-generated method stub
-			listDevice.removeAllViews();
+			//arrayListDevice.clear();
 			bluetoothAdapter.startDiscovery();
+			if (!arrayListDevice.isEmpty()) {
+				deviceAdapter = new DeviceAdapter(MainActivity.this,
+						arrayListDevice);
+				listDevice.setAdapter(deviceAdapter);
+			}
 		}
 	};
 
@@ -264,11 +279,18 @@ public class MainActivity extends TabActivity {
 			// TODO Auto-generated method stub
 			String action = intent.getAction();
 			if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+				Device newDevice = new Device();
 				BluetoothDevice device = intent
 						.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 				TextView tv = new TextView(MainActivity.this);
-				tv.setText(device.getName());
-				listDevice.addView(tv);
+				newDevice.setName(device.getName());
+
+				Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
+						R.drawable.music);
+				Bitmap itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
+						true);
+				newDevice.setImage(itemImage);
+				arrayListDevice.add(newDevice);
 			}
 		}
 	};
