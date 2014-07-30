@@ -260,14 +260,12 @@ public class MainActivity extends TabActivity {
 			Toast.makeText(MainActivity.this, "clear and scan",
 					Toast.LENGTH_SHORT).show();
 			bluetoothAdapter.startDiscovery();
+			Toast.makeText(MainActivity.this, "size " arrayListDevice.size(),
+					Toast.LENGTH_SHORT).show();
 			if (!arrayListDevice.isEmpty()) {
 				deviceAdapter = new DeviceAdapter(MainActivity.this,
 						arrayListDevice);
 				listDevice.setAdapter(deviceAdapter);
-			}
-			else{
-				Toast.makeText(MainActivity.this, "no device",
-						Toast.LENGTH_SHORT).show();
 			}
 		}
 	};

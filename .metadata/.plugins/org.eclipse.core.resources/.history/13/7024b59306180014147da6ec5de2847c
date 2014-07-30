@@ -265,10 +265,6 @@ public class MainActivity extends TabActivity {
 						arrayListDevice);
 				listDevice.setAdapter(deviceAdapter);
 			}
-			else{
-				Toast.makeText(MainActivity.this, "no device",
-						Toast.LENGTH_SHORT).show();
-			}
 		}
 	};
 
@@ -298,8 +294,6 @@ public class MainActivity extends TabActivity {
 				Bitmap itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
 						true);
 				newDevice.setImage(itemImage);
-				Toast.makeText(MainActivity.this, device.getName(),
-						Toast.LENGTH_SHORT).show();
 				arrayListDevice.add(newDevice);
 			}
 		}

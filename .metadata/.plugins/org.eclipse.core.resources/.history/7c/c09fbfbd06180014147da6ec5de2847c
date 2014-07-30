@@ -265,10 +265,6 @@ public class MainActivity extends TabActivity {
 						arrayListDevice);
 				listDevice.setAdapter(deviceAdapter);
 			}
-			else{
-				Toast.makeText(MainActivity.this, "no device",
-						Toast.LENGTH_SHORT).show();
-			}
 		}
 	};
 

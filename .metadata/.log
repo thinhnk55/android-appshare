@@ -7157,3 +7157,76 @@ Binding(CTRL+SHIFT+\,
 		,,true),null),
 	org.eclipse.ui.defaultAcceleratorConfiguration,
 	org.eclipse.wst.sse.ui.structuredTextEditorScope,,,system)
+!SESSION 2014-07-30 22:47:05.878 -----------------------------------------------
+eclipse.buildId=v21.1.0-569685
+java.version=1.7.0_51
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=en_US
+Framework arguments:  -product com.android.ide.eclipse.adt.package.product
+Command-line arguments:  -os win32 -ws win32 -arch x86 -product com.android.ide.eclipse.adt.package.product
+
+!ENTRY WAEclipsePlugin 4 0 2014-07-30 22:47:28.852
+!MESSAGE Azure SDK is not installed.
+!STACK 0
+java.io.IOException: Azure SDK is not installed.
+	at com.interopbridges.tools.windowsazure.WindowsAzureProjectManager.getLatestAzureSdkDir(Unknown Source)
+	at com.persistent.util.WAStartUp.getSchemasLocation(WAStartUp.java:435)
+	at com.persistent.util.WAStartUp.createEntries(WAStartUp.java:384)
+	at com.persistent.util.WAStartUp.makeXMLCatalogEntry(WAStartUp.java:372)
+	at com.persistent.util.WAStartUp.earlyStartup(WAStartUp.java:75)
+	at org.eclipse.ui.internal.EarlyStartupRunnable.runEarlyStartup(EarlyStartupRunnable.java:87)
+	at org.eclipse.ui.internal.EarlyStartupRunnable.run(EarlyStartupRunnable.java:66)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.ui.internal.Workbench$54.run(Workbench.java:2402)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:53)
+
+!ENTRY WAEclipsePlugin 4 0 2014-07-30 22:47:29.153
+!MESSAGE AndroidHorizontalListViewisOpentrue
+
+!ENTRY WAEclipsePlugin 4 0 2014-07-30 22:47:29.155
+!MESSAGE AndroidHorizontalListViewisNaturefalse
+
+!ENTRY WAEclipsePlugin 4 0 2014-07-30 22:47:29.157
+!MESSAGE AndroidHorizontalListViewSampleisOpentrue
+
+!ENTRY WAEclipsePlugin 4 0 2014-07-30 22:47:29.158
+!MESSAGE AndroidHorizontalListViewSampleisNaturefalse
+
+!ENTRY WAEclipsePlugin 4 0 2014-07-30 22:47:29.159
+!MESSAGE ShareAppisOpentrue
+
+!ENTRY WAEclipsePlugin 4 0 2014-07-30 22:47:29.159
+!MESSAGE ShareAppisNaturefalse
+
+!ENTRY WAEclipsePlugin 4 0 2014-07-30 22:47:29.159
+!MESSAGE bluetoothisOpentrue
+
+!ENTRY WAEclipsePlugin 4 0 2014-07-30 22:47:29.160
+!MESSAGE bluetoothisNaturefalse
+
+!ENTRY com.android.ide.eclipse.adt 4 0 2014-07-30 22:47:35.699
+!MESSAGE 
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Marker id 9177 not found.
+	at org.eclipse.core.internal.resources.Marker.checkInfo(Marker.java:57)
+	at org.eclipse.core.internal.resources.Marker.setAttribute(Marker.java:237)
+	at com.android.ide.eclipse.adt.internal.project.BaseProjectHelper.markProject(BaseProjectHelper.java:210)
+	at com.android.ide.eclipse.adt.internal.project.BaseClasspathContainerInitializer$1.run(BaseClasspathContainerInitializer.java:65)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:53)
+!SUBENTRY 1 org.eclipse.core.resources 4 376 2014-07-30 22:47:35.704
+!MESSAGE Marker id 9177 not found.
+
+!ENTRY org.eclipse.egit.ui 2 0 2014-07-30 22:47:59.073
+!MESSAGE Warning: EGit couldn't detect the installation path "gitPrefix" of native Git. Hence EGit can't respect system level
+Git settings which might be configured in ${gitPrefix}/etc/gitconfig under the native Git installation directory.
+The most important of these settings is core.autocrlf. Git for Windows by default sets this parameter to true in
+this system level configuration. The Git installation location can be configured on the
+Team > Git > Configuration preference page's 'System Settings' tab.
+This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.
+
+!ENTRY org.eclipse.egit.ui 2 0 2014-07-30 22:47:59.079
+!MESSAGE Warning: The environment variable HOME is not set. The following directory will be used to store the Git
+user global configuration and to define the default location to store repositories: 'C:\Users\NVDAI'. If this is
+not correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and
+EGit might behave differently since they see different configuration options.
+This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.

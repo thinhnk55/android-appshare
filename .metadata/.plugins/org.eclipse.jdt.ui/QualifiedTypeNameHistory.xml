@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="android.widget.TabHost"/>
-<fullyQualifiedTypeName name="android.app.TabActivity"/>
-<fullyQualifiedTypeName name="java.io.FilenameFilter"/>
-<fullyQualifiedTypeName name="vn.vfossa.music.MusicFilter"/>
-<fullyQualifiedTypeName name="android.view.ViewGroup.LayoutParams"/>
-<fullyQualifiedTypeName name="vn.vfossa.shareapp.R.layout"/>
 <fullyQualifiedTypeName name="java.lang.Float"/>
 <fullyQualifiedTypeName name="vn.vfossa.shareapp.FragmentListFile"/>
 <fullyQualifiedTypeName name="android.graphics.LightingColorFilter"/>
@@ -23,8 +17,6 @@
 <fullyQualifiedTypeName name="android.app.Fragment"/>
 <fullyQualifiedTypeName name="android.widget.BaseAdapter"/>
 <fullyQualifiedTypeName name="android.provider.MediaStore.Images"/>
-<fullyQualifiedTypeName name="vn.vfossa.shareapp.R"/>
-<fullyQualifiedTypeName name="android.widget.ImageView"/>
 <fullyQualifiedTypeName name="android.widget.GridView"/>
 <fullyQualifiedTypeName name="vn.vfossa.shareapp.MusicActivity"/>
 <fullyQualifiedTypeName name="android.provider.ContactsContract.Contacts.Photo"/>
@@ -38,7 +30,6 @@
 <fullyQualifiedTypeName name="android.view.LayoutInflater.Filter"/>
 <fullyQualifiedTypeName name="android.widget.CheckBox"/>
 <fullyQualifiedTypeName name="vn.vfossa.music.MusicAdapter.SongHolder"/>
-<fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="android.content.Context"/>
 <fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="android.widget.ListView"/>
@@ -51,11 +42,22 @@
 <fullyQualifiedTypeName name="java.util.Set"/>
 <fullyQualifiedTypeName name="com.example.bluetooth.MainActivity"/>
 <fullyQualifiedTypeName name="android.widget.Button"/>
-<fullyQualifiedTypeName name="vn.vfossa.shareapp.R.id"/>
 <fullyQualifiedTypeName name="android.widget.Toast"/>
 <fullyQualifiedTypeName name="android.widget.TextView"/>
-<fullyQualifiedTypeName name="vn.vfossa.shareapp.MainActivity"/>
 <fullyQualifiedTypeName name="android.widget.LinearLayout"/>
-<fullyQualifiedTypeName name="android.graphics.Bitmap"/>
 <fullyQualifiedTypeName name="java.text.BreakIterator"/>
+<fullyQualifiedTypeName name="android.R"/>
+<fullyQualifiedTypeName name="android.R.layout"/>
+<fullyQualifiedTypeName name="vn.vfossa.shareapp.R"/>
+<fullyQualifiedTypeName name="vn.vfossa.shareapp.R.layout"/>
+<fullyQualifiedTypeName name="android.view.LayoutInflater"/>
+<fullyQualifiedTypeName name="android.widget.ImageView"/>
+<fullyQualifiedTypeName name="vn.vfossa.shareapp.R.id"/>
+<fullyQualifiedTypeName name="android.graphics.Bitmap"/>
+<fullyQualifiedTypeName name="com.meetme.android.horizontallistview.HorizontalListView"/>
+<fullyQualifiedTypeName name="vn.vfossa.device.DeviceAdapter"/>
+<fullyQualifiedTypeName name="vn.vfossa.shareapp.MainActivity"/>
+<fullyQualifiedTypeName name="android.widget.ArrayAdapter"/>
+<fullyQualifiedTypeName name="vn.vfossa.device.Device"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
 </qualifiedTypeNameHistroy>

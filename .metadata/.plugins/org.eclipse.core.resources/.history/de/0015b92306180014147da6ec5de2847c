@@ -50,7 +50,7 @@ public class MainActivity extends TabActivity {
 	private Button btScan;
 	private BluetoothAdapter bluetoothAdapter;
 	private DeviceAdapter deviceAdapter;
-	private ArrayList<Device> arrayListDevice = new ArrayList<Device>();
+	private ArrayList<Device> arrayListDevice = new ArrayList<Device>();;
 	private HorizontalListView listDevice;
 	private static final int REQUEST_ENABLE_BT = 1;
 
@@ -255,19 +255,11 @@ public class MainActivity extends TabActivity {
 		public void onClick(View arg0) {
 			// TODO Auto-generated method stub
 			arrayListDevice.clear();
-			arrayListDevice = new ArrayList<Device>();
-			if (arrayListDevice.size() ==0)
-			Toast.makeText(MainActivity.this, "clear and scan",
-					Toast.LENGTH_SHORT).show();
 			bluetoothAdapter.startDiscovery();
 			if (!arrayListDevice.isEmpty()) {
 				deviceAdapter = new DeviceAdapter(MainActivity.this,
 						arrayListDevice);
 				listDevice.setAdapter(deviceAdapter);
-			}
-			else{
-				Toast.makeText(MainActivity.this, "no device",
-						Toast.LENGTH_SHORT).show();
 			}
 		}
 	};
@@ -298,8 +290,6 @@ public class MainActivity extends TabActivity {
 				Bitmap itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
 						true);
 				newDevice.setImage(itemImage);
-				Toast.makeText(MainActivity.this, device.getName(),
-						Toast.LENGTH_SHORT).show();
 				arrayListDevice.add(newDevice);
 			}
 		}
