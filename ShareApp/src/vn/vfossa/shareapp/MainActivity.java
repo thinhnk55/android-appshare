@@ -2,9 +2,7 @@ package vn.vfossa.shareapp;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.text.BreakIterator;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Set;
 
 import com.meetme.android.horizontallistview.HorizontalListView;
@@ -29,23 +27,18 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends TabActivity {
 
 	private TabHost tabHost;
-	private BluetoothAdapter btAdapter;
-	private ArrayList<BluetoothDevice> btDeviceList = new ArrayList<BluetoothDevice>();
 	private static final String MEDIA_PATH = "/sdcard/";
 	private Button btScan;
 	private BluetoothAdapter bluetoothAdapter;
@@ -63,6 +56,9 @@ public class MainActivity extends TabActivity {
 
 		btScan = (Button) findViewById(R.id.btScan);
 		listDevice = (HorizontalListView) findViewById(R.id.listDevice);
+		arrayListDevice = new ArrayList<Device>();
+		deviceAdapter = new DeviceAdapter(MainActivity.this, arrayListDevice);
+		listDevice.setAdapter(deviceAdapter);
 		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
 		File home = new File(MEDIA_PATH);
@@ -86,8 +82,8 @@ public class MainActivity extends TabActivity {
 		Intent songsIntent = new Intent(this, MusicActivity.class);
 		songspec.setContent(songsIntent);
 
-		TabSpec videospec = tabHost.newTabSpec("XemPhim");
-		videospec.setIndicator("Xem phim");
+		TabSpec videospec = tabHost.newTabSpec("video");
+		videospec.setIndicator("Video");
 		Intent videosIntent = new Intent(this, VideoActivity.class);
 		videospec.setContent(videosIntent);
 
@@ -97,12 +93,33 @@ public class MainActivity extends TabActivity {
 		tabHost.addTab(videospec);
 
 		CheckBlueToothState();
+		
+		getPairedDevices();
 
 		btScan.setOnClickListener(btScanDeviceOnClickListener);
 
 		registerReceiver(ActionFoundReceiver, new IntentFilter(
 				BluetoothDevice.ACTION_FOUND));
 
+	}
+
+	private void getPairedDevices() {
+		Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+
+		if (pairedDevices.size() > 0) {
+		    for (BluetoothDevice device : pairedDevices) {
+		    	Device newDevice = new Device();
+				newDevice.setName(device.getName());
+
+				Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
+						R.drawable.music);
+				Bitmap itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
+						true);
+				newDevice.setImage(itemImage);
+				arrayListDevice.add(newDevice);
+				deviceAdapter.notifyDataSetChanged();
+		    }
+		}
 	}
 
 	@Override
@@ -255,20 +272,8 @@ public class MainActivity extends TabActivity {
 		public void onClick(View arg0) {
 			// TODO Auto-generated method stub
 			arrayListDevice.clear();
-			arrayListDevice = new ArrayList<Device>();
-			if (arrayListDevice.size() ==0)
-			Toast.makeText(MainActivity.this, "clear and scan",
-					Toast.LENGTH_SHORT).show();
+			getPairedDevices();
 			bluetoothAdapter.startDiscovery();
-			if (!arrayListDevice.isEmpty()) {
-				deviceAdapter = new DeviceAdapter(MainActivity.this,
-						arrayListDevice);
-				listDevice.setAdapter(deviceAdapter);
-			}
-			else{
-				Toast.makeText(MainActivity.this, "no device",
-						Toast.LENGTH_SHORT).show();
-			}
 		}
 	};
 
@@ -284,23 +289,24 @@ public class MainActivity extends TabActivity {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			// TODO Auto-generated method stub
+			
 			String action = intent.getAction();
 			if (BluetoothDevice.ACTION_FOUND.equals(action)) {
 				Device newDevice = new Device();
 				BluetoothDevice device = intent
 						.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-				TextView tv = new TextView(MainActivity.this);
-				newDevice.setName(device.getName());
-
-				Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
-						R.drawable.music);
-				Bitmap itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
-						true);
-				newDevice.setImage(itemImage);
-				Toast.makeText(MainActivity.this, device.getName(),
-						Toast.LENGTH_SHORT).show();
-				arrayListDevice.add(newDevice);
+				Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+				if (!pairedDevices.contains(device)) {
+					newDevice.setName(device.getName());
+	
+					Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
+							R.drawable.music);
+					Bitmap itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
+							true);
+					newDevice.setImage(itemImage);
+					arrayListDevice.add(newDevice);
+					deviceAdapter.notifyDataSetChanged();
+				}
 			}
 		}
 	};
