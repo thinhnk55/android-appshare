@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -20,18 +21,21 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 
 	private Activity context;
 	private ArrayList<FilesData> song;
-	private SongHolder holder;
+	//private SongHolder holder;
 	private static int[] checkedState;
+	private boolean[] checkboxChecked;
 
 	public MusicAdapter(Activity context, ArrayList<FilesData> song) {
 		super(context, R.layout.media_item_layout, song);
 		this.context = context;
 		this.song = song;
+		this.checkboxChecked= new boolean[song.size()];
 
 	}
 
 	@Override
 	public View getView(int position, View view, ViewGroup parent) {
+		final SongHolder holder;
 		View rowView = view;
 		if (rowView == null) {
 			LayoutInflater inflater = context.getLayoutInflater();
@@ -68,11 +72,25 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 			holder.imageView.setImageResource(R.drawable.music);
 		}
 
-		if (checkedState[position] == 0) {
-			holder.checkBox.setChecked(false);
-		} else {
-			holder.checkBox.setChecked(true);
-		}
+		holder.checkBox.setId(position);
+		holder.imageView.setId(position);
+		holder.checkBox.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				CheckBox cb = (CheckBox) v;
+				int id = cb.getId();
+				if (checkboxChecked[id]){
+					cb.setChecked(false);
+					checkboxChecked[id] = false;
+				} else {
+					cb.setChecked(true);
+					checkboxChecked[id] = true;
+				}
+			}
+		});
+		
+		holder.checkBox.setChecked(checkboxChecked[position]);
 
 		return rowView;
 	}

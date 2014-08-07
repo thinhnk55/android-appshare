@@ -93,7 +93,7 @@ public class MainActivity extends TabActivity {
 		tabHost.addTab(videospec);
 
 		CheckBlueToothState();
-		
+
 		getPairedDevices();
 
 		btScan.setOnClickListener(btScanDeviceOnClickListener);
@@ -104,11 +104,12 @@ public class MainActivity extends TabActivity {
 	}
 
 	private void getPairedDevices() {
-		Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+		Set<BluetoothDevice> pairedDevices = bluetoothAdapter
+				.getBondedDevices();
 
 		if (pairedDevices.size() > 0) {
-		    for (BluetoothDevice device : pairedDevices) {
-		    	Device newDevice = new Device();
+			for (BluetoothDevice device : pairedDevices) {
+				Device newDevice = new Device();
 				newDevice.setName(device.getName());
 
 				Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
@@ -118,7 +119,7 @@ public class MainActivity extends TabActivity {
 				newDevice.setImage(itemImage);
 				arrayListDevice.add(newDevice);
 				deviceAdapter.notifyDataSetChanged();
-		    }
+			}
 		}
 	}
 
@@ -135,10 +136,15 @@ public class MainActivity extends TabActivity {
 			File[] listFiles = directory.listFiles();
 			if (listFiles != null && listFiles.length > 0) {
 				for (File file : listFiles) {
-					if (file.isDirectory() && db.checkPath(file.getPath())) {
-						scanDirectory(file);
-					} else {
-						addFileToList(file);
+					if (!file.getName().equals(".thumbnails")
+							&& !file.getName().equals("cache")
+							&& !file.getName().startsWith(".")
+							&& !file.getName().startsWith("com.")) {
+						if (file.isDirectory() && db.checkPath(file.getPath())) {
+							scanDirectory(file);
+						} else {
+							addFileToList(file);
+						}
 					}
 
 				}
@@ -220,7 +226,6 @@ public class MainActivity extends TabActivity {
 		if (file.getName().endsWith(".flv") || file.getName().endsWith(".mp4")
 				|| file.getName().endsWith(".mkv")
 				|| file.getName().endsWith(".3gp")) {
-			Log.e("video", file.getName());
 			if (db.checkPath(file.getPath())) {
 
 				String videoName = file.getName().substring(0,
@@ -289,20 +294,21 @@ public class MainActivity extends TabActivity {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			
+
 			String action = intent.getAction();
 			if (BluetoothDevice.ACTION_FOUND.equals(action)) {
 				Device newDevice = new Device();
 				BluetoothDevice device = intent
 						.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-				Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+				Set<BluetoothDevice> pairedDevices = bluetoothAdapter
+						.getBondedDevices();
 				if (!pairedDevices.contains(device)) {
 					newDevice.setName(device.getName());
-	
-					Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
-							R.drawable.music);
-					Bitmap itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
-							true);
+
+					Bitmap bitmap = BitmapFactory.decodeResource(
+							getResources(), R.drawable.music);
+					Bitmap itemImage = Bitmap.createScaledBitmap(bitmap, 100,
+							100, true);
 					newDevice.setImage(itemImage);
 					arrayListDevice.add(newDevice);
 					deviceAdapter.notifyDataSetChanged();

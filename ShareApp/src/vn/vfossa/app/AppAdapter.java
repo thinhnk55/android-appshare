@@ -18,6 +18,7 @@ public class AppAdapter extends BaseAdapter {
 	private ArrayList<Bitmap> listImage;
 	private Activity activity;
 	private int[] checkedState;
+	private boolean[] checkboxSelected;
 
 	public AppAdapter(Activity activity, ArrayList<Bitmap> listImage,
 			int[] checkedState) {
@@ -25,6 +26,7 @@ public class AppAdapter extends BaseAdapter {
 		this.listImage = listImage;
 		this.activity = activity;
 		this.checkedState = checkedState;
+		this.checkboxSelected = new boolean[listImage.size()];
 	}
 
 	@Override
@@ -80,21 +82,25 @@ public class AppAdapter extends BaseAdapter {
 			view.checkBox.setChecked(true);
 		}
 		
-		view.imgViewItem.setOnClickListener(new OnClickListener() {
-
-			@Override
+		view.checkBox.setId(position);
+		view.imgViewItem.setId(position);
+		view.checkBox.setOnClickListener(new OnClickListener() {
+			
 			public void onClick(View v) {
-				int pos = (Integer) v.getTag();
-				if (checkedState[pos] == 0) {
-					checkedState[pos] = 1;
-					view.checkBox.setChecked(true);
+				// TODO Auto-generated method stub
+				CheckBox cb = (CheckBox) v;
+				int id = cb.getId();
+				if (checkboxSelected[id]){
+					cb.setChecked(false);
+					checkboxSelected[id] = false;
 				} else {
-					checkedState[pos] = 0;
-					view.checkBox.setChecked(false);
+					cb.setChecked(true);
+					checkboxSelected[id] = true;
 				}
-				notifyDataSetChanged();
 			}
 		});
+		
+		view.checkBox.setChecked(checkboxSelected[position]);
 
 		//notifyDataSetChanged();
 		return convertView;

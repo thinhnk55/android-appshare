@@ -1,14 +1,19 @@
 package vn.vfossa.image;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import vn.vfossa.database.DatabaseHandler;
+import vn.vfossa.database.FilesData;
 import vn.vfossa.shareapp.R;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -18,6 +23,7 @@ public class ImageAdapter extends BaseAdapter {
 	private ArrayList<Bitmap> listImage;
 	private Activity activity;
 	private int[] checkedState;
+	private boolean[] checkboxSelected;
 
 	public ImageAdapter(Activity activity, ArrayList<Bitmap> listImage,
 			int[] checkedState) {
@@ -25,6 +31,7 @@ public class ImageAdapter extends BaseAdapter {
 		this.listImage = listImage;
 		this.activity = activity;
 		this.checkedState = checkedState;
+		this.checkboxSelected = new boolean[listImage.size()];
 	}
 
 	@Override
@@ -71,30 +78,27 @@ public class ImageAdapter extends BaseAdapter {
 		}
 
 		view.imgViewItem.setImageBitmap(listImage.get(position));
-		view.imgViewItem.setTag(position);
-		view.checkBox.setTag(position);
+		view.imgViewItem.setId(position);
+		view.checkBox.setId(position);
 		
-		if (checkedState[position] == 0) {
-			view.checkBox.setChecked(false);
-		} else {
-			view.checkBox.setChecked(true);
-		}
-		
-		view.imgViewItem.setOnClickListener(new OnClickListener() {
-
-			@Override
+		view.checkBox.setOnClickListener(new OnClickListener() {
+			
 			public void onClick(View v) {
-				int pos = (Integer) v.getTag();
-				if (checkedState[pos] == 0) {
-					checkedState[pos] = 1;
-					view.checkBox.setChecked(true);
+				// TODO Auto-generated method stub
+				CheckBox cb = (CheckBox) v;
+				int id = cb.getId();
+				if (checkboxSelected[id]){
+					cb.setChecked(false);
+					checkboxSelected[id] = false;
 				} else {
-					checkedState[pos] = 0;
-					view.checkBox.setChecked(false);
+					cb.setChecked(true);
+					checkboxSelected[id] = true;
 				}
-				notifyDataSetChanged();
 			}
 		});
+		
+
+		view.checkBox.setChecked(checkboxSelected[position]);
 
 		//notifyDataSetChanged();
 		return convertView;

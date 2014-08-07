@@ -32,7 +32,6 @@
 <fullyQualifiedTypeName name="vn.vfossa.music.MusicAdapter.SongHolder"/>
 <fullyQualifiedTypeName name="android.content.Context"/>
 <fullyQualifiedTypeName name="java.util.List"/>
-<fullyQualifiedTypeName name="android.widget.ListView"/>
 <fullyQualifiedTypeName name="vn.vfossa.music.MusicAdapter"/>
 <fullyQualifiedTypeName name="android.support.v4.widget.SearchViewCompatIcs.MySearchView"/>
 <fullyQualifiedTypeName name="vn.vfossa.music.MusicActivity"/>
@@ -60,4 +59,5 @@
 <fullyQualifiedTypeName name="android.widget.ArrayAdapter"/>
 <fullyQualifiedTypeName name="vn.vfossa.device.Device"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="android.widget.ListView"/>
 </qualifiedTypeNameHistroy>
