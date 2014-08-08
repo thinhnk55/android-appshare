@@ -83,7 +83,7 @@ public class AppActivity extends Activity {
 			} else {
 
 				Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
-						R.drawable.app);
+						R.drawable.music);
 				Bitmap itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
 						true);
 

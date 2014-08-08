@@ -113,7 +113,7 @@ public class MainActivity extends TabActivity {
 				newDevice.setName(device.getName());
 
 				Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
-						R.drawable.device);
+						R.drawable.music);
 				Bitmap itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
 						true);
 				newDevice.setImage(itemImage);

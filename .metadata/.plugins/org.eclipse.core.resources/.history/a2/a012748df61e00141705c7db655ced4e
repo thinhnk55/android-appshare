@@ -67,7 +67,7 @@ public class VideoAdapter extends ArrayAdapter<FilesData> {
 					true);
 			holder.imageView.setImageBitmap(itemImage);
 		} else {
-			holder.imageView.setImageResource(R.drawable.video);
+			holder.imageView.setImageResource(R.drawable.music);
 		}
 		
 		holder.checkBox.setId(position);
