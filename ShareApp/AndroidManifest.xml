@@ -50,6 +50,10 @@
             android:name="vn.vfossa.video.VideoActivity"
             android:label="@string/app_name" >
         </activity>
+        <activity
+            android:name="vn.vfossa.app.ApplicationActivity"
+            android:label="@string/app_name" >
+        </activity>
     </application>
 
 </manifest>

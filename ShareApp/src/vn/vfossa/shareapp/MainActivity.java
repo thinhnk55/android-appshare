@@ -8,6 +8,7 @@ import java.util.Set;
 import com.meetme.android.horizontallistview.HorizontalListView;
 
 import vn.vfossa.app.AppActivity;
+import vn.vfossa.app.ApplicationActivity;
 import vn.vfossa.database.DatabaseHandler;
 import vn.vfossa.database.FilesData;
 import vn.vfossa.device.Device;
@@ -69,7 +70,7 @@ public class MainActivity extends TabActivity {
 
 		TabSpec appspec = tabHost.newTabSpec("UngDung");
 		appspec.setIndicator("Ứng dụng");
-		Intent appsIntent = new Intent(this, AppActivity.class);
+		Intent appsIntent = new Intent(this, ApplicationActivity.class);
 		appspec.setContent(appsIntent);
 
 		TabSpec photospec = tabHost.newTabSpec("HinhAnh");
@@ -306,7 +307,7 @@ public class MainActivity extends TabActivity {
 					newDevice.setName(device.getName());
 
 					Bitmap bitmap = BitmapFactory.decodeResource(
-							getResources(), R.drawable.music);
+							getResources(), R.drawable.device);
 					Bitmap itemImage = Bitmap.createScaledBitmap(bitmap, 100,
 							100, true);
 					newDevice.setImage(itemImage);

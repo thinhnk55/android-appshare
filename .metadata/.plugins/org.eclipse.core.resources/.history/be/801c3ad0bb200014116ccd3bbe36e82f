@@ -1,0 +1,73 @@
+package vn.vfossa.app;
+
+import java.util.List;
+
+import vn.vfossa.app.AppAdapter.ViewHolder;
+import vn.vfossa.shareapp.R;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+public class ApplicationAdapter extends BaseAdapter {
+	private List<ApplicationInfo> appsList = null;
+	private Activity activity;
+	private PackageManager packageManager;
+
+	public ApplicationAdapter(Activity activity, int textViewResourceId,
+			List<ApplicationInfo> appsList) {
+		super();
+		this.activity = activity;
+		this.appsList = appsList;
+		packageManager = activity.getPackageManager();
+	}
+
+	@Override
+	public int getCount() {
+		return ((null != appsList) ? appsList.size() : 0);
+	}
+
+	@Override
+	public ApplicationInfo getItem(int position) {
+		return ((null != appsList) ? appsList.get(position) : null);
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
+	
+	public static class ViewHolder {
+		public ImageView imgViewItem;
+		public CheckBox checkBox;
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		final ViewHolder view;
+		LayoutInflater inflator = activity.getLayoutInflater();
+
+		if (convertView == null) {
+			convertView = inflator.inflate(R.layout.item_layout, null);
+			convertView.setTag(view);
+		}
+
+		ApplicationInfo data = appsList.get(position);
+		if (data != null) {
+			ImageView iconview = (ImageView) view.findViewById(R.id.imageItem);
+			CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkBoxItem);
+
+			iconview.setImageDrawable(data.loadIcon(packageManager));
+		}
+		return view;
+	}
+};
