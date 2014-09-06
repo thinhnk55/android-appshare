@@ -14,6 +14,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.TextView;
 
 public class Server extends Activity {
@@ -66,12 +67,17 @@ public class Server extends Activity {
 			while (!Thread.currentThread().isInterrupted()) {
 
 				try {
+					// if (!serverSocket.isClosed()) {
 
 					socket = serverSocket.accept();
+
+					String read = "connected";
+					updateConversationHandler.post(new updateUIThread(read));
 
 					CommunicationThread commThread = new CommunicationThread(
 							socket);
 					new Thread(commThread).start();
+					// }
 
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -134,9 +140,9 @@ public class Server extends Activity {
 				// this.clientSocket.getInputStream()));
 				File sdCard = Environment.getExternalStorageDirectory();
 				File directory = new File(sdCard.getAbsolutePath() + "/Myfiles");
-				if (!directory.exists()) {
-					directory.mkdirs();
-				}
+				// if (!directory.exists()) {
+				directory.mkdirs();
+				// }
 				File file = new File(directory, "image.jpg");
 				this.input = this.clientSocket.getInputStream();
 				this.output = new FileOutputStream(file);
@@ -151,33 +157,39 @@ public class Server extends Activity {
 		}
 
 		public void run() {
+			int count = 0;
 
-			while (!Thread.currentThread().isInterrupted()) {
+			// while (!Thread.currentThread().isInterrupted()) {
 
-				try {
-					// String read = inputText.readLine();
-					// updateConversationHandler.post(new updateUIThread(read));
+			try {
+				// String read = inputText.readLine();
+				// updateConversationHandler.post(new updateUIThread(read));
 
-					String read = "sending image";
-					updateConversationHandler.post(new updateUIThread(read));
-					do {
-						this.byteRead = this.input.read(this.mybytearray,
-								current, (mybytearray.length - current));
-						if (this.byteRead >= 0)
-							current += this.byteRead;
-					} while (this.byteRead > -1);
+				Log.e("debug", "running " + count++);
 
-					this.bos.write(this.mybytearray, 0, current);
-					this.bos.flush();
-					this.bos.close();
+				String read = "sending image";
+				updateConversationHandler.post(new updateUIThread(read));
 
-					read = "send image";
-					updateConversationHandler.post(new updateUIThread(read));
+				do {
+					this.byteRead = this.input.read(this.mybytearray, current,
+							(mybytearray.length - current));
+					if (this.byteRead >= 0)
+						current += this.byteRead;
+				} while (this.byteRead > -1);
 
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				this.bos.write(this.mybytearray, 0, current);
+				this.bos.flush();
+
+				read = "send image";
+				updateConversationHandler.post(new updateUIThread(read));
+
+				Thread.currentThread().interrupt();
+				this.bos.close();
+
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
+			// }
 		}
 
 	}
