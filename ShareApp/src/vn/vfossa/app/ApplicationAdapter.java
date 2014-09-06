@@ -1,16 +1,18 @@
 package vn.vfossa.app;
 
 import java.util.ArrayList;
-import java.util.List;
-import vn.vfossa.shareapp.R;
 
+import vn.vfossa.shareapp.R;
 import android.app.Activity;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -44,7 +46,7 @@ public class ApplicationAdapter extends BaseAdapter {
 	public long getItemId(int position) {
 		return position;
 	}
-	
+
 	public static class ViewHolder {
 		public ImageView imgViewItem;
 		public CheckBox checkBox;
@@ -58,9 +60,11 @@ public class ApplicationAdapter extends BaseAdapter {
 		if (convertView == null) {
 			view = new ViewHolder();
 			convertView = inflator.inflate(R.layout.item_layout, null);
-			
-			view.imgViewItem = (ImageView) convertView.findViewById(R.id.imageItem);
-			view.checkBox = (CheckBox) convertView.findViewById(R.id.checkBoxItem);
+
+			view.imgViewItem = (ImageView) convertView
+					.findViewById(R.id.imageItem);
+			view.checkBox = (CheckBox) convertView
+					.findViewById(R.id.checkBoxItem);
 			convertView.setTag(view);
 		} else {
 			view = (ViewHolder) convertView.getTag();
@@ -68,18 +72,19 @@ public class ApplicationAdapter extends BaseAdapter {
 
 		ApplicationInfo data = appsList.get(position);
 		if (data != null) {
-			view.imgViewItem.setImageDrawable(data.loadIcon(packageManager));
+			view.imgViewItem.setImageDrawable(resize(data
+					.loadIcon(packageManager)));
 		}
-		
+
 		view.checkBox.setId(position);
 		view.imgViewItem.setId(position);
 		view.checkBox.setOnClickListener(new OnClickListener() {
-			
+
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				CheckBox cb = (CheckBox) v;
 				int id = cb.getId();
-				if (checkboxSelected[id]){
+				if (checkboxSelected[id]) {
 					cb.setChecked(false);
 					checkboxSelected[id] = false;
 				} else {
@@ -88,9 +93,15 @@ public class ApplicationAdapter extends BaseAdapter {
 				}
 			}
 		});
-		
+
 		view.checkBox.setChecked(checkboxSelected[position]);
-		
+
 		return convertView;
+	}
+
+	private Drawable resize(Drawable image) {
+		Bitmap b = ((BitmapDrawable) image).getBitmap();
+		Bitmap bitmapResized = Bitmap.createScaledBitmap(b, 50, 50, false);
+		return new BitmapDrawable(activity.getResources(), bitmapResized);
 	}
 };
