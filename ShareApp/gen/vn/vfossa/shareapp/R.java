@@ -20,6 +20,10 @@ containing a value of this type.
          */
         public static final int dividerWidth=0x7f010000;
     }
+    public static final class color {
+        public static final int layout_border_color=0x7f040001;
+        public static final int status_bar_color=0x7f040000;
+    }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
 
@@ -27,58 +31,95 @@ containing a value of this type.
          screen margins) for sw720dp devices (e.g. 10" tablets) in landscape here.
     
          */
-        public static final int activity_horizontal_margin=0x7f040000;
-        public static final int activity_vertical_margin=0x7f040001;
+        public static final int activity_horizontal_margin=0x7f050000;
+        public static final int activity_vertical_margin=0x7f050001;
     }
     public static final class drawable {
         public static final int app=0x7f020000;
-        public static final int device=0x7f020001;
-        public static final int ic_launcher=0x7f020002;
-        public static final int music=0x7f020003;
-        public static final int video=0x7f020004;
+        public static final int details_view=0x7f020001;
+        public static final int device=0x7f020002;
+        public static final int ic_action_discover=0x7f020003;
+        public static final int ic_action_on_off=0x7f020004;
+        public static final int ic_launcher=0x7f020005;
+        public static final int icon=0x7f020006;
+        public static final int machine=0x7f020007;
+        public static final int music=0x7f020008;
+        public static final int section_header=0x7f020009;
+        public static final int video=0x7f02000a;
     }
     public static final class id {
-        public static final int TableRow=0x7f08000d;
-        public static final int action_settings=0x7f080011;
-        public static final int autoCompleteTextView1=0x7f080000;
-        public static final int btScan=0x7f080002;
-        public static final int button2=0x7f080004;
-        public static final int button3=0x7f080005;
-        public static final int checkBoxDevice=0x7f080009;
-        public static final int checkBoxItem=0x7f08000c;
-        public static final int deviceImage=0x7f080007;
-        public static final int deviceName=0x7f080008;
-        public static final int gridViewApp=0x7f080006;
-        public static final int gridViewImage=0x7f08000a;
-        public static final int imageItem=0x7f08000b;
-        public static final int image_media=0x7f08000e;
-        public static final int listDevice=0x7f080003;
-        public static final int mediaSize=0x7f080010;
-        public static final int mediaTitle=0x7f08000f;
-        public static final int textView1=0x7f080001;
+        public static final int TableRow=0x7f090019;
+        public static final int action_settings=0x7f09001f;
+        public static final int autoCompleteTextView1=0x7f090000;
+        public static final int btProgress=0x7f090005;
+        public static final int btScan=0x7f090002;
+        public static final int btShare=0x7f090004;
+        public static final int btn_connect=0x7f090007;
+        public static final int btn_disconnect=0x7f090008;
+        public static final int btn_start_client=0x7f090009;
+        public static final int checkBoxDevice=0x7f090012;
+        public static final int checkBoxItem=0x7f090018;
+        public static final int deviceImage=0x7f090010;
+        public static final int deviceName=0x7f090011;
+        public static final int device_address=0x7f09000a;
+        public static final int device_details=0x7f09001e;
+        public static final int device_info=0x7f09000b;
+        public static final int device_name=0x7f09001d;
+        public static final int gridViewApp=0x7f090006;
+        public static final int gridViewImage=0x7f090016;
+        public static final int group_ip=0x7f09000d;
+        public static final int group_owner=0x7f09000c;
+        public static final int icon=0x7f090013;
+        public static final int imageItem=0x7f090017;
+        public static final int image_media=0x7f09001a;
+        public static final int listDevice=0x7f090003;
+        public static final int mediaSize=0x7f09001c;
+        public static final int mediaTitle=0x7f09001b;
+        public static final int my_name=0x7f090014;
+        public static final int my_status=0x7f090015;
+        public static final int status_bar=0x7f09000e;
+        public static final int status_text=0x7f09000f;
+        public static final int textView1=0x7f090001;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
         public static final int apps_activity=0x7f030001;
-        public static final int device_item_layout=0x7f030002;
-        public static final int images_activity=0x7f030003;
-        public static final int item_layout=0x7f030004;
-        public static final int media_item_layout=0x7f030005;
-        public static final int musics_activity=0x7f030006;
-        public static final int videos_activity=0x7f030007;
+        public static final int device_detail=0x7f030002;
+        public static final int device_item_layout=0x7f030003;
+        public static final int device_list=0x7f030004;
+        public static final int images_activity=0x7f030005;
+        public static final int item_layout=0x7f030006;
+        public static final int media_item_layout=0x7f030007;
+        public static final int musics_activity=0x7f030008;
+        public static final int row_devices=0x7f030009;
+        public static final int videos_activity=0x7f03000a;
     }
     public static final class menu {
-        public static final int main=0x7f070000;
+        public static final int main=0x7f080000;
     }
     public static final class string {
-        public static final int action_settings=0x7f050001;
-        public static final int app_name=0x7f050000;
-        public static final int device=0x7f050003;
-        public static final int hello_world=0x7f050002;
-        public static final int progress=0x7f050005;
-        public static final int scan=0x7f050007;
-        public static final int search=0x7f050006;
-        public static final int share=0x7f050004;
+        public static final int action_settings=0x7f060001;
+        public static final int app_name=0x7f060000;
+        public static final int client_text=0x7f060010;
+        public static final int connect_peer_button=0x7f06000a;
+        public static final int device=0x7f060003;
+        public static final int disconnect_peer_button=0x7f06000b;
+        public static final int discover_peers_button=0x7f060009;
+        public static final int empty=0x7f06000d;
+        public static final int empty_message=0x7f060011;
+        public static final int enable_p2p_button=0x7f060008;
+        public static final int get_file_button=0x7f06000c;
+        public static final int group_owner_text=0x7f060013;
+        public static final int hello_world=0x7f060002;
+        public static final int label_me=0x7f060014;
+        public static final int label_peers=0x7f060015;
+        public static final int no=0x7f06000f;
+        public static final int p2p_off_warning=0x7f060012;
+        public static final int progress=0x7f060005;
+        public static final int scan=0x7f060007;
+        public static final int search=0x7f060006;
+        public static final int share=0x7f060004;
+        public static final int yes=0x7f06000e;
     }
     public static final class style {
         /** 
@@ -102,11 +143,11 @@ containing a value of this type.
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f060000;
+        public static final int AppBaseTheme=0x7f070000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f060001;
+        public static final int AppTheme=0x7f070001;
     }
     public static final class styleable {
         /**  Defines the custom XML attributes supported for a HorizontalListView 
@@ -115,9 +156,9 @@ containing a value of this type.
            <colgroup align="left" />
            <colgroup align="left" />
            <tr><th>Attribute</th><th>Description</th></tr>
-           <tr><td><code>{@link #HorizontalListView_android_divider vn.vfossa.shareapp:android_divider}</code></td><td></td></tr>
-           <tr><td><code>{@link #HorizontalListView_android_fadingEdgeLength vn.vfossa.shareapp:android_fadingEdgeLength}</code></td><td></td></tr>
-           <tr><td><code>{@link #HorizontalListView_android_requiresFadingEdge vn.vfossa.shareapp:android_requiresFadingEdge}</code></td><td></td></tr>
+           <tr><td><code>{@link #HorizontalListView_android_divider android:divider}</code></td><td></td></tr>
+           <tr><td><code>{@link #HorizontalListView_android_fadingEdgeLength android:fadingEdgeLength}</code></td><td></td></tr>
+           <tr><td><code>{@link #HorizontalListView_android_requiresFadingEdge android:requiresFadingEdge}</code></td><td></td></tr>
            <tr><td><code>{@link #HorizontalListView_dividerWidth vn.vfossa.shareapp:dividerWidth}</code></td><td></td></tr>
            </table>
            @see #HorizontalListView_android_divider
@@ -129,21 +170,21 @@ containing a value of this type.
             0x010100e0, 0x01010129, 0x010103a5, 0x7f010000
         };
         /**
-          <p>This symbol is the offset where the {@link vn.vfossa.shareapp.R.attr#android_divider}
+          <p>This symbol is the offset where the {@link android.R.attr#divider}
           attribute's value can be found in the {@link #HorizontalListView} array.
-          @attr name android:android_divider
+          @attr name android:divider
         */
         public static final int HorizontalListView_android_divider = 1;
         /**
-          <p>This symbol is the offset where the {@link vn.vfossa.shareapp.R.attr#android_fadingEdgeLength}
+          <p>This symbol is the offset where the {@link android.R.attr#fadingEdgeLength}
           attribute's value can be found in the {@link #HorizontalListView} array.
-          @attr name android:android_fadingEdgeLength
+          @attr name android:fadingEdgeLength
         */
         public static final int HorizontalListView_android_fadingEdgeLength = 0;
         /**
-          <p>This symbol is the offset where the {@link vn.vfossa.shareapp.R.attr#android_requiresFadingEdge}
+          <p>This symbol is the offset where the {@link android.R.attr#requiresFadingEdge}
           attribute's value can be found in the {@link #HorizontalListView} array.
-          @attr name android:android_requiresFadingEdge
+          @attr name android:requiresFadingEdge
         */
         public static final int HorizontalListView_android_requiresFadingEdge = 2;
         /**
@@ -159,7 +200,7 @@ in (inches), mm (millimeters).
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:dividerWidth
+          @attr name vn.vfossa.shareapp:dividerWidth
         */
         public static final int HorizontalListView_dividerWidth = 3;
     };

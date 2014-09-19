@@ -2,9 +2,13 @@ package vn.vfossa.music;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Queue;
 
 import vn.vfossa.database.FilesData;
 import vn.vfossa.shareapp.R;
+import android.R.integer;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,7 +25,7 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 
 	private Activity context;
 	private ArrayList<FilesData> song;
-	//private SongHolder holder;
+	// private SongHolder holder;
 	private static int[] checkedState;
 	private boolean[] checkboxChecked;
 
@@ -29,7 +33,7 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 		super(context, R.layout.media_item_layout, song);
 		this.context = context;
 		this.song = song;
-		this.checkboxChecked= new boolean[song.size()];
+		this.checkboxChecked = new boolean[song.size()];
 
 	}
 
@@ -75,12 +79,11 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 		holder.checkBox.setId(position);
 		holder.imageView.setId(position);
 		holder.checkBox.setOnClickListener(new OnClickListener() {
-			
+
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				CheckBox cb = (CheckBox) v;
 				int id = cb.getId();
-				if (checkboxChecked[id]){
+				if (checkboxChecked[id]) {
 					cb.setChecked(false);
 					checkboxChecked[id] = false;
 				} else {
@@ -89,7 +92,7 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 				}
 			}
 		});
-		
+
 		holder.checkBox.setChecked(checkboxChecked[position]);
 
 		return rowView;
@@ -101,8 +104,8 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 		TextView songTitle;
 		ImageView imageView;
 	}
-	
-	public void createCheckedState(int size){
+
+	public void createCheckedState(int size) {
 		checkedState = new int[size];
 		for (int i = 0; i < size; i++) {
 			checkedState[i] = 0;
@@ -111,6 +114,29 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 
 	public int getCheckedState(int position) {
 		return checkedState[position];
+	}
+
+	public int getNumberChecked() {
+		int count = 0;
+		for (int i = 0; i < song.size(); i++) {
+			if (checkboxChecked[i]) {
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	public int[] getIdChecked(){
+		int[] IDs = new int[getNumberChecked()];
+		
+		int count = 0;
+		for (int i = 0; i < song.size(); i++) {
+			if (checkboxChecked[i]) {
+				IDs[count++] = song.get(i).getID();
+			}
+		}
+		return IDs;
+		
 	}
 
 	public void changeCheckedState(int position) {

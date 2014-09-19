@@ -91,14 +91,14 @@
                 android:weightSum="20" >
 
                 <Button
-                    android:id="@+id/button2"
+                    android:id="@+id/btShare"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="10"
                     android:text="@string/share" />
 
                 <Button
-                    android:id="@+id/button3"
+                    android:id="@+id/btProgress"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="10"

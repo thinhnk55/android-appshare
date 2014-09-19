@@ -3,11 +3,11 @@ package vn.vfossa.shareapp;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Queue;
 import java.util.Set;
 
-import com.meetme.android.horizontallistview.HorizontalListView;
-
-import vn.vfossa.app.AppActivity;
+import vn.vfossa.additionalclass.BluetoothShare;
 import vn.vfossa.app.ApplicationActivity;
 import vn.vfossa.database.DatabaseHandler;
 import vn.vfossa.database.FilesData;
@@ -20,6 +20,7 @@ import android.app.TabActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -27,7 +28,14 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
+import android.net.wifi.p2p.WifiP2pConfig;
+import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pManager;
+import android.net.wifi.p2p.WifiP2pManager.Channel;
+import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -37,16 +45,32 @@ import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.Toast;
 
-public class MainActivity extends TabActivity {
+import com.meetme.android.horizontallistview.HorizontalListView;
+import com.vfossa.wifi.DeviceDetailFragment;
+import com.vfossa.wifi.DeviceListFragment.DeviceActionListener;
 
+public class MainActivity extends TabActivity implements ChannelListener,
+		DeviceActionListener {
+
+	public static final String TAG = "shareApp";
 	private TabHost tabHost;
 	private static final String MEDIA_PATH = "/sdcard/";
 	private Button btScan;
+	private Button btShare;
+	private Button btProgress;
 	private BluetoothAdapter bluetoothAdapter;
 	private DeviceAdapter deviceAdapter;
 	private ArrayList<Device> arrayListDevice = new ArrayList<Device>();
 	private HorizontalListView listDevice;
 	private static final int REQUEST_ENABLE_BT = 1;
+
+	private WifiP2pManager manager;
+	private boolean isWifiP2pEnabled = false;
+	private boolean retryChannel = false;
+
+	private final IntentFilter intentFilter = new IntentFilter();
+	private Channel channel;
+	private BroadcastReceiver receiver = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +80,8 @@ public class MainActivity extends TabActivity {
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 		btScan = (Button) findViewById(R.id.btScan);
+		btShare = (Button) findViewById(R.id.btShare);
+		btProgress = (Button) findViewById(R.id.btProgress);
 		listDevice = (HorizontalListView) findViewById(R.id.listDevice);
 		arrayListDevice = new ArrayList<Device>();
 		deviceAdapter = new DeviceAdapter(MainActivity.this, arrayListDevice);
@@ -98,6 +124,8 @@ public class MainActivity extends TabActivity {
 		getPairedDevices();
 
 		btScan.setOnClickListener(btScanDeviceOnClickListener);
+		btShare.setOnClickListener(btShareOnClickListener);
+		btProgress.setOnClickListener(btProgressOnClickListener);
 
 		registerReceiver(ActionFoundReceiver, new IntentFilter(
 				BluetoothDevice.ACTION_FOUND));
@@ -112,6 +140,7 @@ public class MainActivity extends TabActivity {
 			for (BluetoothDevice device : pairedDevices) {
 				Device newDevice = new Device();
 				newDevice.setName(device.getName());
+				newDevice.setAddress(device.getAddress());
 
 				Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
 						R.drawable.device);
@@ -185,44 +214,45 @@ public class MainActivity extends TabActivity {
 			}
 		}
 
-		if (file.getName().endsWith(".jpg") || file.getName().endsWith(".jpeg")
-				|| file.getName().endsWith(".png")) {
-			if (db.checkPath(file.getPath())) {
-				String imageName;
-				if (file.getName().endsWith(".jpeg")) {
-					imageName = file.getName().substring(0,
-							(file.getName().length() - 5));
-				} else {
-					imageName = file.getName().substring(0,
-							(file.getName().length() - 4));
-				}
-				String imagePath = file.getPath();
-				File imgFile = new File(imagePath);
-
-				Bitmap itemImage = null;
-
-				if (imgFile.exists()) {
-
-					Bitmap bitmap = BitmapFactory.decodeFile(imgFile
-							.getAbsolutePath());
-					if (bitmap == null) {
-						db.close();
-						return;
-					}
-					itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
-							true);
-				}
-
-				ByteArrayOutputStream stream = new ByteArrayOutputStream();
-				itemImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
-				byte[] byteArray = stream.toByteArray();
-
-				float size = (float) (file.length()) / (1024 * 1024);
-				db.addFileData(new FilesData("image", imageName, imagePath,
-						byteArray, size));
-				db.close();
-			}
-		}
+		// if (file.getName().endsWith(".jpg") ||
+		// file.getName().endsWith(".jpeg")
+		// || file.getName().endsWith(".png")) {
+		// if (db.checkPath(file.getPath())) {
+		// String imageName;
+		// if (file.getName().endsWith(".jpeg")) {
+		// imageName = file.getName().substring(0,
+		// (file.getName().length() - 5));
+		// } else {
+		// imageName = file.getName().substring(0,
+		// (file.getName().length() - 4));
+		// }
+		// String imagePath = file.getPath();
+		// File imgFile = new File(imagePath);
+		//
+		// Bitmap itemImage = null;
+		//
+		// if (imgFile.exists()) {
+		//
+		// Bitmap bitmap = BitmapFactory.decodeFile(imgFile
+		// .getAbsolutePath());
+		// if (bitmap == null) {
+		// db.close();
+		// return;
+		// }
+		// itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
+		// true);
+		// }
+		//
+		// ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		// itemImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
+		// byte[] byteArray = stream.toByteArray();
+		//
+		// float size = (float) (file.length()) / (1024 * 1024);
+		// db.addFileData(new FilesData("image", imageName, imagePath,
+		// byteArray, size));
+		// db.close();
+		// }
+		// }
 
 		if (file.getName().endsWith(".flv") || file.getName().endsWith(".mp4")
 				|| file.getName().endsWith(".mkv")
@@ -276,11 +306,85 @@ public class MainActivity extends TabActivity {
 
 		@Override
 		public void onClick(View arg0) {
-			// TODO Auto-generated method stub
 			arrayListDevice.clear();
 			getPairedDevices();
 			bluetoothAdapter.startDiscovery();
 		}
+	};
+
+	private Button.OnClickListener btShareOnClickListener = new Button.OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			MusicActivity music = (MusicActivity) getLocalActivityManager().getActivity("NgheNhac");
+			//music.refreshContent();
+			int[] IDs = music.getMusicFilesChecked();
+			String[] paths = new String[IDs.length];
+			
+			DatabaseHandler db = new DatabaseHandler(MainActivity.this);
+
+			for (int i = 0 ;i< IDs.length ;i ++){
+				paths[i] = db.getFileData(IDs[i]).getPath();
+				//Toast.makeText(MainActivity.this, "file "+ i +": " + paths[i],
+						//Toast.LENGTH_SHORT).show();
+			}
+			
+			String address[] = deviceAdapter.getDeviceChecked();
+			//getListFilesChecked();
+			//getListDeviceChecked();
+
+			//String address = null;
+			//String filePath = Environment.getExternalStorageDirectory()
+					//.toString() + "/img0.jpg";
+			for (int i = 0;i<address.length;i++){
+				for (int j=0;j<IDs.length; j++){
+					Log.e("device ", address[i]);
+					Log.e("file ", paths[j]);
+					ContentValues values = new ContentValues();
+					values.put(BluetoothShare.URI, Uri.fromFile(new File(paths[j]))
+							.toString());
+					values.put(BluetoothShare.DESTINATION, address[i]);
+					values.put(BluetoothShare.DIRECTION,
+							BluetoothShare.DIRECTION_OUTBOUND);
+					Long ts = System.currentTimeMillis();
+					values.put(BluetoothShare.TIMESTAMP, ts);
+					Uri contentUri = getContentResolver().insert(
+							BluetoothShare.CONTENT_URI, values);
+				}
+			}
+			db.close();
+
+			
+		}
+
+	};
+
+	private Button.OnClickListener btProgressOnClickListener = new Button.OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			MusicActivity music = (MusicActivity) getLocalActivityManager().getActivity("NgheNhac");
+			//music.refreshContent();
+			int[] IDs = music.getMusicFilesChecked();
+			String[] paths = new String[IDs.length];
+			
+			DatabaseHandler db = new DatabaseHandler(MainActivity.this);
+
+			for (int i = 0 ;i< IDs.length ;i ++){
+				paths[i] = db.getFileData(IDs[i]).getPath();
+				Toast.makeText(MainActivity.this, "file "+ i +": " + paths[i],
+						Toast.LENGTH_SHORT).show();
+			}
+			
+			String address[] = deviceAdapter.getDeviceChecked();
+			for (int i = 0 ;i< address.length ;i ++){
+				Toast.makeText(MainActivity.this, "device "+ i +": " + address[i],
+						Toast.LENGTH_SHORT).show();
+			}
+			db.close();
+
+		}
+
 	};
 
 	@Override
@@ -317,5 +421,50 @@ public class MainActivity extends TabActivity {
 			}
 		}
 	};
+
+	/*
+	 * Function to get all files that are chosen to send
+	 */
+	public void getListFilesChecked() {
+
+	}
+
+	/*
+	 * Function to get all device that the user want to send files
+	 */
+	public void getListDeviceChecked() {
+
+	}
+
+	@Override
+	public void showDetails(WifiP2pDevice device) {
+		DeviceDetailFragment fragment = (DeviceDetailFragment) getFragmentManager()
+				.findFragmentById(R.id.listDevice);
+		fragment.showDetails(device);
+	}
+
+	@Override
+	public void cancelDisconnect() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void connect(WifiP2pConfig config) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void disconnect() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onChannelDisconnected() {
+		// TODO Auto-generated method stub
+
+	}
 
 }

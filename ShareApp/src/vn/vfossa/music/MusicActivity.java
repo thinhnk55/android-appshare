@@ -2,6 +2,7 @@ package vn.vfossa.music;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 import vn.vfossa.database.DatabaseHandler;
 import vn.vfossa.database.FilesData;
@@ -10,6 +11,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -31,7 +33,7 @@ public class MusicActivity extends ListActivity {
 		DatabaseHandler db = new DatabaseHandler(context);
 
 		List<FilesData> listSongs = db.getAllFileWithType(type);
-		
+
 		db.close();
 		setList(listSongs);
 		listView.setItemsCanFocus(false);
@@ -48,7 +50,6 @@ public class MusicActivity extends ListActivity {
 
 	public void setList(List<FilesData> listSongs) {
 
-		
 		for (FilesData song : listSongs) {
 			listMusics.add(song);
 		}
@@ -58,5 +59,16 @@ public class MusicActivity extends ListActivity {
 		}
 		listView = getListView();
 		listView.setAdapter(adapter);
+	}
+
+	public int[] getMusicFilesChecked() {
+//		SparseBooleanArray checked = listView.getCheckedItemPositions();
+//		
+//		for (int i = 0; i < listView.getAdapter().getCount(); i++) {
+//			if (checked.get(i)) {
+//				
+//			}
+//		}
+		return adapter.getIdChecked();
 	}
 }
