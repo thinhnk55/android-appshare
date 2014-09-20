@@ -7,9 +7,10 @@
 
     <ImageView
         android:id="@+id/deviceImage"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="80"
+        android:contentDescription="@null"
         android:src="@drawable/ic_launcher" />
 
     <LinearLayout
@@ -24,6 +25,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="50"
+            android:singleLine="true"
+            android:maxEms="15"
+            android:ellipsize="marquee"
             android:gravity="center"
             android:text="deviceName"
             android:textAppearance="?android:attr/textAppearanceMedium" />

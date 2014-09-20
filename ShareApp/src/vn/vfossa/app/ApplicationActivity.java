@@ -4,26 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import vn.vfossa.shareapp.R;
-
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.GridView;
-import android.widget.ListView;
-import android.widget.Toast;
 
 public class ApplicationActivity extends Activity {
 	private PackageManager packageManager = null;
@@ -67,7 +54,7 @@ public class ApplicationActivity extends Activity {
 			applist = checkForLaunchIntent(packageManager
 					.getInstalledApplications(PackageManager.GET_META_DATA));
 			listadaptor = new ApplicationAdapter(ApplicationActivity.this,
-					R.layout.item_layout, applist);
+					applist);
 
 			return null;
 		}

@@ -24,7 +24,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 		super(context, R.layout.device_item_layout, objects);
 
 		layoutInflater = (LayoutInflater) getContext().getSystemService(
-				context.LAYOUT_INFLATER_SERVICE);
+				Context.LAYOUT_INFLATER_SERVICE);
 		this.checkboxChecked = new boolean[100];
 	}
 

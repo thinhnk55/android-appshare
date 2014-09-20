@@ -1,10 +1,9 @@
 package vn.vfossa.shareapp;
 
-import java.io.ByteArrayOutputStream;
+import it.sephiroth.android.library.widget.HListView;
+
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Queue;
 import java.util.Set;
 
 import vn.vfossa.additionalclass.BluetoothShare;
@@ -29,15 +28,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
-import android.net.wifi.p2p.WifiP2pConfig;
-import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -45,12 +40,7 @@ import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.Toast;
 
-import com.meetme.android.horizontallistview.HorizontalListView;
-import com.vfossa.wifi.DeviceDetailFragment;
-import com.vfossa.wifi.DeviceListFragment.DeviceActionListener;
-
-public class MainActivity extends TabActivity implements ChannelListener,
-		DeviceActionListener {
+public class MainActivity extends TabActivity implements ChannelListener {
 
 	public static final String TAG = "shareApp";
 	private TabHost tabHost;
@@ -61,7 +51,7 @@ public class MainActivity extends TabActivity implements ChannelListener,
 	private BluetoothAdapter bluetoothAdapter;
 	private DeviceAdapter deviceAdapter;
 	private ArrayList<Device> arrayListDevice = new ArrayList<Device>();
-	private HorizontalListView listDevice;
+	private HListView listDevice;
 	private static final int REQUEST_ENABLE_BT = 1;
 
 	private WifiP2pManager manager;
@@ -82,7 +72,7 @@ public class MainActivity extends TabActivity implements ChannelListener,
 		btScan = (Button) findViewById(R.id.btScan);
 		btShare = (Button) findViewById(R.id.btShare);
 		btProgress = (Button) findViewById(R.id.btProgress);
-		listDevice = (HorizontalListView) findViewById(R.id.listDevice);
+		listDevice = (HListView) findViewById(R.id.listDevice);
 		arrayListDevice = new ArrayList<Device>();
 		deviceAdapter = new DeviceAdapter(MainActivity.this, arrayListDevice);
 		listDevice.setAdapter(deviceAdapter);
@@ -144,20 +134,14 @@ public class MainActivity extends TabActivity implements ChannelListener,
 
 				Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
 						R.drawable.device);
-				Bitmap itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
-						true);
-				newDevice.setImage(itemImage);
+				// Bitmap itemImage = Bitmap.createScaledBitmap(bitmap, 100,
+				// 100,
+				// true);
+				newDevice.setImage(bitmap);
 				arrayListDevice.add(newDevice);
 				deviceAdapter.notifyDataSetChanged();
 			}
 		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
 	}
 
 	private void scanDirectory(File directory) {
@@ -316,45 +300,46 @@ public class MainActivity extends TabActivity implements ChannelListener,
 
 		@Override
 		public void onClick(View v) {
-			MusicActivity music = (MusicActivity) getLocalActivityManager().getActivity("NgheNhac");
-			//music.refreshContent();
+			MusicActivity music = (MusicActivity) getLocalActivityManager()
+					.getActivity("NgheNhac");
+			// music.refreshContent();
 			int[] IDs = music.getMusicFilesChecked();
 			String[] paths = new String[IDs.length];
-			
+
 			DatabaseHandler db = new DatabaseHandler(MainActivity.this);
 
-			for (int i = 0 ;i< IDs.length ;i ++){
+			for (int i = 0; i < IDs.length; i++) {
 				paths[i] = db.getFileData(IDs[i]).getPath();
-				//Toast.makeText(MainActivity.this, "file "+ i +": " + paths[i],
-						//Toast.LENGTH_SHORT).show();
+				// Toast.makeText(MainActivity.this, "file "+ i +": " +
+				// paths[i],
+				// Toast.LENGTH_SHORT).show();
 			}
-			
-			String address[] = deviceAdapter.getDeviceChecked();
-			//getListFilesChecked();
-			//getListDeviceChecked();
 
-			//String address = null;
-			//String filePath = Environment.getExternalStorageDirectory()
-					//.toString() + "/img0.jpg";
-			for (int i = 0;i<address.length;i++){
-				for (int j=0;j<IDs.length; j++){
+			String address[] = deviceAdapter.getDeviceChecked();
+			// getListFilesChecked();
+			// getListDeviceChecked();
+
+			// String address = null;
+			// String filePath = Environment.getExternalStorageDirectory()
+			// .toString() + "/img0.jpg";
+			for (int i = 0; i < address.length; i++) {
+				for (int j = 0; j < IDs.length; j++) {
 					Log.e("device ", address[i]);
 					Log.e("file ", paths[j]);
 					ContentValues values = new ContentValues();
-					values.put(BluetoothShare.URI, Uri.fromFile(new File(paths[j]))
-							.toString());
+					values.put(BluetoothShare.URI,
+							Uri.fromFile(new File(paths[j])).toString());
 					values.put(BluetoothShare.DESTINATION, address[i]);
 					values.put(BluetoothShare.DIRECTION,
 							BluetoothShare.DIRECTION_OUTBOUND);
 					Long ts = System.currentTimeMillis();
 					values.put(BluetoothShare.TIMESTAMP, ts);
-					Uri contentUri = getContentResolver().insert(
-							BluetoothShare.CONTENT_URI, values);
+					// Uri contentUri = getContentResolver().insert(
+					// BluetoothShare.CONTENT_URI, values);
 				}
 			}
 			db.close();
 
-			
 		}
 
 	};
@@ -363,23 +348,26 @@ public class MainActivity extends TabActivity implements ChannelListener,
 
 		@Override
 		public void onClick(View v) {
-			MusicActivity music = (MusicActivity) getLocalActivityManager().getActivity("NgheNhac");
-			//music.refreshContent();
+			MusicActivity music = (MusicActivity) getLocalActivityManager()
+					.getActivity("NgheNhac");
+			// music.refreshContent();
 			int[] IDs = music.getMusicFilesChecked();
 			String[] paths = new String[IDs.length];
-			
+
 			DatabaseHandler db = new DatabaseHandler(MainActivity.this);
 
-			for (int i = 0 ;i< IDs.length ;i ++){
+			for (int i = 0; i < IDs.length; i++) {
 				paths[i] = db.getFileData(IDs[i]).getPath();
-				Toast.makeText(MainActivity.this, "file "+ i +": " + paths[i],
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainActivity.this,
+						"file " + i + ": " + paths[i], Toast.LENGTH_SHORT)
+						.show();
 			}
-			
+
 			String address[] = deviceAdapter.getDeviceChecked();
-			for (int i = 0 ;i< address.length ;i ++){
-				Toast.makeText(MainActivity.this, "device "+ i +": " + address[i],
-						Toast.LENGTH_SHORT).show();
+			for (int i = 0; i < address.length; i++) {
+				Toast.makeText(MainActivity.this,
+						"device " + i + ": " + address[i], Toast.LENGTH_SHORT)
+						.show();
 			}
 			db.close();
 
@@ -437,34 +425,9 @@ public class MainActivity extends TabActivity implements ChannelListener,
 	}
 
 	@Override
-	public void showDetails(WifiP2pDevice device) {
-		DeviceDetailFragment fragment = (DeviceDetailFragment) getFragmentManager()
-				.findFragmentById(R.id.listDevice);
-		fragment.showDetails(device);
-	}
-
-	@Override
-	public void cancelDisconnect() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void connect(WifiP2pConfig config) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void disconnect() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void onChannelDisconnected() {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 }

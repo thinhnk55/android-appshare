@@ -24,7 +24,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class Client extends Activity {
 
@@ -36,7 +35,7 @@ public class Client extends Activity {
 	private EditText etIP;
 	private Button btSendText;
 	private Button btSendImage;
-	private EditText msgChat;
+	// private EditText msgChat;
 	private Button btBrowse;
 	private TextView tvPath;
 	private static boolean checkConnect = false;
@@ -54,7 +53,7 @@ public class Client extends Activity {
 		btSendText = (Button) findViewById(R.id.btSendText);
 		btSendImage = (Button) findViewById(R.id.btSendImage);
 		etIP = (EditText) findViewById(R.id.etIP);
-		msgChat = (EditText) findViewById(R.id.EditText01);
+		// msgChat = (EditText) findViewById(R.id.EditText01);
 		img = (ImageView) findViewById(R.id.image);
 		btBrowse = (Button) findViewById(R.id.btBrowse);
 		tvPath = (TextView) findViewById(R.id.tvPath);
@@ -108,6 +107,8 @@ public class Client extends Activity {
 						OutputStream os = socket.getOutputStream();
 						os.write(mybytearray, 0, mybytearray.length);
 						os.flush();
+
+						bis.close();
 
 					} catch (UnknownHostException e) {
 						e.printStackTrace();
@@ -169,11 +170,22 @@ public class Client extends Activity {
 	}
 
 	public String getPath(Uri uri) {
+		String result = null;
 		String[] projection = { MediaStore.Images.Media.DATA };
-		Cursor cursor = managedQuery(uri, projection, null, null, null);
-		int column_index = cursor
-				.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+		// Cursor cursor = managedQuery(uri, projection, null, null, null);
+		// int column_index = cursor
+		// .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+		// result = cursor.getString(column_index);
+		Cursor cursor = getContentResolver().query(uri, projection, null, null,
+				null);
+		if (cursor.moveToFirst()) {
+			;
+			int column_index = cursor
+					.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+			result = cursor.getString(column_index);
+		}
+
 		cursor.moveToFirst();
-		return cursor.getString(column_index);
+		return result;
 	}
 }

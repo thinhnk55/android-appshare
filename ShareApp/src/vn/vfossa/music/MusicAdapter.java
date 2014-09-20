@@ -2,14 +2,10 @@ package vn.vfossa.music;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Queue;
 
 import vn.vfossa.database.FilesData;
 import vn.vfossa.shareapp.R;
-import android.R.integer;
-import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
@@ -23,18 +19,17 @@ import android.widget.TextView;
 
 public class MusicAdapter extends ArrayAdapter<FilesData> {
 
-	private Activity context;
-	private ArrayList<FilesData> song;
-	// private SongHolder holder;
 	private static int[] checkedState;
 	private boolean[] checkboxChecked;
 
-	public MusicAdapter(Activity context, ArrayList<FilesData> song) {
+	private LayoutInflater mInflator;
+
+	public MusicAdapter(Context context, ArrayList<FilesData> song) {
 		super(context, R.layout.media_item_layout, song);
-		this.context = context;
-		this.song = song;
 		this.checkboxChecked = new boolean[song.size()];
 
+		mInflator = (LayoutInflater) getContext().getSystemService(
+				Context.LAYOUT_INFLATER_SERVICE);
 	}
 
 	@Override
@@ -42,8 +37,8 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 		final SongHolder holder;
 		View rowView = view;
 		if (rowView == null) {
-			LayoutInflater inflater = context.getLayoutInflater();
-			rowView = inflater.inflate(R.layout.media_item_layout, null, true);
+
+			rowView = mInflator.inflate(R.layout.media_item_layout, null);
 			holder = new SongHolder();
 			holder.songTitle = (TextView) rowView.findViewById(R.id.mediaTitle);
 			holder.size = (TextView) rowView.findViewById(R.id.mediaSize);
@@ -56,17 +51,17 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 			holder = (SongHolder) rowView.getTag();
 		}
 
-		holder.songTitle.setText(song.get(position).getName());
+		holder.songTitle.setText(getItem(position).getName());
 		DecimalFormat dec = new DecimalFormat("0.00");
-		holder.size.setText(dec.format(song.get(position).getSize()).concat(
+		holder.size.setText(dec.format(getItem(position).getSize()).concat(
 				" MB"));
 
-		if (song.get(position).getImage() != null) {
+		if (getItem(position).getImage() != null) {
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inPurgeable = true;
 
-			Bitmap bitmap = BitmapFactory.decodeByteArray(song.get(position)
-					.getImage(), 0, song.get(position).getImage().length,
+			Bitmap bitmap = BitmapFactory.decodeByteArray(getItem(position)
+					.getImage(), 0, getItem(position).getImage().length,
 					options);
 
 			Bitmap itemImage = Bitmap
@@ -118,25 +113,25 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 
 	public int getNumberChecked() {
 		int count = 0;
-		for (int i = 0; i < song.size(); i++) {
+		for (int i = 0; i < getCount(); i++) {
 			if (checkboxChecked[i]) {
 				count++;
 			}
 		}
 		return count;
 	}
-	
-	public int[] getIdChecked(){
+
+	public int[] getIdChecked() {
 		int[] IDs = new int[getNumberChecked()];
-		
+
 		int count = 0;
-		for (int i = 0; i < song.size(); i++) {
+		for (int i = 0; i < getCount(); i++) {
 			if (checkboxChecked[i]) {
-				IDs[count++] = song.get(i).getID();
+				IDs[count++] = getItem(i).getID();
 			}
 		}
 		return IDs;
-		
+
 	}
 
 	public void changeCheckedState(int position) {
