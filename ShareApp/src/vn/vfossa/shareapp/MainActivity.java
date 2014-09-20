@@ -334,8 +334,8 @@ public class MainActivity extends TabActivity implements ChannelListener {
 							BluetoothShare.DIRECTION_OUTBOUND);
 					Long ts = System.currentTimeMillis();
 					values.put(BluetoothShare.TIMESTAMP, ts);
-					// Uri contentUri = getContentResolver().insert(
-					// BluetoothShare.CONTENT_URI, values);
+					Uri contentUri = getContentResolver().insert(
+							BluetoothShare.CONTENT_URI, values);
 				}
 			}
 			db.close();
