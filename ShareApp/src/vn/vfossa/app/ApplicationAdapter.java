@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import vn.vfossa.shareapp.R;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -18,7 +17,6 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 
 public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
-	private PackageManager packageManager;
 	private boolean[] checkboxSelected;
 
 	private LayoutInflater mInflator;
@@ -28,7 +26,6 @@ public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
 		mInflator = (LayoutInflater) getContext().getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 
-		packageManager = context.getPackageManager();
 		this.checkboxSelected = new boolean[appsList.size()];
 	}
 
@@ -56,7 +53,7 @@ public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
 		ApplicationInfo appInfo = getItem(position);
 		if (appInfo != null) {
 			holder.imgViewItem.setImageDrawable(resize(appInfo
-					.loadIcon(packageManager)));
+					.loadIcon(getContext().getPackageManager())));
 		}
 
 		holder.checkBox.setId(position);

@@ -2,16 +2,13 @@ package vn.vfossa.music;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 
 import vn.vfossa.database.DatabaseHandler;
 import vn.vfossa.database.FilesData;
 import vn.vfossa.shareapp.R;
 import android.app.ListActivity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;

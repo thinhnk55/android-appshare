@@ -15,15 +15,14 @@ import android.widget.TextView;
 
 public class DeviceAdapter extends ArrayAdapter<Device> {
 
-	private LayoutInflater layoutInflater;
-	private ArrayList<Device> listDevices;
+	private LayoutInflater mInflater;
 	private static int[] checkedState;
 	private boolean[] checkboxChecked;
 
 	public DeviceAdapter(Context context, ArrayList<Device> objects) {
 		super(context, R.layout.device_item_layout, objects);
 
-		layoutInflater = (LayoutInflater) getContext().getSystemService(
+		mInflater = (LayoutInflater) getContext().getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 		this.checkboxChecked = new boolean[100];
 	}
@@ -34,7 +33,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
 		if (convertView == null) {
 			// Inflate the view since it does not exist
-			convertView = layoutInflater.inflate(R.layout.device_item_layout,
+			convertView = mInflater.inflate(R.layout.device_item_layout,
 					parent, false);
 
 			// Create and save off the holder in the tag so we get quick access
@@ -52,15 +51,6 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
 		} else {
 			holder = (Holder) convertView.getTag();
-		}
-
-		if (listDevices == null) {
-			listDevices = new ArrayList<Device>();
-			listDevices.add(position, getItem(position));
-		} else {
-			if (!listDevices.contains(getItem(position))) {
-				listDevices.add(position, getItem(position));
-			}
 		}
 
 		// Populate the text
@@ -103,7 +93,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
 	public int getNumberChecked() {
 		int count = 0;
-		for (int i = 0; i < listDevices.size(); i++) {
+		for (int i = 0; i < getCount(); i++) {
 			if (checkboxChecked[i]) {
 				count++;
 			}
@@ -115,9 +105,9 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 		String[] addresses = new String[getNumberChecked()];
 
 		int count = 0;
-		for (int i = 0; i < listDevices.size(); i++) {
+		for (int i = 0; i < getCount(); i++) {
 			if (checkboxChecked[i]) {
-				addresses[count++] = listDevices.get(i).getAddress();
+				addresses[count++] = getItem(i).getAddress();
 			}
 		}
 		return addresses;
