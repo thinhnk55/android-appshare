@@ -9,7 +9,6 @@
     <string name="progress">Quá trình</string>
     <string name="search">Tìm kiếm</string>
     <string name="scan">Dò</string>
-    
     <string name="enable_p2p_button">P2P On/Off</string>
     <string name="discover_peers_button">Discover</string>
     <string name="connect_peer_button">Connect</string>
@@ -24,5 +23,9 @@
     <string name="group_owner_text">"Am I the Group Owner? "</string>
     <string name="label_me">ME</string>
     <string name="label_peers">PEERS</string>
+    <string name="song_title">Song Title</string>
+    <string name="song_size">Size : </string>
+    <string name="song_size_sample">3.44 MB</string>
+    <string name="device_name">LGL22</string>
 
 </resources>

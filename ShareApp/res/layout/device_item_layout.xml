@@ -10,6 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="80"
+        android:layout_gravity="center_horizontal"
         android:contentDescription="@null"
         android:src="@drawable/ic_launcher" />
 
@@ -25,19 +26,18 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="50"
-            android:singleLine="true"
-            android:maxEms="15"
             android:ellipsize="marquee"
             android:gravity="center"
-            android:text="deviceName"
+            android:maxEms="15"
+            android:singleLine="true"
+            android:text="@string/device_name"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <CheckBox
             android:id="@+id/checkBoxDevice"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="10"/>
-
+            android:layout_weight="10" />
     </LinearLayout>
 
 </LinearLayout>
