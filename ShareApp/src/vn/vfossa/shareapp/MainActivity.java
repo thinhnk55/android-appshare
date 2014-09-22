@@ -74,10 +74,7 @@ public class MainActivity extends TabActivity implements ChannelListener {
 		btShare = (Button) findViewById(R.id.btShare);
 		btProgress = (Button) findViewById(R.id.btProgress);
 		listDevice = (HListView) findViewById(R.id.listDevice);
-		arrayListDevice = new ArrayList<Device>();
-		deviceAdapter = new DeviceAdapter(MainActivity.this, arrayListDevice);
-		listDevice.setAdapter(deviceAdapter);
-
+		
 		File home = new File(MEDIA_PATH);
 
 		scanDirectory(home);
@@ -115,6 +112,9 @@ public class MainActivity extends TabActivity implements ChannelListener {
 
 		bluetoothSender.getPairedDevices();
 		this.arrayListDevice = bluetoothSender.getDevices();
+		deviceAdapter = new DeviceAdapter(MainActivity.this, arrayListDevice);
+		listDevice.setAdapter(deviceAdapter);
+		
 		Toast.makeText(getApplicationContext(), "number devices:" + arrayListDevice.size(),
 				Toast.LENGTH_SHORT).show();
 		deviceAdapter.notifyDataSetChanged();
