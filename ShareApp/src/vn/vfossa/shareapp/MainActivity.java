@@ -8,6 +8,7 @@ import java.util.Set;
 
 import vn.vfossa.additionalclass.BluetoothShare;
 import vn.vfossa.app.ApplicationActivity;
+import vn.vfossa.bluetooth.BluetoothSender;
 import vn.vfossa.database.DatabaseHandler;
 import vn.vfossa.database.FilesData;
 import vn.vfossa.device.Device;
@@ -48,11 +49,9 @@ public class MainActivity extends TabActivity implements ChannelListener {
 	private Button btScan;
 	private Button btShare;
 	private Button btProgress;
-	private BluetoothAdapter bluetoothAdapter;
 	private DeviceAdapter deviceAdapter;
 	private ArrayList<Device> arrayListDevice = new ArrayList<Device>();
 	private HListView listDevice;
-	private static final int REQUEST_ENABLE_BT = 1;
 
 	private WifiP2pManager manager;
 	private boolean isWifiP2pEnabled = false;
@@ -61,6 +60,8 @@ public class MainActivity extends TabActivity implements ChannelListener {
 	private final IntentFilter intentFilter = new IntentFilter();
 	private Channel channel;
 	private BroadcastReceiver receiver = null;
+
+	private BluetoothSender bluetoothSender;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +77,6 @@ public class MainActivity extends TabActivity implements ChannelListener {
 		arrayListDevice = new ArrayList<Device>();
 		deviceAdapter = new DeviceAdapter(MainActivity.this, arrayListDevice);
 		listDevice.setAdapter(deviceAdapter);
-		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
 		File home = new File(MEDIA_PATH);
 
@@ -109,9 +109,15 @@ public class MainActivity extends TabActivity implements ChannelListener {
 		tabHost.addTab(songspec);
 		tabHost.addTab(videospec);
 
-		CheckBlueToothState();
+		bluetoothSender = new BluetoothSender(getApplicationContext());
 
-		getPairedDevices();
+		getBluetoothState();
+
+		bluetoothSender.getPairedDevices();
+		this.arrayListDevice = bluetoothSender.getDevices();
+		Toast.makeText(getApplicationContext(), "number devices:" + arrayListDevice.size(),
+				Toast.LENGTH_SHORT).show();
+		deviceAdapter.notifyDataSetChanged();
 
 		btScan.setOnClickListener(btScanDeviceOnClickListener);
 		btShare.setOnClickListener(btShareOnClickListener);
@@ -120,28 +126,6 @@ public class MainActivity extends TabActivity implements ChannelListener {
 		registerReceiver(ActionFoundReceiver, new IntentFilter(
 				BluetoothDevice.ACTION_FOUND));
 
-	}
-
-	private void getPairedDevices() {
-		Set<BluetoothDevice> pairedDevices = bluetoothAdapter
-				.getBondedDevices();
-
-		if (pairedDevices.size() > 0) {
-			for (BluetoothDevice device : pairedDevices) {
-				Device newDevice = new Device();
-				newDevice.setName(device.getName());
-				newDevice.setAddress(device.getAddress());
-
-				Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
-						R.drawable.device);
-				// Bitmap itemImage = Bitmap.createScaledBitmap(bitmap, 100,
-				// 100,
-				// true);
-				newDevice.setImage(bitmap);
-				arrayListDevice.add(newDevice);
-				deviceAdapter.notifyDataSetChanged();
-			}
-		}
 	}
 
 	private void scanDirectory(File directory) {
@@ -259,40 +243,18 @@ public class MainActivity extends TabActivity implements ChannelListener {
 		}
 	}
 
-	private void CheckBlueToothState() {
-		if (bluetoothAdapter == null) {
-			Toast.makeText(MainActivity.this,
-					"This device do not support Bluetooth", Toast.LENGTH_SHORT)
-					.show();
-		} else {
-			if (bluetoothAdapter.isEnabled()) {
-				if (bluetoothAdapter.isDiscovering()) {
-					Toast.makeText(
-							MainActivity.this,
-							"Bluetooth is currently in device discovery process.",
-							Toast.LENGTH_SHORT).show();
-				} else {
-					Toast.makeText(MainActivity.this, "Bluetooth is Enabled.",
-							Toast.LENGTH_SHORT).show();
-					btScan.setEnabled(true);
-				}
-			} else {
-				Toast.makeText(MainActivity.this, "Bluetooth is NOT Enabled!",
-						Toast.LENGTH_SHORT).show();
-				Intent enableBtIntent = new Intent(
-						BluetoothAdapter.ACTION_REQUEST_ENABLE);
-				startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-			}
-		}
-	}
-
 	private Button.OnClickListener btScanDeviceOnClickListener = new Button.OnClickListener() {
 
 		@Override
 		public void onClick(View arg0) {
 			arrayListDevice.clear();
-			getPairedDevices();
-			bluetoothAdapter.startDiscovery();
+			bluetoothSender = new BluetoothSender(getApplicationContext());
+			bluetoothSender.getPairedDevices();
+			arrayListDevice = bluetoothSender.getDevices();
+			deviceAdapter.notifyDataSetChanged();
+			bluetoothSender.discovery();
+			Toast.makeText(getApplicationContext(), "number devices:" + arrayListDevice.size(),
+					Toast.LENGTH_SHORT).show();
 		}
 	};
 
@@ -350,7 +312,6 @@ public class MainActivity extends TabActivity implements ChannelListener {
 		public void onClick(View v) {
 			MusicActivity music = (MusicActivity) getLocalActivityManager()
 					.getActivity("NgheNhac");
-			// music.refreshContent();
 			int[] IDs = music.getMusicFilesChecked();
 			String[] paths = new String[IDs.length];
 
@@ -375,11 +336,29 @@ public class MainActivity extends TabActivity implements ChannelListener {
 
 	};
 
+	public void getBluetoothState() {
+		int state = bluetoothSender.CheckBlueToothState();
+		switch (state) {
+		case BluetoothSender.BLUETOOTH_ENABLED:
+			btScan.setEnabled(true);
+			break;
+
+		case BluetoothSender.BLUETOOTH_NOTENABLED:
+
+			Intent enableBtIntent = new Intent(
+					BluetoothAdapter.ACTION_REQUEST_ENABLE);
+			startActivityForResult(enableBtIntent,
+					BluetoothSender.REQUEST_ENABLE_BT);
+			break;
+		default:
+			break;
+		}
+	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
-		if (requestCode == REQUEST_ENABLE_BT) {
-			CheckBlueToothState();
+		if (requestCode == BluetoothSender.REQUEST_ENABLE_BT) {
+			getBluetoothState();
 		}
 	}
 
@@ -393,8 +372,8 @@ public class MainActivity extends TabActivity implements ChannelListener {
 				Device newDevice = new Device();
 				BluetoothDevice device = intent
 						.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-				Set<BluetoothDevice> pairedDevices = bluetoothAdapter
-						.getBondedDevices();
+				Set<BluetoothDevice> pairedDevices = bluetoothSender
+						.getBoundedDevices();
 				if (!pairedDevices.contains(device)) {
 					newDevice.setName(device.getName());
 
@@ -427,7 +406,7 @@ public class MainActivity extends TabActivity implements ChannelListener {
 	@Override
 	public void onChannelDisconnected() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
