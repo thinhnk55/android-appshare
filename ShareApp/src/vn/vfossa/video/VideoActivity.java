@@ -54,9 +54,7 @@ public class VideoActivity extends ListActivity {
 		for (FilesData song : listVideos) {
 			videos.add(song);
 		}
-		if (listVideos.size() > 0) {
-			adapter = new VideoAdapter(VideoActivity.this, videos);
-		}
+		adapter = new VideoAdapter(VideoActivity.this, videos);
 
 		listView = getListView();
 		listView.setAdapter(adapter);
