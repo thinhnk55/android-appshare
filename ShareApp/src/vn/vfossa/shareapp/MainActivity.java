@@ -3,12 +3,10 @@ package vn.vfossa.shareapp;
 import it.sephiroth.android.library.widget.HListView;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Set;
+import java.util.List;
 
-import vn.vfossa.additionalclass.BluetoothShare;
 import vn.vfossa.app.ApplicationActivity;
-import vn.vfossa.bluetooth.BluetoothSender;
+import vn.vfossa.bluetooth.BluetoothManager;
 import vn.vfossa.database.DatabaseHandler;
 import vn.vfossa.database.FilesData;
 import vn.vfossa.device.Device;
@@ -19,21 +17,13 @@ import vn.vfossa.video.VideoActivity;
 import android.app.TabActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
-import android.net.Uri;
-import android.net.wifi.p2p.WifiP2pManager;
-import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Environment;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -45,23 +35,23 @@ public class MainActivity extends TabActivity implements ChannelListener {
 
 	public static final String TAG = "shareApp";
 	private TabHost tabHost;
-	private static final String MEDIA_PATH = "/sdcard/";
+	private static final String MEDIA_PATH = Environment
+			.getExternalStorageDirectory().getPath();
 	private Button btScan;
 	private Button btShare;
 	private Button btProgress;
 	private DeviceAdapter deviceAdapter;
-	private ArrayList<Device> arrayListDevice = new ArrayList<Device>();
 	private HListView listDevice;
 
-	private WifiP2pManager manager;
-	private boolean isWifiP2pEnabled = false;
-	private boolean retryChannel = false;
+	// private WifiP2pManager manager;
+	// private boolean isWifiP2pEnabled = false;
+	// private boolean retryChannel = false;
+	//
+	// private final IntentFilter intentFilter = new IntentFilter();
+	// private Channel channel;
+	// private BroadcastReceiver receiver = null;
 
-	private final IntentFilter intentFilter = new IntentFilter();
-	private Channel channel;
-	private BroadcastReceiver receiver = null;
-
-	private BluetoothSender bluetoothSender;
+	private BluetoothManager bluetoothSender;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,11 +64,29 @@ public class MainActivity extends TabActivity implements ChannelListener {
 		btShare = (Button) findViewById(R.id.btShare);
 		btProgress = (Button) findViewById(R.id.btProgress);
 		listDevice = (HListView) findViewById(R.id.listDevice);
-		
+
 		File home = new File(MEDIA_PATH);
 
 		scanDirectory(home);
 
+		setUpTabs();
+
+		bluetoothSender = new BluetoothManager(getApplicationContext());
+		deviceAdapter = new DeviceAdapter(MainActivity.this,
+				bluetoothSender.getDevices());
+		listDevice.setAdapter(deviceAdapter);
+
+		Toast.makeText(getApplicationContext(),
+				"number devices:" + bluetoothSender.getDevices().size(),
+				Toast.LENGTH_SHORT).show();
+		deviceAdapter.notifyDataSetChanged();
+
+		btScan.setOnClickListener(btnScanDeviceOnClickListener);
+		btShare.setOnClickListener(btnShareOnClickListener);
+		btProgress.setOnClickListener(btProgressOnClickListener);
+	}
+
+	private void setUpTabs() {
 		tabHost = getTabHost();
 
 		TabSpec appspec = tabHost.newTabSpec("UngDung");
@@ -105,27 +113,6 @@ public class MainActivity extends TabActivity implements ChannelListener {
 		tabHost.addTab(photospec);
 		tabHost.addTab(songspec);
 		tabHost.addTab(videospec);
-
-		bluetoothSender = new BluetoothSender(getApplicationContext());
-
-		getBluetoothState();
-
-		bluetoothSender.getPairedDevices();
-		this.arrayListDevice = bluetoothSender.getDevices();
-		deviceAdapter = new DeviceAdapter(MainActivity.this, arrayListDevice);
-		listDevice.setAdapter(deviceAdapter);
-		
-		Toast.makeText(getApplicationContext(), "number devices:" + arrayListDevice.size(),
-				Toast.LENGTH_SHORT).show();
-		deviceAdapter.notifyDataSetChanged();
-
-		btScan.setOnClickListener(btScanDeviceOnClickListener);
-		btShare.setOnClickListener(btShareOnClickListener);
-		btProgress.setOnClickListener(btProgressOnClickListener);
-
-		registerReceiver(ActionFoundReceiver, new IntentFilter(
-				BluetoothDevice.ACTION_FOUND));
-
 	}
 
 	private void scanDirectory(File directory) {
@@ -243,63 +230,31 @@ public class MainActivity extends TabActivity implements ChannelListener {
 		}
 	}
 
-	private Button.OnClickListener btScanDeviceOnClickListener = new Button.OnClickListener() {
-
+	private Button.OnClickListener btnScanDeviceOnClickListener = new Button.OnClickListener() {
 		@Override
 		public void onClick(View arg0) {
-			arrayListDevice.clear();
-			//bluetoothSender = new BluetoothSender(getApplicationContext());
-			bluetoothSender.getPairedDevices();
-			arrayListDevice = bluetoothSender.getDevices();
+			bluetoothSender.updatePairedDevices();
 			deviceAdapter.notifyDataSetChanged();
 			bluetoothSender.discovery();
 		}
 	};
 
-	private Button.OnClickListener btShareOnClickListener = new Button.OnClickListener() {
+	private Button.OnClickListener btnShareOnClickListener = new Button.OnClickListener() {
 
 		@Override
 		public void onClick(View v) {
 			MusicActivity music = (MusicActivity) getLocalActivityManager()
 					.getActivity("NgheNhac");
 			// music.refreshContent();
-			int[] IDs = music.getMusicFilesChecked();
-			String[] paths = new String[IDs.length];
+			List<FilesData> musicList = music.getCheckedList();
 
-			DatabaseHandler db = new DatabaseHandler(MainActivity.this);
-
-			for (int i = 0; i < IDs.length; i++) {
-				paths[i] = db.getFileData(IDs[i]).getPath();
-				// Toast.makeText(MainActivity.this, "file "+ i +": " +
-				// paths[i],
-				// Toast.LENGTH_SHORT).show();
-			}
-
-			String address[] = deviceAdapter.getDeviceChecked();
-			// getListFilesChecked();
-			// getListDeviceChecked();
-
-			// String address = null;
-			// String filePath = Environment.getExternalStorageDirectory()
-			// .toString() + "/img0.jpg";
-			for (int i = 0; i < address.length; i++) {
-				for (int j = 0; j < IDs.length; j++) {
-					Log.e("device ", address[i]);
-					Log.e("file ", paths[j]);
-					ContentValues values = new ContentValues();
-					values.put(BluetoothShare.URI,
-							Uri.fromFile(new File(paths[j])).toString());
-					values.put(BluetoothShare.DESTINATION, address[i]);
-					values.put(BluetoothShare.DIRECTION,
-							BluetoothShare.DIRECTION_OUTBOUND);
-					Long ts = System.currentTimeMillis();
-					values.put(BluetoothShare.TIMESTAMP, ts);
-					Uri contentUri = getContentResolver().insert(
-							BluetoothShare.CONTENT_URI, values);
+			List<Device> deviceList = deviceAdapter.getCheckedList();
+			for (Device device : deviceList) {
+				for (FilesData data : musicList) {
+					bluetoothSender.sendFile(MainActivity.this,
+							new File(data.getPath()), device.getAddress());
 				}
 			}
-			db.close();
-
 		}
 
 	};
@@ -308,46 +263,52 @@ public class MainActivity extends TabActivity implements ChannelListener {
 
 		@Override
 		public void onClick(View v) {
-			MusicActivity music = (MusicActivity) getLocalActivityManager()
-					.getActivity("NgheNhac");
-			int[] IDs = music.getMusicFilesChecked();
-			String[] paths = new String[IDs.length];
-
-			DatabaseHandler db = new DatabaseHandler(MainActivity.this);
-
-			for (int i = 0; i < IDs.length; i++) {
-				paths[i] = db.getFileData(IDs[i]).getPath();
-				Toast.makeText(MainActivity.this,
-						"file " + i + ": " + paths[i], Toast.LENGTH_SHORT)
-						.show();
-			}
-
-			String address[] = deviceAdapter.getDeviceChecked();
-			for (int i = 0; i < address.length; i++) {
-				Toast.makeText(MainActivity.this,
-						"device " + i + ": " + address[i], Toast.LENGTH_SHORT)
-						.show();
-			}
-			db.close();
+//			MusicActivity music = (MusicActivity) getLocalActivityManager()
+//					.getActivity("NgheNhac");
+//			int[] IDs = music.getMusicFilesChecked();
+//			String[] paths = new String[IDs.length];
+//
+//			DatabaseHandler db = new DatabaseHandler(MainActivity.this);
+//
+//			for (int i = 0; i < IDs.length; i++) {
+//				paths[i] = db.getFileData(IDs[i]).getPath();
+//				Toast.makeText(MainActivity.this,
+//						"file " + i + ": " + paths[i], Toast.LENGTH_SHORT)
+//						.show();
+//			}
+//
+//			String address[] = deviceAdapter.getDeviceChecked();
+//			for (int i = 0; i < address.length; i++) {
+//				Toast.makeText(MainActivity.this,
+//						"device " + i + ": " + address[i], Toast.LENGTH_SHORT)
+//						.show();
+//			}
+//			db.close();
 
 		}
 
 	};
 
-	public void getBluetoothState() {
-		int state = bluetoothSender.CheckBlueToothState();
+	public void prepareBluetooth() {
+		int state = bluetoothSender.checkBlueToothState();
 		switch (state) {
-		case BluetoothSender.BLUETOOTH_ENABLED:
+		case BluetoothManager.BLUETOOTH_ENABLED:
 			btScan.setEnabled(true);
 			break;
 
-		case BluetoothSender.BLUETOOTH_NOTENABLED:
-
+		case BluetoothManager.BLUETOOTH_NOTENABLED:
 			Intent enableBtIntent = new Intent(
 					BluetoothAdapter.ACTION_REQUEST_ENABLE);
 			startActivityForResult(enableBtIntent,
-					BluetoothSender.REQUEST_ENABLE_BT);
+					BluetoothManager.REQUEST_ENABLE_BT);
 			break;
+
+		case BluetoothManager.BLUETOOTH_NOTSUPPORTED:
+			Toast.makeText(this, "You cannot use this app without bluetooth",
+					Toast.LENGTH_SHORT).show();
+			finish();
+			break;
+
 		default:
 			break;
 		}
@@ -355,37 +316,10 @@ public class MainActivity extends TabActivity implements ChannelListener {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == BluetoothSender.REQUEST_ENABLE_BT) {
-			getBluetoothState();
+		if (requestCode == BluetoothManager.REQUEST_ENABLE_BT) {
+			prepareBluetooth();
 		}
 	}
-
-	private final BroadcastReceiver ActionFoundReceiver = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-
-			String action = intent.getAction();
-			if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-				Device newDevice = new Device();
-				BluetoothDevice device = intent
-						.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-				Set<BluetoothDevice> pairedDevices = bluetoothSender
-						.getBoundedDevices();
-				if (!pairedDevices.contains(device)) {
-					newDevice.setName(device.getName());
-
-					Bitmap bitmap = BitmapFactory.decodeResource(
-							getResources(), R.drawable.device);
-					Bitmap itemImage = Bitmap.createScaledBitmap(bitmap, 100,
-							100, true);
-					newDevice.setImage(itemImage);
-					arrayListDevice.add(newDevice);
-					deviceAdapter.notifyDataSetChanged();
-				}
-			}
-		}
-	};
 
 	/*
 	 * Function to get all files that are chosen to send
@@ -405,6 +339,25 @@ public class MainActivity extends TabActivity implements ChannelListener {
 	public void onChannelDisconnected() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		prepareBluetooth();
+
+		bluetoothSender.updatePairedDevices();
+		deviceAdapter.notifyDataSetChanged();
+		bluetoothSender.discovery();
+
+		registerReceiver(bluetoothSender.ActionFoundReceiver, new IntentFilter(
+				BluetoothDevice.ACTION_FOUND));
+	}
+
+	@Override
+	public void onPause() {
+		unregisterReceiver(bluetoothSender.ActionFoundReceiver);
+		super.onPause();
 	}
 
 }

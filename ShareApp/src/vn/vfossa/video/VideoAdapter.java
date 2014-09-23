@@ -2,9 +2,11 @@ package vn.vfossa.video;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import vn.vfossa.database.FilesData;
 import vn.vfossa.shareapp.R;
+import vn.vfossa.util.Utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,38 +22,32 @@ import android.widget.TextView;
 public class VideoAdapter extends ArrayAdapter<FilesData> {
 
 	private LayoutInflater mInflator;
+	private List<FilesData> checkedList = new ArrayList<FilesData>();
 
-	private int[] checkedState;
-	private boolean[] checkboxChecked;
-
-	public VideoAdapter(Context context, ArrayList<FilesData> videos,
-			int[] checkedState) {
+	public VideoAdapter(Context context, ArrayList<FilesData> videos) {
 		super(context, R.layout.media_item_layout, videos);
-		this.checkedState = checkedState;
-		this.checkboxChecked = new boolean[videos.size()];
-
 		mInflator = (LayoutInflater) getContext().getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 	}
 
 	@Override
-	public View getView(int position, View view, ViewGroup parent) {
-		View rowView = view;
+	public View getView(final int position, View convertView, ViewGroup parent) {
 		VideoHolder holder = null;
 
-		if (rowView == null) {
-			rowView = mInflator.inflate(R.layout.media_item_layout, null, true);
+		if (convertView == null) {
+			convertView = mInflator.inflate(R.layout.media_item_layout, parent, false);
+
 			holder = new VideoHolder();
-			holder.videoTitle = (TextView) rowView
+			holder.videoTitle = (TextView) convertView
 					.findViewById(R.id.mediaTitle);
-			holder.size = (TextView) rowView.findViewById(R.id.mediaSize);
-			holder.checkBox = (CheckBox) rowView
+			holder.size = (TextView) convertView.findViewById(R.id.mediaSize);
+			holder.checkBox = (CheckBox) convertView
 					.findViewById(R.id.checkBoxItem);
-			holder.imageView = (ImageView) rowView
+			holder.imageView = (ImageView) convertView
 					.findViewById(R.id.image_media);
-			rowView.setTag(holder);
+			convertView.setTag(holder);
 		} else {
-			holder = (VideoHolder) rowView.getTag();
+			holder = (VideoHolder) convertView.getTag();
 		}
 
 		holder.videoTitle.setText(getItem(position).getName());
@@ -74,26 +70,21 @@ public class VideoAdapter extends ArrayAdapter<FilesData> {
 			holder.imageView.setImageResource(R.drawable.video);
 		}
 
-		holder.checkBox.setId(position);
-		holder.imageView.setId(position);
 		holder.checkBox.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
 				CheckBox cb = (CheckBox) v;
-				int id = cb.getId();
-				if (checkboxChecked[id]) {
-					cb.setChecked(false);
-					checkboxChecked[id] = false;
+				if (!cb.isChecked()) {
+					checkedList.remove(getItem(position));
+					Utils.showToast(getContext(), "remove an item");
 				} else {
-					cb.setChecked(true);
-					checkboxChecked[id] = true;
+					checkedList.add(getItem(position));
+					Utils.showToast(getContext(), "add an item");
 				}
 			}
 		});
 
-		holder.checkBox.setChecked(checkboxChecked[position]);
-
-		return rowView;
+		return convertView;
 	}
 
 	class VideoHolder {
@@ -101,6 +92,10 @@ public class VideoAdapter extends ArrayAdapter<FilesData> {
 		TextView size;
 		TextView videoTitle;
 		ImageView imageView;
+	}
+
+	public List<FilesData> getCheckedList() {
+		return checkedList;
 	}
 
 }

@@ -1,8 +1,10 @@
 package vn.vfossa.device;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import vn.vfossa.shareapp.R;
+import vn.vfossa.util.Utils;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,19 +18,17 @@ import android.widget.TextView;
 public class DeviceAdapter extends ArrayAdapter<Device> {
 
 	private LayoutInflater mInflater;
-	private static int[] checkedState;
-	private boolean[] checkboxChecked;
+	private List<Device> checkedList = new ArrayList<Device>();
 
 	public DeviceAdapter(Context context, ArrayList<Device> objects) {
 		super(context, R.layout.device_item_layout, objects);
 
 		mInflater = (LayoutInflater) getContext().getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
-		this.checkboxChecked = new boolean[100];
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, ViewGroup parent) {
 		Holder holder;
 
 		if (convertView == null) {
@@ -57,26 +57,20 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 		holder.nameDevice.setText(getItem(position).getName());
 		holder.imageDevice.setImageBitmap(getItem(position).getImage());
 
-		holder.nameDevice.setId(position);
-		holder.imageDevice.setId(position);
-		holder.checkBox.setId(position);
 		holder.checkBox.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				CheckBox cb = (CheckBox) v;
-				int id = cb.getId();
-				if (checkboxChecked[id]) {
-					cb.setChecked(false);
-					checkboxChecked[id] = false;
+				if (!cb.isChecked()) {
+					checkedList.remove(getItem(position));
+					Utils.showToast(getContext(), "remove an item");
 				} else {
-					cb.setChecked(true);
-					checkboxChecked[id] = true;
+					checkedList.add(getItem(position));
+					Utils.showToast(getContext(), "add an item");
 				}
-
 			}
 		});
-		holder.checkBox.setChecked(checkboxChecked[position]);
 
 		return convertView;
 	}
@@ -87,31 +81,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 		public CheckBox checkBox;
 	}
 
-	public boolean getCheckedState(int position) {
-		return checkboxChecked[position];
+	public List<Device> getCheckedList() {
+		return checkedList;
 	}
-
-	public int getNumberChecked() {
-		int count = 0;
-		for (int i = 0; i < getCount(); i++) {
-			if (checkboxChecked[i]) {
-				count++;
-			}
-		}
-		return count;
-	}
-
-	public String[] getDeviceChecked() {
-		String[] addresses = new String[getNumberChecked()];
-
-		int count = 0;
-		for (int i = 0; i < getCount(); i++) {
-			if (checkboxChecked[i]) {
-				addresses[count++] = getItem(i).getAddress();
-			}
-		}
-		return addresses;
-
-	}
-
 }

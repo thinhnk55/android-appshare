@@ -2,9 +2,11 @@ package vn.vfossa.music;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import vn.vfossa.database.FilesData;
 import vn.vfossa.shareapp.R;
+import vn.vfossa.util.Utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,27 +20,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class MusicAdapter extends ArrayAdapter<FilesData> {
+	public static final String TAG = MusicAdapter.class.getSimpleName();
 
-	private static int[] checkedState;
-	private boolean[] checkboxChecked;
-
+	private List<FilesData> checkedList = new ArrayList<FilesData>();
 	private LayoutInflater mInflator;
 
 	public MusicAdapter(Context context, ArrayList<FilesData> song) {
 		super(context, R.layout.media_item_layout, song);
-		this.checkboxChecked = new boolean[song.size()];
-
 		mInflator = (LayoutInflater) getContext().getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 	}
 
 	@Override
-	public View getView(int position, View view, ViewGroup parent) {
+	public View getView(final int position, View view, ViewGroup parent) {
 		final SongHolder holder;
 		View rowView = view;
 		if (rowView == null) {
 
-			rowView = mInflator.inflate(R.layout.media_item_layout, null);
+			rowView = mInflator.inflate(R.layout.media_item_layout, parent, false);
 			holder = new SongHolder();
 			holder.songTitle = (TextView) rowView.findViewById(R.id.mediaTitle);
 			holder.size = (TextView) rowView.findViewById(R.id.mediaSize);
@@ -71,24 +70,18 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 			holder.imageView.setImageResource(R.drawable.music);
 		}
 
-		holder.checkBox.setId(position);
-		holder.imageView.setId(position);
 		holder.checkBox.setOnClickListener(new OnClickListener() {
-
 			public void onClick(View v) {
 				CheckBox cb = (CheckBox) v;
-				int id = cb.getId();
-				if (checkboxChecked[id]) {
-					cb.setChecked(false);
-					checkboxChecked[id] = false;
+				if (!cb.isChecked()) {
+					checkedList.remove(getItem(position));
+					Utils.showToast(getContext(), "remove an item");
 				} else {
-					cb.setChecked(true);
-					checkboxChecked[id] = true;
+					checkedList.add(getItem(position));
+					Utils.showToast(getContext(), "add an item");
 				}
 			}
 		});
-
-		holder.checkBox.setChecked(checkboxChecked[position]);
 
 		return rowView;
 	}
@@ -100,46 +93,7 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 		ImageView imageView;
 	}
 
-	public void createCheckedState(int size) {
-		checkedState = new int[size];
-		for (int i = 0; i < size; i++) {
-			checkedState[i] = 0;
-		}
+	public List<FilesData> getCheckedList() {
+		return checkedList;
 	}
-
-	public int getCheckedState(int position) {
-		return checkedState[position];
-	}
-
-	public int getNumberChecked() {
-		int count = 0;
-		for (int i = 0; i < getCount(); i++) {
-			if (checkboxChecked[i]) {
-				count++;
-			}
-		}
-		return count;
-	}
-
-	public int[] getIdChecked() {
-		int[] IDs = new int[getNumberChecked()];
-
-		int count = 0;
-		for (int i = 0; i < getCount(); i++) {
-			if (checkboxChecked[i]) {
-				IDs[count++] = getItem(i).getID();
-			}
-		}
-		return IDs;
-
-	}
-
-	public void changeCheckedState(int position) {
-		if (checkedState[position] == 0) {
-			checkedState[position] = 1;
-		} else {
-			checkedState[position] = 0;
-		}
-	}
-
 }

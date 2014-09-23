@@ -14,8 +14,8 @@ import android.widget.GridView;
 
 public class ApplicationActivity extends Activity {
 	private PackageManager packageManager = null;
-	private ArrayList<ApplicationInfo> applist = null;
-	private ApplicationAdapter listadaptor = null;
+	private ArrayList<ApplicationInfo> appList = null;
+	private ApplicationAdapter listAdapter = null;
 	private GridView gridView;
 
 	@Override
@@ -34,8 +34,7 @@ public class ApplicationActivity extends Activity {
 		ArrayList<ApplicationInfo> applist = new ArrayList<ApplicationInfo>();
 		for (ApplicationInfo info : list) {
 			try {
-				if (null != packageManager
-						.getLaunchIntentForPackage(info.packageName)) {
+				if (packageManager.getLaunchIntentForPackage(info.packageName) != null) {
 					applist.add(info);
 				}
 			} catch (Exception e) {
@@ -50,28 +49,6 @@ public class ApplicationActivity extends Activity {
 		private ProgressDialog progress = null;
 
 		@Override
-		protected Void doInBackground(Void... params) {
-			applist = checkForLaunchIntent(packageManager
-					.getInstalledApplications(PackageManager.GET_META_DATA));
-			listadaptor = new ApplicationAdapter(ApplicationActivity.this,
-					applist);
-
-			return null;
-		}
-
-		@Override
-		protected void onCancelled() {
-			super.onCancelled();
-		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-			gridView.setAdapter(listadaptor);
-			progress.dismiss();
-			super.onPostExecute(result);
-		}
-
-		@Override
 		protected void onPreExecute() {
 			progress = ProgressDialog.show(ApplicationActivity.this, null,
 					"Loading application info...");
@@ -79,8 +56,21 @@ public class ApplicationActivity extends Activity {
 		}
 
 		@Override
-		protected void onProgressUpdate(Void... values) {
-			super.onProgressUpdate(values);
+		protected Void doInBackground(Void... params) {
+			appList = checkForLaunchIntent(packageManager
+					.getInstalledApplications(PackageManager.GET_META_DATA));
+			listAdapter = new ApplicationAdapter(ApplicationActivity.this,
+					appList);
+
+			return null;
 		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			gridView.setAdapter(listAdapter);
+			progress.dismiss();
+			super.onPostExecute(result);
+		}
+
 	}
 }

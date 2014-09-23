@@ -1,8 +1,10 @@
 package vn.vfossa.app;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import vn.vfossa.shareapp.R;
+import vn.vfossa.util.Utils;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
@@ -17,16 +19,15 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 
 public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
-	private boolean[] checkboxSelected;
-
+	
+	private List<ApplicationInfo> checkedList = new ArrayList<ApplicationInfo>();
 	private LayoutInflater mInflator;
 
-	public ApplicationAdapter(Context context, ArrayList<ApplicationInfo> appsList) {
+	public ApplicationAdapter(Context context,
+			ArrayList<ApplicationInfo> appsList) {
 		super(context, R.layout.item_layout, appsList);
 		mInflator = (LayoutInflater) getContext().getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
-
-		this.checkboxSelected = new boolean[appsList.size()];
 	}
 
 	public static class ViewHolder {
@@ -35,7 +36,7 @@ public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, ViewGroup parent) {
 		final ViewHolder holder;
 		if (convertView == null) {
 			holder = new ViewHolder();
@@ -56,24 +57,19 @@ public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
 					.loadIcon(getContext().getPackageManager())));
 		}
 
-		holder.checkBox.setId(position);
-		holder.imgViewItem.setId(position);
 		holder.checkBox.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
 				CheckBox cb = (CheckBox) v;
-				int id = cb.getId();
-				if (checkboxSelected[id]) {
-					cb.setChecked(false);
-					checkboxSelected[id] = false;
+				if (!cb.isChecked()) {
+					checkedList.remove(getItem(position));
+					Utils.showToast(getContext(), "remove an item");
 				} else {
-					cb.setChecked(true);
-					checkboxSelected[id] = true;
+					checkedList.add(getItem(position));
+					Utils.showToast(getContext(), "add an item");
 				}
 			}
 		});
-
-		holder.checkBox.setChecked(checkboxSelected[position]);
 
 		return convertView;
 	}
@@ -82,5 +78,9 @@ public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
 		Bitmap b = ((BitmapDrawable) image).getBitmap();
 		Bitmap bitmapResized = Bitmap.createScaledBitmap(b, 50, 50, false);
 		return new BitmapDrawable(getContext().getResources(), bitmapResized);
+	}
+	
+	public List<ApplicationInfo> getCheckedList() {
+		return checkedList;
 	}
 };
