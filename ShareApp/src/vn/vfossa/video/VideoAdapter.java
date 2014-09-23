@@ -83,6 +83,8 @@ public class VideoAdapter extends ArrayAdapter<FilesData> {
 				}
 			}
 		});
+		
+		holder.checkBox.setChecked(checkedList.contains(getItem(position)));
 
 		return convertView;
 	}

@@ -71,6 +71,8 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 				}
 			}
 		});
+		
+		holder.checkBox.setChecked(checkedList.contains(getItem(position)));
 
 		return convertView;
 	}

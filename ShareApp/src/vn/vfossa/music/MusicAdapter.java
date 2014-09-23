@@ -82,6 +82,8 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 				}
 			}
 		});
+		
+		holder.checkBox.setChecked(checkedList.contains(getItem(position)));
 
 		return rowView;
 	}
