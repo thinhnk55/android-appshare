@@ -248,13 +248,11 @@ public class MainActivity extends TabActivity implements ChannelListener {
 		@Override
 		public void onClick(View arg0) {
 			arrayListDevice.clear();
-			bluetoothSender = new BluetoothSender(getApplicationContext());
+			//bluetoothSender = new BluetoothSender(getApplicationContext());
 			bluetoothSender.getPairedDevices();
 			arrayListDevice = bluetoothSender.getDevices();
 			deviceAdapter.notifyDataSetChanged();
 			bluetoothSender.discovery();
-			Toast.makeText(getApplicationContext(), "number devices:" + arrayListDevice.size(),
-					Toast.LENGTH_SHORT).show();
 		}
 	};
 
