@@ -40,7 +40,7 @@ public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
 		final ViewHolder holder;
 		if (convertView == null) {
 			holder = new ViewHolder();
-			convertView = mInflator.inflate(R.layout.item_layout, null);
+			convertView = mInflator.inflate(R.layout.item_layout, parent, false);
 
 			holder.imgViewItem = (ImageView) convertView
 					.findViewById(R.id.imageItem);
