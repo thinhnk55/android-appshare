@@ -323,8 +323,8 @@ public class MainActivity extends TabActivity implements ChannelListener {
 		case BluetoothManager.BLUETOOTH_NOTENABLED:
 			Intent enableBtIntent = new Intent(
 					BluetoothAdapter.ACTION_REQUEST_ENABLE);
-			startActivityForResult(enableBtIntent,
-					BluetoothManager.REQUEST_ENABLE_BT);
+//			startActivityForResult(enableBtIntent,
+//					BluetoothManager.REQUEST_ENABLE_BT);
 			break;
 
 		case BluetoothManager.BLUETOOTH_NOTSUPPORTED:

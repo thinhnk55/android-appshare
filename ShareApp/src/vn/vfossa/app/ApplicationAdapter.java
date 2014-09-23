@@ -53,8 +53,8 @@ public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
 
 		ApplicationInfo appInfo = getItem(position);
 		if (appInfo != null) {
-			holder.imgViewItem.setImageDrawable(resize(appInfo
-					.loadIcon(getContext().getPackageManager())));
+			holder.imgViewItem.setImageDrawable(appInfo
+					.loadIcon(getContext().getPackageManager()));
 		}
 
 		holder.checkBox.setOnClickListener(new OnClickListener() {
