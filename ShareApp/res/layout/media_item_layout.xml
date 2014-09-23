@@ -1,81 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:baselineAligned="false"
-    android:weightSum="100" >
+    android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants">
 
-    <RelativeLayout
-        android:id="@+id/TableRow"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="85" >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:weightSum="100" >
 
-        <ImageView
-            android:id="@+id/image_media"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:contentDescription="@null" />
+        <TableRow
+            android:id="@+id/TableRow"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="85" >
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_toEndOf="@+id/image_media"
-            android:layout_toRightOf="@+id/image_media"
-            android:gravity="center_vertical"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/mediaTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:text="@string/song_title"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+            <ImageView
+                android:id="@+id/image_media"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:contentDescription="@null"
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp" >
+                android:gravity="center_vertical"
+                android:layout_height="80dp"
+                android:orientation="vertical" >
 
                 <TextView
-                    android:id="@+id/textView1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/song_size"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="#6bb579"
-                    android:textStyle="italic" />
-
-                <TextView
-                    android:id="@+id/mediaSize"
+                    android:id="@+id/mediaTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
-                    android:text="@string/song_size_sample"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="#6bb579"
-                    android:textStyle="italic" />
+                    android:text="@string/song_title"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textView1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/song_size"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="#6bb579"
+                        android:textStyle="italic" />
+
+                    <TextView
+                        android:id="@+id/mediaSize"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="@string/song_size_sample"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="#6bb579"
+                        android:textStyle="italic" />
+                </LinearLayout>
             </LinearLayout>
+        </TableRow>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="15"
+            android:gravity="center"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:orientation="vertical" >
+
+            <CheckBox
+                android:id="@+id/checkBoxItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"/>
+
         </LinearLayout>
-    </RelativeLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:layout_weight="15"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:gravity="center"
-        android:orientation="vertical" >
-
-        <CheckBox
-            android:id="@+id/checkBoxItem"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false" />
     </LinearLayout>
 
-</LinearLayout>
+</TableLayout>
