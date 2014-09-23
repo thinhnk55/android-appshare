@@ -3,6 +3,7 @@ package vn.vfossa.shareapp;
 import it.sephiroth.android.library.widget.HListView;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import vn.vfossa.app.ApplicationActivity;
@@ -20,6 +21,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
 import android.media.MediaMetadataRetriever;
 import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.os.Bundle;
@@ -141,18 +143,6 @@ public class MainActivity extends TabActivity implements ChannelListener {
 	private void addFileToList(File file) {
 		DatabaseHandler db = new DatabaseHandler(MainActivity.this);
 
-		if (file.getName().endsWith(".apk")) {
-			if (db.checkPath(file.getPath())) {
-				String appName = file.getName().substring(0,
-						(file.getName().length() - 4));
-				String appPath = file.getPath();
-				float size = (float) (file.length()) / (1024 * 1024);
-				db.addFileData(new FilesData("app", appName, appPath, null,
-						size));
-				db.close();
-			}
-		}
-
 		if (file.getName().endsWith(".mp3")) {
 			if (db.checkPath(file.getPath())) {
 				String songName = file.getName().substring(0,
@@ -243,16 +233,50 @@ public class MainActivity extends TabActivity implements ChannelListener {
 
 		@Override
 		public void onClick(View v) {
-			MusicActivity music = (MusicActivity) getLocalActivityManager()
+			List<FilesData> musicList, videoList;
+			List<ApplicationInfo> appList;
+			
+			MusicActivity musicActivity = (MusicActivity) getLocalActivityManager()
 					.getActivity("NgheNhac");
-			// music.refreshContent();
-			List<FilesData> musicList = music.getCheckedList();
+			ApplicationActivity appActivity = (ApplicationActivity) getLocalActivityManager()
+					.getActivity("UngDung");
+//			ImageActivity imageActivity = (ImageActivity) getLocalActivityManager()
+//					.getActivity("HinhAnh");
+			VideoActivity videoActivity = (VideoActivity) getLocalActivityManager()
+					.getActivity("video");
+			
+			
+			if (musicActivity != null){
+				musicList = musicActivity.getCheckedList();
+			} else {
+				musicList = new ArrayList<FilesData>();
+			}
+			
+			if (videoActivity != null){
+				videoList = videoActivity.getCheckedList();
+			} else {
+				videoList = new ArrayList<FilesData>();
+			}
+			
+			if (appActivity != null){
+				appList = appActivity.getCheckedList();
+			} else {
+				appList = new ArrayList<ApplicationInfo>();
+			}
 
 			List<Device> deviceList = deviceAdapter.getCheckedList();
 			for (Device device : deviceList) {
-				for (FilesData data : musicList) {
+				for (FilesData music : musicList) {
 					bluetoothSender.sendFile(MainActivity.this,
-							new File(data.getPath()), device.getAddress());
+							new File(music.getPath()), device.getAddress());
+				}
+				for (FilesData video : videoList) {
+					bluetoothSender.sendFile(MainActivity.this,
+							new File(video.getPath()), device.getAddress());
+				}
+				for (ApplicationInfo app : appList) {
+					bluetoothSender.sendFile(MainActivity.this,
+							new File(app.publicSourceDir), device.getAddress());
 				}
 			}
 		}

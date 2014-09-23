@@ -28,6 +28,10 @@ public class ApplicationActivity extends Activity {
 
 		new LoadApplications().execute();
 	}
+	
+	public List<ApplicationInfo> getCheckedList() {
+		return listAdapter.getCheckedList();
+	}
 
 	private ArrayList<ApplicationInfo> checkForLaunchIntent(
 			List<ApplicationInfo> list) {

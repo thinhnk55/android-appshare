@@ -61,4 +61,8 @@ public class VideoActivity extends ListActivity {
 		listView = getListView();
 		listView.setAdapter(adapter);
 	}
+	
+	public List<FilesData> getCheckedList(){
+		return adapter.getCheckedList();
+	}
 }
