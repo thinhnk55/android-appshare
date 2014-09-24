@@ -75,12 +75,12 @@ public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
 
 		return convertView;
 	}
-
-	private Drawable resize(Drawable image) {
-		Bitmap b = ((BitmapDrawable) image).getBitmap();
-		Bitmap bitmapResized = Bitmap.createScaledBitmap(b, 50, 50, false);
-		return new BitmapDrawable(getContext().getResources(), bitmapResized);
-	}
+//
+//	private Drawable resize(Drawable image) {
+//		Bitmap b = ((BitmapDrawable) image).getBitmap();
+//		Bitmap bitmapResized = Bitmap.createScaledBitmap(b, 50, 50, false);
+//		return new BitmapDrawable(getContext().getResources(), bitmapResized);
+//	}
 	
 	public List<ApplicationInfo> getCheckedList() {
 		return checkedList;

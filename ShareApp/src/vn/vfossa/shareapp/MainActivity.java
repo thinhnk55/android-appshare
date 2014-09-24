@@ -26,16 +26,25 @@ import android.media.MediaMetadataRetriever;
 import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TabHost;
+import android.widget.TextView;
 import android.widget.TabHost.TabSpec;
 import android.widget.Toast;
 
 public class MainActivity extends TabActivity implements ChannelListener {
 
 	public static final String TAG = "shareApp";
+	public static final String APP_TAB = "UngDung";
+	public static final String IMAGE_TAB = "HinhAnh";
+	public static final String MUSIC_TAB = "NgheNhac";
+	public static final String VIDEO_TAB = "Video";
 	private TabHost tabHost;
 	private static final String MEDIA_PATH = Environment
 			.getExternalStorageDirectory().getPath();
@@ -44,6 +53,7 @@ public class MainActivity extends TabActivity implements ChannelListener {
 	private Button btProgress;
 	private DeviceAdapter deviceAdapter;
 	private HListView listDevice;
+	private TextView etSearch;
 
 	// private WifiP2pManager manager;
 	// private boolean isWifiP2pEnabled = false;
@@ -86,27 +96,65 @@ public class MainActivity extends TabActivity implements ChannelListener {
 		btScan.setOnClickListener(btnScanDeviceOnClickListener);
 		btShare.setOnClickListener(btnShareOnClickListener);
 		btProgress.setOnClickListener(btProgressOnClickListener);
+		
+		etSearch = (EditText) findViewById(R.id.etSearch);
+		etSearch.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
+				String tabTag = tabHost.getCurrentTabTag();
+				switch (tabTag) {
+				case APP_TAB:
+					break;
+				case MUSIC_TAB:
+					MusicActivity musicActivity = (MusicActivity) getLocalActivityManager()
+							.getActivity(MUSIC_TAB);
+					musicActivity.Filter(s);
+					break;
+				case IMAGE_TAB:
+					break;
+				case VIDEO_TAB:
+					break;
+
+				default:
+					break;
+				}
+				
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+
+			}
+		});
 	}
 
 	private void setUpTabs() {
 		tabHost = getTabHost();
 
-		TabSpec appspec = tabHost.newTabSpec("UngDung");
+		TabSpec appspec = tabHost.newTabSpec(APP_TAB);
 		appspec.setIndicator("Ứng dụng");
 		Intent appsIntent = new Intent(this, ApplicationActivity.class);
 		appspec.setContent(appsIntent);
 
-		TabSpec photospec = tabHost.newTabSpec("HinhAnh");
+		TabSpec photospec = tabHost.newTabSpec(IMAGE_TAB);
 		photospec.setIndicator("Hình ảnh");
 		Intent photosIntent = new Intent(this, ImageActivity.class);
 		photospec.setContent(photosIntent);
 
-		TabSpec songspec = tabHost.newTabSpec("NgheNhac");
+		TabSpec songspec = tabHost.newTabSpec(MUSIC_TAB);
 		songspec.setIndicator("Nghe nhạc");
 		Intent songsIntent = new Intent(this, MusicActivity.class);
 		songspec.setContent(songsIntent);
 
-		TabSpec videospec = tabHost.newTabSpec("video");
+		TabSpec videospec = tabHost.newTabSpec(VIDEO_TAB);
 		videospec.setIndicator("Video");
 		Intent videosIntent = new Intent(this, VideoActivity.class);
 		videospec.setContent(videosIntent);
@@ -220,6 +268,7 @@ public class MainActivity extends TabActivity implements ChannelListener {
 		}
 	}
 
+	
 	private Button.OnClickListener btnScanDeviceOnClickListener = new Button.OnClickListener() {
 		@Override
 		public void onClick(View arg0) {
@@ -237,13 +286,13 @@ public class MainActivity extends TabActivity implements ChannelListener {
 			List<ApplicationInfo> appList;
 			
 			MusicActivity musicActivity = (MusicActivity) getLocalActivityManager()
-					.getActivity("NgheNhac");
+					.getActivity(MUSIC_TAB);
 			ApplicationActivity appActivity = (ApplicationActivity) getLocalActivityManager()
-					.getActivity("UngDung");
+					.getActivity(APP_TAB);
 //			ImageActivity imageActivity = (ImageActivity) getLocalActivityManager()
 //					.getActivity("HinhAnh");
 			VideoActivity videoActivity = (VideoActivity) getLocalActivityManager()
-					.getActivity("video");
+					.getActivity(VIDEO_TAB);
 			
 			
 			if (musicActivity != null){
