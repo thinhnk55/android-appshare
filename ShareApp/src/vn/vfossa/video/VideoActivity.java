@@ -63,4 +63,10 @@ public class VideoActivity extends ListActivity {
 	public List<FilesData> getCheckedList(){
 		return adapter.getCheckedList();
 	}
+	
+	public void Filter(CharSequence strSearch){
+		if (!adapter.isEmpty()){
+			adapter.getFilter().filter(strSearch);
+		}
+	}
 }

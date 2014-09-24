@@ -2,6 +2,7 @@ package vn.vfossa.shareapp;
 
 import it.sephiroth.android.library.widget.HListView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,20 +23,21 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TabHost;
-import android.widget.TextView;
 import android.widget.TabHost.TabSpec;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends TabActivity implements ChannelListener {
@@ -96,7 +98,7 @@ public class MainActivity extends TabActivity implements ChannelListener {
 		btScan.setOnClickListener(btnScanDeviceOnClickListener);
 		btShare.setOnClickListener(btnShareOnClickListener);
 		btProgress.setOnClickListener(btProgressOnClickListener);
-		
+
 		etSearch = (EditText) findViewById(R.id.etSearch);
 		etSearch.addTextChangedListener(new TextWatcher() {
 
@@ -106,6 +108,9 @@ public class MainActivity extends TabActivity implements ChannelListener {
 				String tabTag = tabHost.getCurrentTabTag();
 				switch (tabTag) {
 				case APP_TAB:
+					ApplicationActivity appActivity = (ApplicationActivity) getLocalActivityManager()
+							.getActivity(APP_TAB);
+					appActivity.Filter(s);
 					break;
 				case MUSIC_TAB:
 					MusicActivity musicActivity = (MusicActivity) getLocalActivityManager()
@@ -113,14 +118,20 @@ public class MainActivity extends TabActivity implements ChannelListener {
 					musicActivity.Filter(s);
 					break;
 				case IMAGE_TAB:
+					ImageActivity imageActivity = (ImageActivity) getLocalActivityManager()
+							.getActivity(IMAGE_TAB);
+					imageActivity.Filter(s);
 					break;
 				case VIDEO_TAB:
+					VideoActivity videoActivity = (VideoActivity) getLocalActivityManager()
+							.getActivity(VIDEO_TAB);
+					videoActivity.Filter(s);
 					break;
 
 				default:
 					break;
 				}
-				
+
 			}
 
 			@Override
@@ -207,45 +218,44 @@ public class MainActivity extends TabActivity implements ChannelListener {
 			}
 		}
 
-		// if (file.getName().endsWith(".jpg") ||
-		// file.getName().endsWith(".jpeg")
-		// || file.getName().endsWith(".png")) {
-		// if (db.checkPath(file.getPath())) {
-		// String imageName;
-		// if (file.getName().endsWith(".jpeg")) {
-		// imageName = file.getName().substring(0,
-		// (file.getName().length() - 5));
-		// } else {
-		// imageName = file.getName().substring(0,
-		// (file.getName().length() - 4));
-		// }
-		// String imagePath = file.getPath();
-		// File imgFile = new File(imagePath);
-		//
-		// Bitmap itemImage = null;
-		//
-		// if (imgFile.exists()) {
-		//
-		// Bitmap bitmap = BitmapFactory.decodeFile(imgFile
-		// .getAbsolutePath());
-		// if (bitmap == null) {
-		// db.close();
-		// return;
-		// }
-		// itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
-		// true);
-		// }
-		//
-		// ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		// itemImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
-		// byte[] byteArray = stream.toByteArray();
-		//
-		// float size = (float) (file.length()) / (1024 * 1024);
-		// db.addFileData(new FilesData("image", imageName, imagePath,
-		// byteArray, size));
-		// db.close();
-		// }
-		// }
+		if (file.getName().endsWith(".jpg") || file.getName().endsWith(".jpeg")
+				|| file.getName().endsWith(".png")) {
+			if (db.checkPath(file.getPath())) {
+				String imageName;
+				if (file.getName().endsWith(".jpeg")) {
+					imageName = file.getName().substring(0,
+							(file.getName().length() - 5));
+				} else {
+					imageName = file.getName().substring(0,
+							(file.getName().length() - 4));
+				}
+				String imagePath = file.getPath();
+				File imgFile = new File(imagePath);
+
+				Bitmap itemImage = null;
+
+				if (imgFile.exists()) {
+
+					Bitmap bitmap = BitmapFactory.decodeFile(imgFile
+							.getAbsolutePath());
+					if (bitmap == null) {
+						db.close();
+						return;
+					}
+					itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
+							true);
+				}
+
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				itemImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
+				byte[] byteArray = stream.toByteArray();
+
+				float size = (float) (file.length()) / (1024 * 1024);
+				db.addFileData(new FilesData("image", imageName, imagePath,
+						byteArray, size));
+				db.close();
+			}
+		}
 
 		if (file.getName().endsWith(".flv") || file.getName().endsWith(".mp4")
 				|| file.getName().endsWith(".mkv")
@@ -268,7 +278,6 @@ public class MainActivity extends TabActivity implements ChannelListener {
 		}
 	}
 
-	
 	private Button.OnClickListener btnScanDeviceOnClickListener = new Button.OnClickListener() {
 		@Override
 		public void onClick(View arg0) {
@@ -284,30 +293,30 @@ public class MainActivity extends TabActivity implements ChannelListener {
 		public void onClick(View v) {
 			List<FilesData> musicList, videoList;
 			List<ApplicationInfo> appList;
-			
+
 			MusicActivity musicActivity = (MusicActivity) getLocalActivityManager()
 					.getActivity(MUSIC_TAB);
 			ApplicationActivity appActivity = (ApplicationActivity) getLocalActivityManager()
 					.getActivity(APP_TAB);
-//			ImageActivity imageActivity = (ImageActivity) getLocalActivityManager()
-//					.getActivity("HinhAnh");
+			// ImageActivity imageActivity = (ImageActivity)
+			// getLocalActivityManager()
+			// .getActivity("HinhAnh");
 			VideoActivity videoActivity = (VideoActivity) getLocalActivityManager()
 					.getActivity(VIDEO_TAB);
-			
-			
-			if (musicActivity != null){
+
+			if (musicActivity != null) {
 				musicList = musicActivity.getCheckedList();
 			} else {
 				musicList = new ArrayList<FilesData>();
 			}
-			
-			if (videoActivity != null){
+
+			if (videoActivity != null) {
 				videoList = videoActivity.getCheckedList();
 			} else {
 				videoList = new ArrayList<FilesData>();
 			}
-			
-			if (appActivity != null){
+
+			if (appActivity != null) {
 				appList = appActivity.getCheckedList();
 			} else {
 				appList = new ArrayList<ApplicationInfo>();
@@ -324,8 +333,8 @@ public class MainActivity extends TabActivity implements ChannelListener {
 							new File(video.getPath()), device.getAddress());
 				}
 				for (ApplicationInfo app : appList) {
-					bluetoothSender.sendFile(MainActivity.this,
-							new File(app.publicSourceDir), device.getAddress());
+					bluetoothSender.sendFile(MainActivity.this, new File(
+							app.publicSourceDir), device.getAddress());
 				}
 			}
 		}
@@ -336,27 +345,27 @@ public class MainActivity extends TabActivity implements ChannelListener {
 
 		@Override
 		public void onClick(View v) {
-//			MusicActivity music = (MusicActivity) getLocalActivityManager()
-//					.getActivity("NgheNhac");
-//			int[] IDs = music.getMusicFilesChecked();
-//			String[] paths = new String[IDs.length];
-//
-//			DatabaseHandler db = new DatabaseHandler(MainActivity.this);
-//
-//			for (int i = 0; i < IDs.length; i++) {
-//				paths[i] = db.getFileData(IDs[i]).getPath();
-//				Toast.makeText(MainActivity.this,
-//						"file " + i + ": " + paths[i], Toast.LENGTH_SHORT)
-//						.show();
-//			}
-//
-//			String address[] = deviceAdapter.getDeviceChecked();
-//			for (int i = 0; i < address.length; i++) {
-//				Toast.makeText(MainActivity.this,
-//						"device " + i + ": " + address[i], Toast.LENGTH_SHORT)
-//						.show();
-//			}
-//			db.close();
+			// MusicActivity music = (MusicActivity) getLocalActivityManager()
+			// .getActivity("NgheNhac");
+			// int[] IDs = music.getMusicFilesChecked();
+			// String[] paths = new String[IDs.length];
+			//
+			// DatabaseHandler db = new DatabaseHandler(MainActivity.this);
+			//
+			// for (int i = 0; i < IDs.length; i++) {
+			// paths[i] = db.getFileData(IDs[i]).getPath();
+			// Toast.makeText(MainActivity.this,
+			// "file " + i + ": " + paths[i], Toast.LENGTH_SHORT)
+			// .show();
+			// }
+			//
+			// String address[] = deviceAdapter.getDeviceChecked();
+			// for (int i = 0; i < address.length; i++) {
+			// Toast.makeText(MainActivity.this,
+			// "device " + i + ": " + address[i], Toast.LENGTH_SHORT)
+			// .show();
+			// }
+			// db.close();
 
 		}
 
@@ -372,8 +381,8 @@ public class MainActivity extends TabActivity implements ChannelListener {
 		case BluetoothManager.BLUETOOTH_NOTENABLED:
 			Intent enableBtIntent = new Intent(
 					BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//			startActivityForResult(enableBtIntent,
-//					BluetoothManager.REQUEST_ENABLE_BT);
+			// startActivityForResult(enableBtIntent,
+			// BluetoothManager.REQUEST_ENABLE_BT);
 			break;
 
 		case BluetoothManager.BLUETOOTH_NOTSUPPORTED:

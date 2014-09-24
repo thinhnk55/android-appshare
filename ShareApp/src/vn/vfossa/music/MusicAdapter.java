@@ -28,6 +28,7 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 	private ArrayList<FilesData> song;
 	private LayoutInflater mInflator;
 	private Context context;
+	private static final String type = "music";
 
 	public MusicAdapter(Context context, ArrayList<FilesData> song) {
 		super(context, R.layout.media_item_layout, song);
@@ -118,12 +119,13 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 			protected FilterResults performFiltering(CharSequence constraint) {
 				DatabaseHandler db = new DatabaseHandler(context);
 				ArrayList<FilesData> songs = new ArrayList<FilesData>();
-				List<FilesData> listSongs = db.getAllFileDatas();
+				List<FilesData> listSongs = db.getAllFileWithType(type);
 				for (FilesData sd : listSongs) {
 					FilesData song = new FilesData();
 					song.setID(sd.getID());
 					song.setName(sd.getName());
 					song.setPath(sd.getPath());
+					song.setSize(sd.getSize());
 					byte[] data = sd.getImage();
 					if (data != null) {
 						song.setImage(data);

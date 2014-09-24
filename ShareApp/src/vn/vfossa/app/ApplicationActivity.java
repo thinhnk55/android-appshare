@@ -75,6 +75,13 @@ public class ApplicationActivity extends Activity {
 			progress.dismiss();
 			super.onPostExecute(result);
 		}
+		
 
+	}
+	
+	public void Filter(CharSequence strSearch){
+		if (!listAdapter.isEmpty()){
+			listAdapter.getFilter().filter(strSearch);
+		}
 	}
 }

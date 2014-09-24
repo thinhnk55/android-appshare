@@ -76,5 +76,11 @@ public class ImageActivity extends Activity {
 			}
 		}
 	}
+	
+	public void Filter(CharSequence strSearch){
+		if (!adapter.isEmpty()){
+			adapter.getFilter().filter(strSearch);
+		}
+	}
 
 }
