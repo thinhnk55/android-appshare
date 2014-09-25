@@ -27,6 +27,7 @@ public class ImageAdapter extends ArrayAdapter<Bitmap> {
 
 	private int[] checkedState;
 	private boolean[] checkboxSelected;
+	private List<Bitmap> checkedList = new ArrayList<Bitmap>();
 	private static final String type = "image";
 
 	public ImageAdapter(Context context, ArrayList<Bitmap> listImage,
@@ -47,7 +48,7 @@ public class ImageAdapter extends ArrayAdapter<Bitmap> {
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, ViewGroup parent) {
 		final ViewHolder view;
 
 		if (convertView == null) {
@@ -74,19 +75,23 @@ public class ImageAdapter extends ArrayAdapter<Bitmap> {
 				CheckBox cb = (CheckBox) v;
 				int id = cb.getId();
 				if (checkboxSelected[id]) {
-					cb.setChecked(false);
+					checkedList.remove(getItem(position));
 					checkboxSelected[id] = false;
 				} else {
-					cb.setChecked(true);
+					checkedList.add(getItem(position));
 					checkboxSelected[id] = true;
 				}
 			}
 		});
 
-		view.checkBox.setChecked(checkboxSelected[position]);
+		view.checkBox.setChecked(checkedList.contains(getItem(position)));
 
 		// notifyDataSetChanged();
 		return convertView;
+	}
+	
+	public List<Bitmap> getCheckedList() {
+		return checkedList;
 	}
 
 	@Override

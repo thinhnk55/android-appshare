@@ -82,5 +82,9 @@ public class ImageActivity extends Activity {
 			adapter.getFilter().filter(strSearch);
 		}
 	}
+	
+	public List<Bitmap> getCheckedList(){
+		return adapter.getCheckedList();
+	}
 
 }

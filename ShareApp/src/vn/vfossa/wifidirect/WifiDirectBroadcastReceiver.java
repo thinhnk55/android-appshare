@@ -1,6 +1,7 @@
 
 package vn.vfossa.wifidirect;
 
+import vn.vfossa.shareapp.MainActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,10 +14,10 @@ public class WifiDirectBroadcastReceiver extends BroadcastReceiver {
 
     private final String TAG = WifiDirectBroadcastReceiver.class.getSimpleName();
 
-    private BaseActivity mBaseActivity = null;
+    private MainActivity mMainActivity = null;
 
-    public WifiDirectBroadcastReceiver(BaseActivity activity) {
-        mBaseActivity = activity;
+    public WifiDirectBroadcastReceiver(MainActivity activity) {
+        mMainActivity = activity;
     }
 
     @Override
@@ -42,13 +43,13 @@ public class WifiDirectBroadcastReceiver extends BroadcastReceiver {
             // request available peers from the wifi p2p manager. This is an
             // asynchronous call and the calling activity is notified with a
             // callback on PeerListListener.onPeersAvailable()
-            mBaseActivity.onPeersChanged();
+            mMainActivity.onPeersChanged();
 
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             Log.d(TAG, "WIFI_P2P_CONNECTION_CHANGED_ACTION");
 
             NetworkInfo info = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
-            mBaseActivity.onConnectionChanged(info);
+            mMainActivity.onConnectionChanged(info);
 
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
             Log.d(TAG, "WIFI_P2P_THIS_DEVICE_CHANGED_ACTION");
