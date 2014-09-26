@@ -18,13 +18,10 @@ import vn.vfossa.device.DeviceAdapter;
 import vn.vfossa.image.ImageActivity;
 import vn.vfossa.music.MusicActivity;
 import vn.vfossa.video.VideoActivity;
-import vn.vfossa.wifidirect.WifiDirectBroadcastReceiver;
-import vn.vfossa.wifidirect.WifiP2pDeviceAdapter;
 import android.app.TabActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
@@ -32,24 +29,12 @@ import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
-import android.net.NetworkInfo;
-import android.net.wifi.WpsInfo;
-import android.net.wifi.p2p.WifiP2pConfig;
-import android.net.wifi.p2p.WifiP2pDevice;
-import android.net.wifi.p2p.WifiP2pDeviceList;
-import android.net.wifi.p2p.WifiP2pInfo;
-import android.net.wifi.p2p.WifiP2pManager;
-import android.net.wifi.p2p.WifiP2pManager.ActionListener;
+import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
-import android.net.wifi.p2p.WifiP2pManager.ConnectionInfoListener;
-import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -59,8 +44,7 @@ import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends TabActivity implements ChannelListener,
-		PeerListListener, ConnectionInfoListener {
+public class MainActivity extends TabActivity implements ChannelListener {
 
 	public static final String TAG = "shareApp";
 	public static final String APP_TAB = "UngDung";
@@ -73,47 +57,13 @@ public class MainActivity extends TabActivity implements ChannelListener,
 	private Button btScan;
 	private Button btShare;
 	private Button btProgress;
-	private DeviceAdapter deviceAdapter;
+	private static DeviceAdapter deviceAdapter;
 	private HListView listDevice;
 	private TextView etSearch;
 	public static final int currentapiVersion = android.os.Build.VERSION.SDK_INT;
 	public static boolean goodVersion = false;
 
-	protected WifiP2pManager mWifiP2pManager = null;
-	protected WifiP2pManager.Channel mChannel = null;
-	protected BroadcastReceiver mBroadcastReceiver = null;
-	protected IntentFilter mIntentFilter = null;
-
-	private final int WIFIP2PDEVICE = 0;
-
-	private WifiP2pDeviceAdapter mWifiP2pDeviceAdapter = null;
-	private List<WifiP2pDevice> mWifiP2pDeviceList = new ArrayList<WifiP2pDevice>();
-	private WifiP2pDevice mWifiP2pDevice = null;
-
 	private BluetoothManager bluetoothSender;
-
-	private Handler mHandler = new Handler() {
-		public void handleMessage(Message msg) {
-			if (msg.what == WIFIP2PDEVICE) {
-				WifiP2pDevice device = (WifiP2pDevice) msg.obj;
-				WifiP2pConfig config = new WifiP2pConfig();
-				config.deviceAddress = device.deviceAddress;
-				config.wps.setup = WpsInfo.PBC;
-				mWifiP2pManager.connect(mChannel, config, new ActionListener() {
-					@Override
-					public void onSuccess() {
-						Log.d(TAG, "connect callback success.");
-					}
-
-					@Override
-					public void onFailure(int reason) {
-						Log.e(TAG, "connect callback failed.");
-					}
-				});
-
-			}
-		};
-	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -122,24 +72,10 @@ public class MainActivity extends TabActivity implements ChannelListener,
 		setContentView(R.layout.activity_main);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-		mWifiP2pManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-		mChannel = mWifiP2pManager.initialize(this, getMainLooper(), null);
-
-		mIntentFilter = new IntentFilter();
-		mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-		mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-		mIntentFilter
-				.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-		mIntentFilter
-				.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-
 		btScan = (Button) findViewById(R.id.btScan);
 		btShare = (Button) findViewById(R.id.btShare);
 		btProgress = (Button) findViewById(R.id.btProgress);
 		listDevice = (HListView) findViewById(R.id.listDevice);
-
-		mWifiP2pDeviceAdapter = new WifiP2pDeviceAdapter(this,
-				mWifiP2pDeviceList);
 
 		File home = new File(MEDIA_PATH);
 
@@ -149,15 +85,15 @@ public class MainActivity extends TabActivity implements ChannelListener,
 
 		checkVersion();
 
-		if (goodVersion) {
-			listDevice.setAdapter(mWifiP2pDeviceAdapter);
-		} else {
-			bluetoothSender = new BluetoothManager(getApplicationContext());
-			deviceAdapter = new DeviceAdapter(MainActivity.this,
-					bluetoothSender.getDevices());
-			listDevice.setAdapter(deviceAdapter);
-			deviceAdapter.notifyDataSetChanged();
-		}
+		// if (goodVersion) {
+		// // listDevice.setAdapter(mWifiP2pDeviceAdapter);
+		// } else {
+		bluetoothSender = new BluetoothManager(getApplicationContext());
+		deviceAdapter = new DeviceAdapter(MainActivity.this,
+				bluetoothSender.getDevices());
+		listDevice.setAdapter(deviceAdapter);
+		deviceAdapter.notifyDataSetChanged();
+		// }
 
 		listDevice.setOnItemClickListener(new OnItemClickListener() {
 
@@ -360,25 +296,13 @@ public class MainActivity extends TabActivity implements ChannelListener,
 	private Button.OnClickListener btnScanDeviceOnClickListener = new Button.OnClickListener() {
 		@Override
 		public void onClick(View arg0) {
-			if (goodVersion) {
-				Toast.makeText(MainActivity.this, "discover peers.",
-						Toast.LENGTH_SHORT).show();
-				mWifiP2pManager.discoverPeers(mChannel, new ActionListener() {
-					@Override
-					public void onSuccess() {
-						Log.d(TAG, "discover initiated!");
-					}
-
-					@Override
-					public void onFailure(int reason) {
-						Log.e(TAG, "discover failed!");
-					}
-				});
-			} else {
-				bluetoothSender.updatePairedDevices();
-				deviceAdapter.notifyDataSetChanged();
-				bluetoothSender.discovery();
-			}
+			// if (goodVersion) {
+			//
+			// } else {
+			bluetoothSender.updatePairedDevices();
+			deviceAdapter.notifyDataSetChanged();
+			bluetoothSender.discovery();
+			// }
 
 		}
 	};
@@ -425,21 +349,38 @@ public class MainActivity extends TabActivity implements ChannelListener,
 			}
 
 			if (goodVersion) {
-				
+				for (FilesData music : musicList) {
+					Intent sharingIntent = new Intent(
+							android.content.Intent.ACTION_SEND);
+					sharingIntent.setType("audio/*");
+					sharingIntent
+							.setComponent(new ComponentName(
+									"com.android.bluetooth",
+									"com.android.bluetooth.opp.BluetoothOppLauncherActivity"));
+					//String filePath = music.getPath();
+					//File file = new File(music.getPath());
+					sharingIntent.putExtra(Intent.EXTRA_STREAM,
+							Uri.fromFile(new File(music.getPath())));
+					startActivity(sharingIntent);
+				}
 			} else {
 				List<Device> deviceList = deviceAdapter.getCheckedList();
 				for (Device device : deviceList) {
 					for (FilesData music : musicList) {
-						bluetoothSender.sendFile(MainActivity.this, new File(
-								music.getPath()), device.getAddress());
+						bluetoothSender.sendFileForBadVersion(
+								MainActivity.this, new File(music.getPath()),
+								device.getAddress());
 					}
 					for (FilesData video : videoList) {
-						bluetoothSender.sendFile(MainActivity.this, new File(
-								video.getPath()), device.getAddress());
+						bluetoothSender.sendFileForBadVersion(
+								MainActivity.this, new File(video.getPath()),
+								device.getAddress());
 					}
 					for (ApplicationInfo app : appList) {
-						bluetoothSender.sendFile(MainActivity.this, new File(
-								app.publicSourceDir), device.getAddress());
+						bluetoothSender.sendFileForBadVersion(
+								MainActivity.this,
+								new File(app.publicSourceDir),
+								device.getAddress());
 					}
 				}
 			}
@@ -505,11 +446,11 @@ public class MainActivity extends TabActivity implements ChannelListener,
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == BluetoothManager.REQUEST_ENABLE_BT) {
-			if (goodVersion) {
-
-			} else {
-				prepareBluetooth();
-			}
+			// if (goodVersion) {
+			//
+			// } else {
+			prepareBluetooth();
+			// }
 		}
 	}
 
@@ -536,27 +477,25 @@ public class MainActivity extends TabActivity implements ChannelListener,
 	@Override
 	public void onResume() {
 		super.onResume();
-		mBroadcastReceiver = new WifiDirectBroadcastReceiver(this);
-		registerReceiver(mBroadcastReceiver, mIntentFilter);
 
-		if (goodVersion) {
+		// if (goodVersion) {
+		//
+		// } else {
+		prepareBluetooth();
+		bluetoothSender.updatePairedDevices();
+		deviceAdapter.notifyDataSetChanged();
+		bluetoothSender.discovery();
 
-		} else {
-			prepareBluetooth();
-			bluetoothSender.updatePairedDevices();
-			deviceAdapter.notifyDataSetChanged();
-			bluetoothSender.discovery();
-
-			registerReceiver(bluetoothSender.ActionFoundReceiver,
-					new IntentFilter(BluetoothDevice.ACTION_FOUND));
-		}
+		registerReceiver(bluetoothSender.ActionFoundReceiver, new IntentFilter(
+				BluetoothDevice.ACTION_FOUND));
+		// }
 
 	}
 
 	@Override
 	public void onPause() {
 		unregisterReceiver(bluetoothSender.ActionFoundReceiver);
-		unregisterReceiver(mBroadcastReceiver);
+		// unregisterReceiver(mBroadcastReceiver);
 		super.onPause();
 	}
 
@@ -565,39 +504,10 @@ public class MainActivity extends TabActivity implements ChannelListener,
 		super.onDestroy();
 		deviceAdapter.clear();
 		deviceAdapter.notifyDataSetChanged();
-		mWifiP2pDeviceAdapter.clear();
-		mWifiP2pDeviceAdapter.notifyDataSetChanged();
 	}
 
-	@Override
-	public void onConnectionInfoAvailable(WifiP2pInfo info) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onPeersAvailable(WifiP2pDeviceList peers) {
-		mWifiP2pDeviceAdapter.clear();
-		mWifiP2pDeviceAdapter.addAll(peers.getDeviceList());
-		mWifiP2pDeviceAdapter.notifyDataSetChanged();
-	}
-
-	public void onConnectionChanged(NetworkInfo info) {
-		if (info.isConnected()) {
-			mWifiP2pManager.requestConnectionInfo(mChannel, this);
-			Log.d(TAG, "request connection info.");
-			Toast.makeText(this, "request connection info.", Toast.LENGTH_SHORT)
-					.show();
-		} else {
-			Log.e(TAG, "wifi p2p not connected!");
-			Toast.makeText(this, "connect failed!", Toast.LENGTH_SHORT).show();
-		}
-	}
-
-	public void onPeersChanged() {
-		Log.d(TAG, "request peers.");
-		mWifiP2pManager.requestPeers(mChannel, this);
-		Toast.makeText(this, "request peers.", Toast.LENGTH_SHORT).show();
+	public static DeviceAdapter getDeviceAdapter() {
+		return deviceAdapter;
 	}
 
 }

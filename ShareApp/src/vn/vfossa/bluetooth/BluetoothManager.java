@@ -91,8 +91,9 @@ public class BluetoothManager {
 			}
 		}
 	}
-
-	public void sendFile(Context context, File file, String address) {
+	
+	
+	public void sendFileForBadVersion(Context context, File file, String address) {
 		ContentValues values = new ContentValues();
 		//values.put(BluetoothShare.URI, BluetoothShare.USER_CONFIRMATION);
 		values.put(BluetoothShare.URI, Uri.fromFile(file).toString());
