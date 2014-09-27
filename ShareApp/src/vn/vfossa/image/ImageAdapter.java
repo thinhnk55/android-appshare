@@ -89,7 +89,7 @@ public class ImageAdapter extends ArrayAdapter<Bitmap> {
 		// notifyDataSetChanged();
 		return convertView;
 	}
-	
+
 	public List<Bitmap> getCheckedList() {
 		return checkedList;
 	}
@@ -166,7 +166,7 @@ public class ImageAdapter extends ArrayAdapter<Bitmap> {
 			@Override
 			protected void publishResults(CharSequence constraint,
 					FilterResults results) {
-				if (results != null) {
+				if (results.count != 0) {
 					listImage.clear();
 					@SuppressWarnings("unchecked")
 					ArrayList<Bitmap> items = new ArrayList<Bitmap>(

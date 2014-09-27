@@ -84,26 +84,12 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false" />
 
-            <LinearLayout
+            <Button
+                android:id="@+id/btShare"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="15"
-                android:weightSum="20" >
-
-                <Button
-                    android:id="@+id/btShare"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="10"
-                    android:text="@string/share" />
-
-                <Button
-                    android:id="@+id/btProgress"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="10"
-                    android:text="@string/progress" />
-            </LinearLayout>
+                android:text="@string/share" />
         </LinearLayout>
     </TabHost>
 

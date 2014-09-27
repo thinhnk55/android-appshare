@@ -42,7 +42,8 @@ public class VideoAdapter extends ArrayAdapter<FilesData> {
 		VideoHolder holder = null;
 
 		if (convertView == null) {
-			convertView = mInflator.inflate(R.layout.media_item_layout, parent, false);
+			convertView = mInflator.inflate(R.layout.media_item_layout, parent,
+					false);
 
 			holder = new VideoHolder();
 			holder.videoTitle = (TextView) convertView
@@ -90,7 +91,7 @@ public class VideoAdapter extends ArrayAdapter<FilesData> {
 				}
 			}
 		});
-		
+
 		holder.checkBox.setChecked(checkedList.contains(getItem(position)));
 
 		return convertView;
@@ -106,7 +107,7 @@ public class VideoAdapter extends ArrayAdapter<FilesData> {
 	public List<FilesData> getCheckedList() {
 		return checkedList;
 	}
-	
+
 	public Filter getFilter() {
 		return new Filter() {
 
@@ -157,7 +158,7 @@ public class VideoAdapter extends ArrayAdapter<FilesData> {
 			@Override
 			protected void publishResults(CharSequence constraint,
 					FilterResults results) {
-				if (results != null) {
+				if (results.count != 0) {
 					videos.clear();
 					@SuppressWarnings("unchecked")
 					ArrayList<FilesData> items = new ArrayList<FilesData>(
@@ -175,6 +176,5 @@ public class VideoAdapter extends ArrayAdapter<FilesData> {
 
 		};
 	}
-
 
 }

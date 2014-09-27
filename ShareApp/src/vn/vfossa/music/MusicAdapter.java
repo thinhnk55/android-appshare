@@ -87,10 +87,12 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 				CheckBox cb = (CheckBox) v;
 				if (!cb.isChecked()) {
 					checkedList.remove(getItem(position));
-					Utils.showToast(getContext(), "remove an item "+getItem(position).getPath());
+					Utils.showToast(getContext(),
+							"remove an item " + getItem(position).getPath());
 				} else {
 					checkedList.add(getItem(position));
-					Utils.showToast(getContext(), "add an item "+getItem(position).getPath());
+					Utils.showToast(getContext(),
+							"add an item " + getItem(position).getPath());
 				}
 			}
 		});
@@ -162,7 +164,7 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 			@Override
 			protected void publishResults(CharSequence constraint,
 					FilterResults results) {
-				if (results != null) {
+				if (results.count != 0) {
 					song.clear();
 					@SuppressWarnings("unchecked")
 					ArrayList<FilesData> items = new ArrayList<FilesData>(

@@ -6,9 +6,13 @@ import it.sephiroth.android.library.widget.HListView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import vn.vfossa.additionalclass.BluetoothShare;
 import vn.vfossa.app.ApplicationActivity;
 import vn.vfossa.bluetooth.BluetoothManager;
 import vn.vfossa.database.DatabaseHandler;
@@ -21,7 +25,10 @@ import vn.vfossa.video.VideoActivity;
 import android.app.TabActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
@@ -35,6 +42,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -56,25 +64,35 @@ public class MainActivity extends TabActivity implements ChannelListener {
 			.getExternalStorageDirectory().getPath();
 	private Button btScan;
 	private Button btShare;
-	private Button btProgress;
 	private static DeviceAdapter deviceAdapter;
 	private HListView listDevice;
 	private TextView etSearch;
 	public static final int currentapiVersion = android.os.Build.VERSION.SDK_INT;
 	public static boolean goodVersion = false;
 
-	private BluetoothManager bluetoothSender;
+	// private static BluetoothManager bluetoothSender;
+	private Context context;
+	private BluetoothAdapter bluetoothAdapter = BluetoothAdapter
+			.getDefaultAdapter();
+	private ArrayList<Device> devices = new ArrayList<Device>();
+	public static final int REQUEST_ENABLE_BT = 1;
+
+	public static final int BLUETOOTH_NOTSUPPORTED = -1;
+	public static final int BLUETOOTH_NOTENABLED = 0;
+	public static final int BLUETOOTH_ENABLED = 1;
+	public static final int BLUETOOTH_ISDISCOVERING = 2;
+	public static final String UUID0 = "c2915cd0-5c3c-11e3-949a-0800200c9a66";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		context = this;
 		setContentView(R.layout.activity_main);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 		btScan = (Button) findViewById(R.id.btScan);
 		btShare = (Button) findViewById(R.id.btShare);
-		btProgress = (Button) findViewById(R.id.btProgress);
 		listDevice = (HListView) findViewById(R.id.listDevice);
 
 		File home = new File(MEDIA_PATH);
@@ -85,15 +103,10 @@ public class MainActivity extends TabActivity implements ChannelListener {
 
 		checkVersion();
 
-		// if (goodVersion) {
-		// // listDevice.setAdapter(mWifiP2pDeviceAdapter);
-		// } else {
-		bluetoothSender = new BluetoothManager(getApplicationContext());
-		deviceAdapter = new DeviceAdapter(MainActivity.this,
-				bluetoothSender.getDevices());
+		// bluetoothSender = new BluetoothManager(getApplicationContext());
+		deviceAdapter = new DeviceAdapter(MainActivity.this, devices);
 		listDevice.setAdapter(deviceAdapter);
 		deviceAdapter.notifyDataSetChanged();
-		// }
 
 		listDevice.setOnItemClickListener(new OnItemClickListener() {
 
@@ -106,7 +119,6 @@ public class MainActivity extends TabActivity implements ChannelListener {
 
 		btScan.setOnClickListener(btnScanDeviceOnClickListener);
 		btShare.setOnClickListener(btnShareOnClickListener);
-		btProgress.setOnClickListener(btProgressOnClickListener);
 
 		etSearch = (EditText) findViewById(R.id.etSearch);
 		etSearch.addTextChangedListener(new TextWatcher() {
@@ -296,13 +308,9 @@ public class MainActivity extends TabActivity implements ChannelListener {
 	private Button.OnClickListener btnScanDeviceOnClickListener = new Button.OnClickListener() {
 		@Override
 		public void onClick(View arg0) {
-			// if (goodVersion) {
-			//
-			// } else {
-			bluetoothSender.updatePairedDevices();
+			updatePairedDevices();
 			deviceAdapter.notifyDataSetChanged();
-			bluetoothSender.discovery();
-			// }
+			bluetoothAdapter.startDiscovery();
 
 		}
 	};
@@ -348,6 +356,19 @@ public class MainActivity extends TabActivity implements ChannelListener {
 				appList = new ArrayList<ApplicationInfo>();
 			}
 
+			List<Device> deviceList = deviceAdapter.getCheckedList();
+
+			for (Device device : deviceList) {
+				Log.e("device", device.getName() + " : " + device.getAddress());
+				if (!BluetoothAdapter.getDefaultAdapter().getBondedDevices()
+						.contains(device)) {
+
+					BluetoothDevice bd = BluetoothAdapter.getDefaultAdapter()
+							.getRemoteDevice(device.getAddress());
+					pairDevice(bd);
+				}
+			}
+
 			if (goodVersion) {
 				for (FilesData music : musicList) {
 					Intent sharingIntent = new Intent(
@@ -357,29 +378,24 @@ public class MainActivity extends TabActivity implements ChannelListener {
 							.setComponent(new ComponentName(
 									"com.android.bluetooth",
 									"com.android.bluetooth.opp.BluetoothOppLauncherActivity"));
-					//String filePath = music.getPath();
-					//File file = new File(music.getPath());
+					// String filePath = music.getPath();
+					// File file = new File(music.getPath());
 					sharingIntent.putExtra(Intent.EXTRA_STREAM,
 							Uri.fromFile(new File(music.getPath())));
 					startActivity(sharingIntent);
 				}
 			} else {
-				List<Device> deviceList = deviceAdapter.getCheckedList();
 				for (Device device : deviceList) {
 					for (FilesData music : musicList) {
-						bluetoothSender.sendFileForBadVersion(
-								MainActivity.this, new File(music.getPath()),
+						sendFileForBadVersion(new File(music.getPath()),
 								device.getAddress());
 					}
 					for (FilesData video : videoList) {
-						bluetoothSender.sendFileForBadVersion(
-								MainActivity.this, new File(video.getPath()),
+						sendFileForBadVersion(new File(video.getPath()),
 								device.getAddress());
 					}
 					for (ApplicationInfo app : appList) {
-						bluetoothSender.sendFileForBadVersion(
-								MainActivity.this,
-								new File(app.publicSourceDir),
+						sendFileForBadVersion(new File(app.publicSourceDir),
 								device.getAddress());
 					}
 				}
@@ -388,59 +404,44 @@ public class MainActivity extends TabActivity implements ChannelListener {
 
 	};
 
-	private Button.OnClickListener btProgressOnClickListener = new Button.OnClickListener() {
-
-		@Override
-		public void onClick(View v) {
-			// MusicActivity music = (MusicActivity) getLocalActivityManager()
-			// .getActivity("NgheNhac");
-			// int[] IDs = music.getMusicFilesChecked();
-			// String[] paths = new String[IDs.length];
-			//
-			// DatabaseHandler db = new DatabaseHandler(MainActivity.this);
-			//
-			// for (int i = 0; i < IDs.length; i++) {
-			// paths[i] = db.getFileData(IDs[i]).getPath();
-			// Toast.makeText(MainActivity.this,
-			// "file " + i + ": " + paths[i], Toast.LENGTH_SHORT)
-			// .show();
-			// }
-			//
-			// String address[] = deviceAdapter.getDeviceChecked();
-			// for (int i = 0; i < address.length; i++) {
-			// Toast.makeText(MainActivity.this,
-			// "device " + i + ": " + address[i], Toast.LENGTH_SHORT)
-			// .show();
-			// }
-			// db.close();
-
+	private void pairDevice(BluetoothDevice device) {
+		try {
+			Method m = device.getClass()
+					.getMethod("createBond", (Class[]) null);
+			m.invoke(device, (Object[]) null);
+		} catch (Exception e) {
+			Log.e(TAG, e.getMessage());
 		}
+	}
 
-	};
 
 	public void prepareBluetooth() {
-		int state = bluetoothSender.checkBlueToothState();
-		switch (state) {
-		case BluetoothManager.BLUETOOTH_ENABLED:
-			btScan.setEnabled(true);
-			break;
-
-		case BluetoothManager.BLUETOOTH_NOTENABLED:
-			Intent enableBtIntent = new Intent(
-					BluetoothAdapter.ACTION_REQUEST_ENABLE);
-			// startActivityForResult(enableBtIntent,
-			// BluetoothManager.REQUEST_ENABLE_BT);
-			break;
-
-		case BluetoothManager.BLUETOOTH_NOTSUPPORTED:
+		if (bluetoothAdapter == null) {
 			Toast.makeText(this, "You cannot use this app without bluetooth",
 					Toast.LENGTH_SHORT).show();
 			finish();
-			break;
-
-		default:
-			break;
+		} else {
+			if (bluetoothAdapter.isEnabled()) {
+				if (bluetoothAdapter.isDiscovering()) {
+					Toast.makeText(
+							context,
+							"Bluetooth is currently in device discovery process.",
+							Toast.LENGTH_SHORT).show();
+				} else {
+					Toast.makeText(context, "Bluetooth is Enabled.",
+							Toast.LENGTH_SHORT).show();
+					btScan.setEnabled(true);
+				}
+			} else {
+				Toast.makeText(context, "Bluetooth is NOT Enabled!",
+						Toast.LENGTH_SHORT).show();
+				Intent enableBtIntent = new Intent(
+						BluetoothAdapter.ACTION_REQUEST_ENABLE);
+				startActivityForResult(enableBtIntent,
+						BluetoothManager.REQUEST_ENABLE_BT);
+			}
 		}
+
 	}
 
 	@Override
@@ -482,11 +483,11 @@ public class MainActivity extends TabActivity implements ChannelListener {
 		//
 		// } else {
 		prepareBluetooth();
-		bluetoothSender.updatePairedDevices();
+		updatePairedDevices();
 		deviceAdapter.notifyDataSetChanged();
-		bluetoothSender.discovery();
+		bluetoothAdapter.startDiscovery();
 
-		registerReceiver(bluetoothSender.ActionFoundReceiver, new IntentFilter(
+		registerReceiver(ActionFoundReceiver, new IntentFilter(
 				BluetoothDevice.ACTION_FOUND));
 		// }
 
@@ -494,7 +495,7 @@ public class MainActivity extends TabActivity implements ChannelListener {
 
 	@Override
 	public void onPause() {
-		unregisterReceiver(bluetoothSender.ActionFoundReceiver);
+		unregisterReceiver(ActionFoundReceiver);
 		// unregisterReceiver(mBroadcastReceiver);
 		super.onPause();
 	}
@@ -509,5 +510,63 @@ public class MainActivity extends TabActivity implements ChannelListener {
 	public static DeviceAdapter getDeviceAdapter() {
 		return deviceAdapter;
 	}
+
+	public void updatePairedDevices() {
+		devices.clear();
+
+		Set<BluetoothDevice> pairedDevices = bluetoothAdapter
+				.getBondedDevices();
+
+		if (pairedDevices.size() > 0) {
+			for (BluetoothDevice device : pairedDevices) {
+				Device newDevice = new Device();
+				newDevice.setName(device.getName());
+				newDevice.setAddress(device.getAddress());
+
+				Bitmap bitmap = BitmapFactory.decodeResource(
+						context.getResources(), R.drawable.device);
+				newDevice.setImage(bitmap);
+				devices.add(newDevice);
+			}
+		}
+	}
+
+	public void sendFileForBadVersion(File file, String address) {
+		ContentValues values = new ContentValues();
+		File addfile = new File(Environment.getExternalStorageDirectory()
+				.getPath() + "/img0.jpg");
+		values.put(BluetoothShare.URI, Uri.fromFile(addfile).toString());
+		values.put(BluetoothShare.URI, Uri.fromFile(file).toString());
+		values.put(BluetoothShare.DESTINATION, address);
+		values.put(BluetoothShare.DIRECTION, BluetoothShare.DIRECTION_OUTBOUND);
+		Long ts = System.currentTimeMillis();
+		values.put(BluetoothShare.TIMESTAMP, ts);
+		context.getContentResolver().insert(BluetoothShare.CONTENT_URI, values);
+	}
+
+	public final BroadcastReceiver ActionFoundReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+
+			String action = intent.getAction();
+			if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+				Device newDevice = new Device();
+				BluetoothDevice device = intent
+						.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+				Set<BluetoothDevice> pairedDevices = bluetoothAdapter
+						.getBondedDevices();
+				if (!pairedDevices.contains(device)) {
+					newDevice.setName(device.getName());
+					newDevice.setAddress(device.getAddress());
+					Bitmap itemImage = BitmapFactory.decodeResource(
+							context.getResources(), R.drawable.device);
+					newDevice.setImage(itemImage);
+					devices.add(newDevice);
+					deviceAdapter.notifyDataSetChanged();
+				}
+			}
+		}
+	};
 
 }

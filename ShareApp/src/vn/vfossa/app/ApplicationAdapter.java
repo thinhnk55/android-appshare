@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
 
@@ -94,17 +96,10 @@ public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
 		return convertView;
 	}
 
-	//
-	// private Drawable resize(Drawable image) {
-	// Bitmap b = ((BitmapDrawable) image).getBitmap();
-	// Bitmap bitmapResized = Bitmap.createScaledBitmap(b, 50, 50, false);
-	// return new BitmapDrawable(getContext().getResources(), bitmapResized);
-	// }
-
 	public List<ApplicationInfo> getCheckedList() {
 		return checkedList;
 	}
-	
+
 	@Override
 	public Filter getFilter() {
 		return new Filter() {
@@ -112,11 +107,13 @@ public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
 			@Override
 			protected FilterResults performFiltering(CharSequence constraint) {
 				DatabaseHandler db = new DatabaseHandler(context);
-				ArrayList<ApplicationInfo> apps =  checkForLaunchIntent(context.getPackageManager()
-						.getInstalledApplications(PackageManager.GET_META_DATA));
+				ArrayList<ApplicationInfo> apps = checkForLaunchIntent(context
+						.getPackageManager().getInstalledApplications(
+								PackageManager.GET_META_DATA));
 				FilterResults results = new FilterResults();
 				ArrayList<ApplicationInfo> filter = new ArrayList<ApplicationInfo>();
 				constraint = constraint.toString().toLowerCase();
+				Log.e("search", (String) constraint);
 
 				if (constraint != null && constraint.toString().length() > 0) {
 					for (int i = 0; i < apps.size(); i++) {
@@ -142,7 +139,7 @@ public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
 			@Override
 			protected void publishResults(CharSequence constraint,
 					FilterResults results) {
-				if (results != null) {
+				if (results.count != 0) {
 					appsList.clear();
 					@SuppressWarnings("unchecked")
 					ArrayList<ApplicationInfo> items = new ArrayList<ApplicationInfo>(
@@ -153,6 +150,7 @@ public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
 							appsList.add(item);
 						}
 					}
+
 					notifyDataSetChanged();
 				}
 
@@ -160,13 +158,14 @@ public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
 
 		};
 	}
-	
+
 	private ArrayList<ApplicationInfo> checkForLaunchIntent(
 			List<ApplicationInfo> list) {
 		ArrayList<ApplicationInfo> applist = new ArrayList<ApplicationInfo>();
 		for (ApplicationInfo info : list) {
 			try {
-				if (context.getPackageManager().getLaunchIntentForPackage(info.packageName) != null) {
+				if (context.getPackageManager().getLaunchIntentForPackage(
+						info.packageName) != null) {
 					applist.add(info);
 				}
 			} catch (Exception e) {
