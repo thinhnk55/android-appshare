@@ -46,9 +46,6 @@ public class ImageActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int position, long arg3) {
-//				Toast.makeText(MusicActivity.this, "check",
-//				Toast.LENGTH_SHORT).show();
-				//notifyDataSetChanged();
 			}
 		});
 
@@ -61,7 +58,7 @@ public class ImageActivity extends Activity {
 		List<FilesData> listApps = db.getAllFileWithType(type);
 
 		for (FilesData file : listApps) {
-			
+
 			if (file.getImage() != null) {
 				BitmapFactory.Options options = new BitmapFactory.Options();
 				options.inPurgeable = true;
@@ -76,14 +73,14 @@ public class ImageActivity extends Activity {
 			}
 		}
 	}
-	
-	public void Filter(CharSequence strSearch){
-		if (!adapter.isEmpty()){
+
+	public void Filter(CharSequence strSearch) {
+		if (!adapter.isEmpty()) {
 			adapter.getFilter().filter(strSearch);
 		}
 	}
-	
-	public List<Bitmap> getCheckedList(){
+
+	public List<Bitmap> getCheckedList() {
 		return adapter.getCheckedList();
 	}
 

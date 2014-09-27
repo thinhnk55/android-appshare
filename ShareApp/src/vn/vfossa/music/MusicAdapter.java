@@ -87,12 +87,8 @@ public class MusicAdapter extends ArrayAdapter<FilesData> {
 				CheckBox cb = (CheckBox) v;
 				if (!cb.isChecked()) {
 					checkedList.remove(getItem(position));
-					Utils.showToast(getContext(),
-							"remove an item " + getItem(position).getPath());
 				} else {
 					checkedList.add(getItem(position));
-					Utils.showToast(getContext(),
-							"add an item " + getItem(position).getPath());
 				}
 			}
 		});

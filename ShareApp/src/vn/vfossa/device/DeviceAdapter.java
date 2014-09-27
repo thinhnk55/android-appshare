@@ -64,14 +64,12 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 				CheckBox cb = (CheckBox) v;
 				if (!cb.isChecked()) {
 					checkedList.remove(getItem(position));
-					Utils.showToast(getContext(), "remove an item");
 				} else {
 					checkedList.add(getItem(position));
-					Utils.showToast(getContext(), "add an item");
 				}
 			}
 		});
-		
+
 		holder.checkBox.setChecked(checkedList.contains(getItem(position)));
 
 		return convertView;

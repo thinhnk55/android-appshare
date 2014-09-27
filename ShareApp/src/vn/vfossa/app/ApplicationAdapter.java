@@ -75,18 +75,8 @@ public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
 				CheckBox cb = (CheckBox) v;
 				if (!cb.isChecked()) {
 					checkedList.remove(getItem(position));
-					Utils.showToast(
-							getContext(),
-							"remove an item "
-									+ getItem(position).loadLabel(
-											getContext().getPackageManager()));
 				} else {
 					checkedList.add(getItem(position));
-					Utils.showToast(
-							getContext(),
-							"add an item "
-									+ getItem(position).loadLabel(
-											getContext().getPackageManager()));
 				}
 			}
 		});

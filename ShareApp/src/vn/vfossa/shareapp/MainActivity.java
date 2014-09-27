@@ -6,7 +6,6 @@ import it.sephiroth.android.library.widget.HListView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -198,7 +197,7 @@ public class MainActivity extends TabActivity implements ChannelListener {
 	}
 
 	private void checkVersion() {
-		if (currentapiVersion >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+		if (currentapiVersion >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 			goodVersion = true;
 		}
 	}
@@ -360,6 +359,7 @@ public class MainActivity extends TabActivity implements ChannelListener {
 
 			for (Device device : deviceList) {
 				Log.e("device", device.getName() + " : " + device.getAddress());
+
 				if (!BluetoothAdapter.getDefaultAdapter().getBondedDevices()
 						.contains(device)) {
 
@@ -370,19 +370,19 @@ public class MainActivity extends TabActivity implements ChannelListener {
 			}
 
 			if (goodVersion) {
-				for (FilesData music : musicList) {
-					Intent sharingIntent = new Intent(
-							android.content.Intent.ACTION_SEND);
-					sharingIntent.setType("audio/*");
-					sharingIntent
-							.setComponent(new ComponentName(
-									"com.android.bluetooth",
-									"com.android.bluetooth.opp.BluetoothOppLauncherActivity"));
-					// String filePath = music.getPath();
-					// File file = new File(music.getPath());
-					sharingIntent.putExtra(Intent.EXTRA_STREAM,
-							Uri.fromFile(new File(music.getPath())));
-					startActivity(sharingIntent);
+				for (Device device : deviceList) {
+					for (FilesData music : musicList) {
+						Intent sharingIntent = new Intent(
+								android.content.Intent.ACTION_SEND);
+						sharingIntent.setType("audio/*");
+						sharingIntent
+								.setComponent(new ComponentName(
+										"com.android.bluetooth",
+										"com.android.bluetooth.opp.BluetoothOppLauncherActivity"));
+						sharingIntent.putExtra(Intent.EXTRA_STREAM,
+								Uri.fromFile(new File(music.getPath())));
+						startActivity(sharingIntent);
+					}
 				}
 			} else {
 				for (Device device : deviceList) {
@@ -413,7 +413,6 @@ public class MainActivity extends TabActivity implements ChannelListener {
 			Log.e(TAG, e.getMessage());
 		}
 	}
-
 
 	public void prepareBluetooth() {
 		if (bluetoothAdapter == null) {
@@ -447,11 +446,7 @@ public class MainActivity extends TabActivity implements ChannelListener {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == BluetoothManager.REQUEST_ENABLE_BT) {
-			// if (goodVersion) {
-			//
-			// } else {
 			prepareBluetooth();
-			// }
 		}
 	}
 
@@ -479,9 +474,6 @@ public class MainActivity extends TabActivity implements ChannelListener {
 	public void onResume() {
 		super.onResume();
 
-		// if (goodVersion) {
-		//
-		// } else {
 		prepareBluetooth();
 		updatePairedDevices();
 		deviceAdapter.notifyDataSetChanged();
@@ -489,14 +481,12 @@ public class MainActivity extends TabActivity implements ChannelListener {
 
 		registerReceiver(ActionFoundReceiver, new IntentFilter(
 				BluetoothDevice.ACTION_FOUND));
-		// }
 
 	}
 
 	@Override
 	public void onPause() {
 		unregisterReceiver(ActionFoundReceiver);
-		// unregisterReceiver(mBroadcastReceiver);
 		super.onPause();
 	}
 
