@@ -1,4 +1,4 @@
-#Ứng Android : Appshare
+#Ứng Android : ShareApp
 
 ##Mô tả sản phẩm
 Phần mềm cho phép các thiết bị android gần nhau tìm kiếm và chia sẻ các nội dung như ứng dụng, hình ảnh, video, thông qua wifi hoặc bluetooth. Phần mềm được xây dựng trong khuôn khổ cuộc thi MHST2014.
