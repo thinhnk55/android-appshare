@@ -3,11 +3,11 @@ package vn.vfossa.video;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import vn.vfossa.database.DatabaseHandler;
 import vn.vfossa.database.FilesData;
 import vn.vfossa.shareapp.R;
-import vn.vfossa.util.Utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -131,12 +131,13 @@ public class VideoAdapter extends ArrayAdapter<FilesData> {
 				}
 				FilterResults results = new FilterResults();
 				ArrayList<FilesData> filter = new ArrayList<FilesData>();
-				constraint = constraint.toString().toLowerCase();
+				constraint = constraint.toString().toLowerCase(
+						Locale.getDefault());
 
 				if (constraint != null && constraint.toString().length() > 0) {
 					for (int i = 0; i < listVideos.size(); i++) {
 						String strName = listVideos.get(i).getName();
-						if (strName.toLowerCase().contains(
+						if (strName.toLowerCase(Locale.getDefault()).contains(
 								constraint.toString())) {
 							filter.add(listVideos.get(i));
 						}

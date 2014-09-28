@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import vn.vfossa.shareapp.R;
-import vn.vfossa.util.Utils;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,6 +64,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 				if (!cb.isChecked()) {
 					checkedList.remove(getItem(position));
 				} else {
+					checkedList.clear(); //checkedList keeps only one item.
 					checkedList.add(getItem(position));
 				}
 			}

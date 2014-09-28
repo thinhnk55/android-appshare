@@ -2,18 +2,13 @@ package vn.vfossa.app;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-import vn.vfossa.database.DatabaseHandler;
-import vn.vfossa.database.FilesData;
 import vn.vfossa.shareapp.R;
 import vn.vfossa.util.Utils;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,7 +17,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
 
@@ -30,7 +24,8 @@ public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
 	private ArrayList<ApplicationInfo> appsList;
 	private List<ApplicationInfo> checkedList = new ArrayList<ApplicationInfo>();
 	private LayoutInflater mInflator;
-	private static final String type = "app";
+
+	// private static final String type = "app";
 
 	public ApplicationAdapter(Context context,
 			ArrayList<ApplicationInfo> appsList) {
@@ -96,20 +91,20 @@ public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
 
 			@Override
 			protected FilterResults performFiltering(CharSequence constraint) {
-				DatabaseHandler db = new DatabaseHandler(context);
 				ArrayList<ApplicationInfo> apps = checkForLaunchIntent(context
 						.getPackageManager().getInstalledApplications(
 								PackageManager.GET_META_DATA));
 				FilterResults results = new FilterResults();
 				ArrayList<ApplicationInfo> filter = new ArrayList<ApplicationInfo>();
-				constraint = constraint.toString().toLowerCase();
-				Log.e("search", (String) constraint);
+				constraint = constraint.toString().toLowerCase(
+						Locale.getDefault());
+				Utils.log("search", (String) constraint);
 
 				if (constraint != null && constraint.toString().length() > 0) {
 					for (int i = 0; i < apps.size(); i++) {
 						String strName = (String) apps.get(i).loadLabel(
 								getContext().getPackageManager());
-						if (strName.toLowerCase().contains(
+						if (strName.toLowerCase(Locale.getDefault()).contains(
 								constraint.toString())) {
 							filter.add(apps.get(i));
 						}

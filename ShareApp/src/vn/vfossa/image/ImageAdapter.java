@@ -2,6 +2,7 @@ package vn.vfossa.image;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import vn.vfossa.database.DatabaseHandler;
 import vn.vfossa.database.FilesData;
@@ -25,18 +26,13 @@ public class ImageAdapter extends ArrayAdapter<Bitmap> {
 	private Context context;
 	private ArrayList<Bitmap> listImage;
 
-	private int[] checkedState;
-	private boolean[] checkboxSelected;
 	private List<Bitmap> checkedList = new ArrayList<Bitmap>();
 	private static final String type = "image";
 
-	public ImageAdapter(Context context, ArrayList<Bitmap> listImage,
-			int[] checkedState) {
+	public ImageAdapter(Context context, ArrayList<Bitmap> listImage) {
 		super(context, R.layout.item_layout, listImage);
-		this.checkedState = checkedState;
 		this.context = context;
 		this.listImage = listImage;
-		this.checkboxSelected = new boolean[listImage.size()];
 
 		mInflator = (LayoutInflater) getContext().getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
@@ -53,7 +49,8 @@ public class ImageAdapter extends ArrayAdapter<Bitmap> {
 
 		if (convertView == null) {
 			view = new ViewHolder();
-			convertView = mInflator.inflate(R.layout.item_layout, null);
+			convertView = mInflator.inflate(R.layout.item_layout, parent,
+					false);
 
 			view.imgViewItem = (ImageView) convertView
 					.findViewById(R.id.imageItem);
@@ -66,20 +63,14 @@ public class ImageAdapter extends ArrayAdapter<Bitmap> {
 		}
 
 		view.imgViewItem.setImageBitmap(getItem(position));
-		view.imgViewItem.setId(position);
-		view.checkBox.setId(position);
-
 		view.checkBox.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
 				CheckBox cb = (CheckBox) v;
-				int id = cb.getId();
-				if (checkboxSelected[id]) {
+				if (!cb.isChecked()) {
 					checkedList.remove(getItem(position));
-					checkboxSelected[id] = false;
 				} else {
 					checkedList.add(getItem(position));
-					checkboxSelected[id] = true;
 				}
 			}
 		});
@@ -120,7 +111,7 @@ public class ImageAdapter extends ArrayAdapter<Bitmap> {
 				}
 				FilterResults results = new FilterResults();
 				ArrayList<Bitmap> filter = new ArrayList<Bitmap>();
-				constraint = constraint.toString().toLowerCase();
+				constraint = constraint.toString().toLowerCase(Locale.getDefault());
 
 				BitmapFactory.Options options = new BitmapFactory.Options();
 				options.inPurgeable = true;
@@ -128,7 +119,7 @@ public class ImageAdapter extends ArrayAdapter<Bitmap> {
 				if (constraint != null && constraint.toString().length() > 0) {
 					for (int i = 0; i < images.size(); i++) {
 						String strName = images.get(i).getName();
-						if (strName.toLowerCase().contains(
+						if (strName.toLowerCase(Locale.getDefault()).contains(
 								constraint.toString())) {
 							if (images.get(i).getImage() != null) {
 

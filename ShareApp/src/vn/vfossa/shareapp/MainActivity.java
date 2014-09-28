@@ -4,7 +4,6 @@ import it.sephiroth.android.library.widget.AdapterView;
 import it.sephiroth.android.library.widget.AdapterView.OnItemClickListener;
 import it.sephiroth.android.library.widget.HListView;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -14,7 +13,6 @@ import java.util.Set;
 import vn.vfossa.additionalclass.BluetoothShare;
 import vn.vfossa.app.ApplicationActivity;
 import vn.vfossa.bluetooth.BluetoothManager;
-import vn.vfossa.database.DatabaseHandler;
 import vn.vfossa.database.FilesData;
 import vn.vfossa.device.Device;
 import vn.vfossa.device.DeviceAdapter;
@@ -34,7 +32,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.os.Bundle;
@@ -51,6 +48,7 @@ import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.widget.Toast;
 
+@SuppressWarnings("deprecation")
 public class MainActivity extends TabActivity implements ChannelListener {
 
 	public static final String TAG = "shareApp";
@@ -59,14 +57,12 @@ public class MainActivity extends TabActivity implements ChannelListener {
 	public static final String MUSIC_TAB = "NgheNhac";
 	public static final String VIDEO_TAB = "Video";
 	private TabHost tabHost;
-	private static final String MEDIA_PATH = Environment
-			.getExternalStorageDirectory().getPath();
+
 	private Button btScan;
 	private Button btShare;
 	private static DeviceAdapter deviceAdapter;
 	private HListView listDevice;
 	private TextView etSearch;
-	public static final int currentapiVersion = android.os.Build.VERSION.SDK_INT;
 	public static boolean goodVersion = false;
 
 	// private static BluetoothManager bluetoothSender;
@@ -94,10 +90,6 @@ public class MainActivity extends TabActivity implements ChannelListener {
 		btShare = (Button) findViewById(R.id.btShare);
 		listDevice = (HListView) findViewById(R.id.listDevice);
 
-		File home = new File(MEDIA_PATH);
-
-		scanDirectory(home);
-
 		setUpTabs();
 
 		checkVersion();
@@ -105,7 +97,6 @@ public class MainActivity extends TabActivity implements ChannelListener {
 		// bluetoothSender = new BluetoothManager(getApplicationContext());
 		deviceAdapter = new DeviceAdapter(MainActivity.this, devices);
 		listDevice.setAdapter(deviceAdapter);
-		deviceAdapter.notifyDataSetChanged();
 
 		listDevice.setOnItemClickListener(new OnItemClickListener() {
 
@@ -197,110 +188,8 @@ public class MainActivity extends TabActivity implements ChannelListener {
 	}
 
 	private void checkVersion() {
-		if (currentapiVersion >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 			goodVersion = true;
-		}
-	}
-
-	private void scanDirectory(File directory) {
-		DatabaseHandler db = new DatabaseHandler(MainActivity.this);
-		if (directory != null) {
-			File[] listFiles = directory.listFiles();
-			if (listFiles != null && listFiles.length > 0) {
-				for (File file : listFiles) {
-					if (!file.getName().equals(".thumbnails")
-							&& !file.getName().equals("cache")
-							&& !file.getName().startsWith(".")
-							&& !file.getName().startsWith("com.")) {
-						if (file.isDirectory() && db.checkPath(file.getPath())) {
-							scanDirectory(file);
-						} else {
-							addFileToList(file);
-						}
-					}
-
-				}
-			}
-		}
-		db.close();
-	}
-
-	private void addFileToList(File file) {
-		DatabaseHandler db = new DatabaseHandler(MainActivity.this);
-
-		if (file.getName().endsWith(".mp3")) {
-			if (db.checkPath(file.getPath())) {
-				String songName = file.getName().substring(0,
-						(file.getName().length() - 4));
-				String songPath = file.getPath();
-				MediaMetadataRetriever media = new MediaMetadataRetriever();
-				media.setDataSource(songPath);
-				byte[] data = media.getEmbeddedPicture();
-				media.release();
-				float size = (float) (file.length()) / (1024 * 1024);
-				db.addFileData(new FilesData("music", songName, songPath, data,
-						size));
-				db.close();
-			}
-		}
-
-		if (file.getName().endsWith(".jpg") || file.getName().endsWith(".jpeg")
-				|| file.getName().endsWith(".png")) {
-			if (db.checkPath(file.getPath())) {
-				String imageName;
-				if (file.getName().endsWith(".jpeg")) {
-					imageName = file.getName().substring(0,
-							(file.getName().length() - 5));
-				} else {
-					imageName = file.getName().substring(0,
-							(file.getName().length() - 4));
-				}
-				String imagePath = file.getPath();
-				File imgFile = new File(imagePath);
-
-				Bitmap itemImage = null;
-
-				if (imgFile.exists()) {
-
-					Bitmap bitmap = BitmapFactory.decodeFile(imgFile
-							.getAbsolutePath());
-					if (bitmap == null) {
-						db.close();
-						return;
-					}
-					itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
-							true);
-				}
-
-				ByteArrayOutputStream stream = new ByteArrayOutputStream();
-				itemImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
-				byte[] byteArray = stream.toByteArray();
-
-				float size = (float) (file.length()) / (1024 * 1024);
-				db.addFileData(new FilesData("image", imageName, imagePath,
-						byteArray, size));
-				db.close();
-			}
-		}
-
-		if (file.getName().endsWith(".flv") || file.getName().endsWith(".mp4")
-				|| file.getName().endsWith(".mkv")
-				|| file.getName().endsWith(".3gp")) {
-			if (db.checkPath(file.getPath())) {
-
-				String videoName = file.getName().substring(0,
-						(file.getName().length() - 4));
-				String videoPath = file.getPath();
-				MediaMetadataRetriever media = new MediaMetadataRetriever();
-				media.setDataSource(videoPath);
-				byte[] data = media.getEmbeddedPicture();
-
-				media.release();
-				float size = (float) (file.length()) / (1024 * 1024);
-				db.addFileData(new FilesData("video", videoName, videoPath,
-						data, size));
-				db.close();
-			}
 		}
 	}
 
@@ -369,35 +258,15 @@ public class MainActivity extends TabActivity implements ChannelListener {
 				}
 			}
 
-			if (goodVersion) {
-				for (Device device : deviceList) {
-					for (FilesData music : musicList) {
-						Intent sharingIntent = new Intent(
-								android.content.Intent.ACTION_SEND);
-						sharingIntent.setType("audio/*");
-						sharingIntent
-								.setComponent(new ComponentName(
-										"com.android.bluetooth",
-										"com.android.bluetooth.opp.BluetoothOppLauncherActivity"));
-						sharingIntent.putExtra(Intent.EXTRA_STREAM,
-								Uri.fromFile(new File(music.getPath())));
-						startActivity(sharingIntent);
-					}
+			for (Device device : deviceList) {
+				for (FilesData music : musicList) {
+					sendFile(new File(music.getPath()), device.getAddress());
 				}
-			} else {
-				for (Device device : deviceList) {
-					for (FilesData music : musicList) {
-						sendFileForBadVersion(new File(music.getPath()),
-								device.getAddress());
-					}
-					for (FilesData video : videoList) {
-						sendFileForBadVersion(new File(video.getPath()),
-								device.getAddress());
-					}
-					for (ApplicationInfo app : appList) {
-						sendFileForBadVersion(new File(app.publicSourceDir),
-								device.getAddress());
-					}
+				for (FilesData video : videoList) {
+					sendFile(new File(video.getPath()), device.getAddress());
+				}
+				for (ApplicationInfo app : appList) {
+					sendFile(new File(app.publicSourceDir), device.getAddress());
 				}
 			}
 		}
@@ -521,17 +390,30 @@ public class MainActivity extends TabActivity implements ChannelListener {
 		}
 	}
 
-	public void sendFileForBadVersion(File file, String address) {
-		ContentValues values = new ContentValues();
-		File addfile = new File(Environment.getExternalStorageDirectory()
-				.getPath() + "/img0.jpg");
-		values.put(BluetoothShare.URI, Uri.fromFile(addfile).toString());
-		values.put(BluetoothShare.URI, Uri.fromFile(file).toString());
-		values.put(BluetoothShare.DESTINATION, address);
-		values.put(BluetoothShare.DIRECTION, BluetoothShare.DIRECTION_OUTBOUND);
-		Long ts = System.currentTimeMillis();
-		values.put(BluetoothShare.TIMESTAMP, ts);
-		context.getContentResolver().insert(BluetoothShare.CONTENT_URI, values);
+	public void sendFile(File file, String address) {
+		if (goodVersion) {
+			Intent sharingIntent = new Intent(
+					android.content.Intent.ACTION_SEND);
+			sharingIntent.setType("audio/*");
+			sharingIntent.setComponent(new ComponentName(
+					"com.android.bluetooth",
+					"com.android.bluetooth.opp.BluetoothOppLauncherActivity"));
+			sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+			startActivity(sharingIntent);
+		} else {
+			ContentValues values = new ContentValues();
+			File addfile = new File(Environment.getExternalStorageDirectory()
+					.getPath() + "/img0.jpg");
+			values.put(BluetoothShare.URI, Uri.fromFile(addfile).toString());
+			values.put(BluetoothShare.URI, Uri.fromFile(file).toString());
+			values.put(BluetoothShare.DESTINATION, address);
+			values.put(BluetoothShare.DIRECTION,
+					BluetoothShare.DIRECTION_OUTBOUND);
+			Long ts = System.currentTimeMillis();
+			values.put(BluetoothShare.TIMESTAMP, ts);
+			context.getContentResolver().insert(BluetoothShare.CONTENT_URI,
+					values);
+		}
 	}
 
 	public final BroadcastReceiver ActionFoundReceiver = new BroadcastReceiver() {

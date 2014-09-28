@@ -1,18 +1,14 @@
 package vn.vfossa.bluetooth;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
-import java.util.UUID;
 
 import vn.vfossa.additionalclass.BluetoothShare;
 import vn.vfossa.device.Device;
 import vn.vfossa.shareapp.R;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothServerSocket;
-import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -28,7 +24,7 @@ public class BluetoothManager {
 	private Context context;
 	private BluetoothAdapter bluetoothAdapter = BluetoothAdapter
 			.getDefaultAdapter();
-	private static ArrayList<Device> devices;
+	private static ArrayList<Device> devices; //Why static???
 	public static final int REQUEST_ENABLE_BT = 1;
 
 	public static final int BLUETOOTH_NOTSUPPORTED = -1;
@@ -39,7 +35,7 @@ public class BluetoothManager {
 
 	public BluetoothManager(Context context) {
 		this.context = context;
-		this.devices = new ArrayList<Device>();
+		devices = new ArrayList<Device>();
 	}
 
 	public ArrayList<Device> getDevices() {
@@ -65,7 +61,7 @@ public class BluetoothManager {
 				Bitmap bitmap = BitmapFactory.decodeResource(
 						context.getResources(), R.drawable.device);
 				newDevice.setImage(bitmap);
-				this.devices.add(newDevice);
+				devices.add(newDevice);
 			}
 		}
 	}

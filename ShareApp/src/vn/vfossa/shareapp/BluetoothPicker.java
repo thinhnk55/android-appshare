@@ -4,14 +4,12 @@ import java.util.List;
 
 import vn.vfossa.device.Device;
 import vn.vfossa.device.DeviceAdapter;
-import vn.vfossa.shareapp.R;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 public class BluetoothPicker extends Activity {
 

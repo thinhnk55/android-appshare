@@ -20,7 +20,6 @@ public class ImageActivity extends Activity {
 	private ImageAdapter adapter;
 	private ArrayList<Bitmap> listImage;
 	private GridView gridView;
-	private int[] checkedState;
 	private static final String type = "image";
 
 	@Override
@@ -29,13 +28,7 @@ public class ImageActivity extends Activity {
 		setContentView(R.layout.images_activity);
 
 		setList();
-
-		checkedState = new int[listImage.size()];
-		for (int i = 0; i < listImage.size(); i++) {
-			checkedState[i] = 0;
-		}
-
-		adapter = new ImageAdapter(this, listImage, checkedState);
+		adapter = new ImageAdapter(this, listImage);
 
 		// Set custom adapter to gridview
 		gridView = (GridView) findViewById(R.id.gridViewImage);

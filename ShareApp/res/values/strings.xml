@@ -27,5 +27,6 @@
     <string name="song_size">Size : </string>
     <string name="song_size_sample">3.44 MB</string>
     <string name="device_name">LGL22</string>
+    <string name="title_activity_start_up">StartUpActivity</string>
 
 </resources>
