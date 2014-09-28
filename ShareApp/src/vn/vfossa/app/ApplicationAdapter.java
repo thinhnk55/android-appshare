@@ -1,27 +1,19 @@
 package vn.vfossa.app;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 import vn.vfossa.additionalclass.CheckableAdapter;
 import vn.vfossa.shareapp.R;
-import vn.vfossa.util.Utils;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.Filter;
 import android.widget.ImageView;
 
 public class ApplicationAdapter extends CheckableAdapter<ApplicationInfo> {
-
-	private Context context;
-	private ArrayList<ApplicationInfo> appsList;
 	private LayoutInflater mInflator;
 
 	// private static final String type = "app";
@@ -29,8 +21,6 @@ public class ApplicationAdapter extends CheckableAdapter<ApplicationInfo> {
 	public ApplicationAdapter(Context context,
 			ArrayList<ApplicationInfo> appsList) {
 		super(context, R.layout.item_layout, appsList);
-		this.context = context;
-		this.appsList = appsList;
 		mInflator = (LayoutInflater) getContext().getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 	}
@@ -78,81 +68,5 @@ public class ApplicationAdapter extends CheckableAdapter<ApplicationInfo> {
 		holder.checkBox.setChecked(checkedList.contains(appInfo));
 
 		return convertView;
-	}
-
-	@Override
-	public Filter getFilter() {
-		return new Filter() {
-
-			@Override
-			protected FilterResults performFiltering(CharSequence constraint) {
-				ArrayList<ApplicationInfo> apps = checkForLaunchIntent(context
-						.getPackageManager().getInstalledApplications(
-								PackageManager.GET_META_DATA));
-				FilterResults results = new FilterResults();
-				ArrayList<ApplicationInfo> filter = new ArrayList<ApplicationInfo>();
-				constraint = constraint.toString().toLowerCase(
-						Locale.getDefault());
-				Utils.log("search", (String) constraint);
-
-				if (constraint != null && constraint.toString().length() > 0) {
-					for (int i = 0; i < apps.size(); i++) {
-						String strName = (String) apps.get(i).loadLabel(
-								getContext().getPackageManager());
-						if (strName.toLowerCase(Locale.getDefault()).contains(
-								constraint.toString())) {
-							filter.add(apps.get(i));
-						}
-					}
-				}
-				if (constraint == null || constraint.toString().length() == 0) {
-					for (int i = 0; i < apps.size(); i++) {
-						filter.add(apps.get(i));
-					}
-				}
-
-				results.count = filter.size();
-				results.values = filter;
-				return results;
-			}
-
-			@Override
-			protected void publishResults(CharSequence constraint,
-					FilterResults results) {
-				if (results.count != 0) {
-					appsList.clear();
-					@SuppressWarnings("unchecked")
-					ArrayList<ApplicationInfo> items = new ArrayList<ApplicationInfo>(
-							(ArrayList<ApplicationInfo>) results.values);
-
-					if (items.size() > 0) {
-						for (ApplicationInfo item : items) {
-							appsList.add(item);
-						}
-					}
-
-					notifyDataSetChanged();
-				}
-
-			}
-
-		};
-	}
-
-	private ArrayList<ApplicationInfo> checkForLaunchIntent(
-			List<ApplicationInfo> list) {
-		ArrayList<ApplicationInfo> applist = new ArrayList<ApplicationInfo>();
-		for (ApplicationInfo info : list) {
-			try {
-				if (context.getPackageManager().getLaunchIntentForPackage(
-						info.packageName) != null) {
-					applist.add(info);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		return applist;
 	}
 };

@@ -131,8 +131,8 @@ public class MainActivity extends TabActivity implements ChannelListener {
 				for (int tabId = 0; tabId < TABS.length; ++tabId) {
 					if (tabTag.equals(TABS[tabId])) {
 						CheckableAndFilterableActivity activity = (CheckableAndFilterableActivity) getLocalActivityManager()
-								.getActivity(APP_TAB);
-						activity.Filter(s);
+								.getActivity(TABS[tabId]);
+						activity.filter(s);
 					}
 				}
 			}

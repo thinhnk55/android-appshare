@@ -2,11 +2,8 @@ package vn.vfossa.music;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 import vn.vfossa.additionalclass.CheckableAdapter;
-import vn.vfossa.database.DatabaseHandler;
 import vn.vfossa.database.FilesData;
 import vn.vfossa.shareapp.R;
 import android.content.Context;
@@ -17,22 +14,16 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 public class MusicAdapter extends CheckableAdapter<FilesData> {
 	public static final String TAG = MusicAdapter.class.getSimpleName();
 
-	private ArrayList<FilesData> song;
 	private LayoutInflater mInflator;
-	private Context context;
-	private static final String type = "music";
 
 	public MusicAdapter(Context context, ArrayList<FilesData> song) {
 		super(context, R.layout.media_item_layout, song);
-		this.context = context;
-		this.song = song;
 		mInflator = (LayoutInflater) getContext().getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 	}
@@ -102,77 +93,6 @@ public class MusicAdapter extends CheckableAdapter<FilesData> {
 		TextView size;
 		TextView songTitle;
 		ImageView imageView;
-	}
-
-	@Override
-	public Filter getFilter() {
-		return new Filter() {
-
-			@Override
-			protected FilterResults performFiltering(CharSequence constraint) {
-				DatabaseHandler db = new DatabaseHandler(context);
-				ArrayList<FilesData> songs = new ArrayList<FilesData>();
-				List<FilesData> listSongs = db.getAllFileWithType(type);
-				for (FilesData sd : listSongs) {
-					FilesData song = new FilesData();
-					song.setID(sd.getID());
-					song.setName(sd.getName());
-					song.setPath(sd.getPath());
-					song.setSize(sd.getSize());
-					byte[] data = sd.getImage();
-					if (data != null) {
-						song.setImage(data);
-					} else {
-						song.setImage(null);
-					}
-
-					songs.add(song);
-				}
-				FilterResults results = new FilterResults();
-				ArrayList<FilesData> filter = new ArrayList<FilesData>();
-				constraint = constraint.toString().toLowerCase(
-						Locale.getDefault());
-
-				if (constraint != null && constraint.toString().length() > 0) {
-					for (int i = 0; i < songs.size(); i++) {
-						String strName = songs.get(i).getName();
-						if (strName.toLowerCase(Locale.getDefault()).contains(
-								constraint.toString())) {
-							filter.add(songs.get(i));
-						}
-					}
-				}
-				if (constraint == null || constraint.toString().length() == 0) {
-					for (int i = 0; i < songs.size(); i++) {
-						filter.add(songs.get(i));
-					}
-				}
-
-				results.count = filter.size();
-				results.values = filter;
-				return results;
-			}
-
-			@Override
-			protected void publishResults(CharSequence constraint,
-					FilterResults results) {
-				if (results.count != 0) {
-					song.clear();
-					@SuppressWarnings("unchecked")
-					ArrayList<FilesData> items = new ArrayList<FilesData>(
-							(ArrayList<FilesData>) results.values);
-
-					if (items.size() > 0) {
-						for (FilesData item : items) {
-							song.add(item);
-						}
-					}
-					notifyDataSetChanged();
-				}
-
-			}
-
-		};
 	}
 
 }

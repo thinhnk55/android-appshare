@@ -141,10 +141,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	/*
 	 * Hàm để lấy tất cả các dữ liệu hiện có trong cơ sở dữ liệu
 	 */
-	public List<FilesData> getAllFileWithType(String type) {
+	public ArrayList<FilesData> getAllFileWithType(String type) {
 
 		// Tạo list để chứa dữ liệu
-		List<FilesData> fileDataList = new ArrayList<FilesData>();
+		ArrayList<FilesData> fileDataList = new ArrayList<FilesData>();
 
 		// Tạo lệnh SQLite
 		String selectQuery = "SELECT  * FROM " + TABLE_FILESDATA +" WHERE " + KEY_TYPE +" = '" + type+"'";

@@ -2,6 +2,7 @@ package vn.vfossa.app;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import vn.vfossa.additionalclass.CheckableAndFilterableActivity;
 import vn.vfossa.shareapp.R;
@@ -15,8 +16,9 @@ import android.widget.GridView;
 
 public class ApplicationActivity extends Activity implements CheckableAndFilterableActivity {
 	private PackageManager packageManager = null;
-	private ArrayList<ApplicationInfo> appList = null;
-	private ApplicationAdapter listAdapter = null;
+	private ArrayList<ApplicationInfo> allApps = null;
+	private ArrayList<ApplicationInfo> showApps = null;
+	private ApplicationAdapter adapter = null;
 	private GridView gridView;
 
 	@Override
@@ -32,7 +34,7 @@ public class ApplicationActivity extends Activity implements CheckableAndFiltera
 	
 	@Override
 	public List<ApplicationInfo> getCheckedList() {
-		return listAdapter.getCheckedList();
+		return adapter.getCheckedList();
 	}
 
 	private ArrayList<ApplicationInfo> checkForLaunchIntent(
@@ -63,28 +65,45 @@ public class ApplicationActivity extends Activity implements CheckableAndFiltera
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			appList = checkForLaunchIntent(packageManager
+			allApps = checkForLaunchIntent(packageManager
 					.getInstalledApplications(PackageManager.GET_META_DATA));
-			listAdapter = new ApplicationAdapter(ApplicationActivity.this,
-					appList);
+			
+			showApps = new ArrayList<ApplicationInfo>();
+			for (ApplicationInfo app : allApps){
+				showApps.add(app);
+			}
+			adapter = new ApplicationAdapter(ApplicationActivity.this,
+					showApps);
 
 			return null;
 		}
 
 		@Override
 		protected void onPostExecute(Void result) {
-			gridView.setAdapter(listAdapter);
+			gridView.setAdapter(adapter);
 			progress.dismiss();
 			super.onPostExecute(result);
 		}
-		
-
 	}
 	
 	@Override
-	public void Filter(CharSequence strSearch){
-		if (!listAdapter.isEmpty()){
-			listAdapter.getFilter().filter(strSearch);
+	public void filter(CharSequence constraint){
+		if (! allApps.isEmpty()){
+			showApps.clear();
+			if (constraint != null && constraint.length() > 0){
+				constraint = constraint.toString().toLowerCase(Locale.getDefault());
+				for (ApplicationInfo app : allApps){
+					String appName = (String) app.loadLabel(getPackageManager());
+					if (appName.toLowerCase(Locale.getDefault()).contains(constraint)){
+						showApps.add(app);
+					}
+				}
+			} else {
+				for (ApplicationInfo song : allApps){
+					showApps.add(song);
+				}
+			}
+			adapter.notifyDataSetChanged();
 		}
 	}
 }

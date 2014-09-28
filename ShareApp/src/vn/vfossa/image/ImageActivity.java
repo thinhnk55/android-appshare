@@ -2,6 +2,7 @@ package vn.vfossa.image;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import vn.vfossa.additionalclass.CheckableAndFilterableActivity;
 import vn.vfossa.database.DatabaseHandler;
@@ -17,7 +18,8 @@ import android.widget.GridView;
 public class ImageActivity extends Activity implements CheckableAndFilterableActivity {
 
 	private ImageAdapter adapter;
-	private ArrayList<FilesData> listImage;
+	private ArrayList<FilesData> allImages;
+	private ArrayList<FilesData> showImages;
 	private GridView gridView;
 	private static final String type = "image";
 
@@ -26,8 +28,8 @@ public class ImageActivity extends Activity implements CheckableAndFilterableAct
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.images_activity);
 
-		setList();
-		adapter = new ImageAdapter(this, listImage);
+		initShowList();
+		adapter = new ImageAdapter(this, showImages);
 
 		// Set custom adapter to gridview
 		gridView = (GridView) findViewById(R.id.gridViewImage);
@@ -43,19 +45,32 @@ public class ImageActivity extends Activity implements CheckableAndFilterableAct
 
 	}
 
-	public void setList() {
-		listImage = new ArrayList<FilesData>();
+	public void initShowList() {
+		showImages = new ArrayList<FilesData>();
 		DatabaseHandler db = new DatabaseHandler(this);
-		List<FilesData> listImages = db.getAllFileWithType(type);
-		for (FilesData song : listImages) {
-			listImage.add(song);
+		allImages = db.getAllFileWithType(type);
+		for (FilesData song : allImages) {
+			showImages.add(song);
 		}
 	}
 
 	@Override
-	public void Filter(CharSequence strSearch) {
-		if (!adapter.isEmpty()) {
-			adapter.getFilter().filter(strSearch);
+	public void filter(CharSequence constraint) {
+		if (! allImages.isEmpty()){
+			showImages.clear();
+			if (constraint != null && constraint.length() > 0){
+				constraint = constraint.toString().toLowerCase(Locale.getDefault());
+				for (FilesData image : allImages){
+					if (image.getName().toLowerCase(Locale.getDefault()).contains(constraint)){
+						showImages.add(image);
+					}
+				}
+			} else {
+				for (FilesData song : allImages){
+					showImages.add(song);
+				}
+			}
+			adapter.notifyDataSetChanged();
 		}
 	}
 

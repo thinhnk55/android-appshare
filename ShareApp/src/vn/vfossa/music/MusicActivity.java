@@ -2,12 +2,12 @@ package vn.vfossa.music;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import vn.vfossa.additionalclass.CheckableAndFilterableActivity;
 import vn.vfossa.database.DatabaseHandler;
 import vn.vfossa.database.FilesData;
 import vn.vfossa.shareapp.R;
-import vn.vfossa.util.Utils;
 import android.app.ListActivity;
 import android.content.Context;
 import android.os.Bundle;
@@ -17,7 +17,8 @@ public class MusicActivity extends ListActivity implements CheckableAndFilterabl
 	public static final String TAG = MusicActivity.class.getName();
 
 	private MusicAdapter adapter;
-	private ArrayList<FilesData> listMusics = new ArrayList<FilesData>();
+	private ArrayList<FilesData> allSongs;
+	private ArrayList<FilesData> showSongs;
 	private ListView listView;
 	private Context context;
 	private static final String type = "music";
@@ -28,30 +29,20 @@ public class MusicActivity extends ListActivity implements CheckableAndFilterabl
 		context = this;
 
 		DatabaseHandler db = new DatabaseHandler(context);
-
-		List<FilesData> listSongs = db.getAllFileWithType(type);
-		Utils.log(TAG, "List song: " + listSongs.size());
-
+		allSongs = db.getAllFileWithType(type);
 		db.close();
-		setList(listSongs);
+		
+		initShowList(allSongs);
+		
 		listView.setItemsCanFocus(false);
-//		listView.setOnItemClickListener(new OnItemClickListener() {
-//
-//			@Override
-//			public void onItemClick(AdapterView<?> parent, View view,
-//					int position, long id) {
-//				adapter.changeCheckedState(position);
-//			}
-//		});
-
 	}
 
-	public void setList(List<FilesData> listSongs) {
-
+	public void initShowList(List<FilesData> listSongs) {
+		showSongs = new ArrayList<FilesData>();
 		for (FilesData song : listSongs) {
-			listMusics.add(song);
+			showSongs.add(song);
 		}
-		adapter = new MusicAdapter(MusicActivity.this, listMusics);
+		adapter = new MusicAdapter(MusicActivity.this, showSongs);
 		listView = getListView();
 		listView.setAdapter(adapter);
 	}
@@ -62,9 +53,22 @@ public class MusicActivity extends ListActivity implements CheckableAndFilterabl
 	}
 	
 	@Override
-	public void Filter(CharSequence strSearch){
-		if (!adapter.isEmpty()){
-			adapter.getFilter().filter(strSearch);
+	public void filter(CharSequence constraint){
+		if (! allSongs.isEmpty()){
+			showSongs.clear();
+			if (constraint != null && constraint.length() > 0){
+				constraint = constraint.toString().toLowerCase(Locale.getDefault());
+				for (FilesData song : allSongs){
+					if (song.getName().toLowerCase(Locale.getDefault()).contains(constraint)){
+						showSongs.add(song);
+					}
+				}
+			} else {
+				for (FilesData song : allSongs){
+					showSongs.add(song);
+				}
+			}
+			adapter.notifyDataSetChanged();
 		}
 	}
 }

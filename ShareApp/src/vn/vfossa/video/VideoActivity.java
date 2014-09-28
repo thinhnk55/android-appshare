@@ -2,6 +2,7 @@ package vn.vfossa.video;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import vn.vfossa.additionalclass.CheckableAndFilterableActivity;
 import vn.vfossa.database.DatabaseHandler;
@@ -15,7 +16,8 @@ import android.widget.ListView;
 public class VideoActivity extends ListActivity implements CheckableAndFilterableActivity {
 
 	private VideoAdapter adapter;
-	private ArrayList<FilesData> videos = new ArrayList<FilesData>();
+	private ArrayList<FilesData> allVideos;
+	private ArrayList<FilesData> showVideos;
 	private ListView listView;
 	private Context context;
 	private static final String type = "video";
@@ -26,19 +28,19 @@ public class VideoActivity extends ListActivity implements CheckableAndFilterabl
 		context = this;
 
 		DatabaseHandler db = new DatabaseHandler(context);
-
-		List<FilesData> listVideos = db.getAllFileWithType(type);
+		allVideos = db.getAllFileWithType(type);
 		db.close();
-		setList(listVideos);
+		
+		initShowList(allVideos);
 		listView.setItemsCanFocus(false);
 	}
 
-	public void setList(List<FilesData> listVideos) {
-
+	public void initShowList(List<FilesData> listVideos) {
+		showVideos = new ArrayList<FilesData>();
 		for (FilesData song : listVideos) {
-			videos.add(song);
+			showVideos.add(song);
 		}
-		adapter = new VideoAdapter(VideoActivity.this, videos);
+		adapter = new VideoAdapter(VideoActivity.this, showVideos);
 
 		listView = getListView();
 		listView.setAdapter(adapter);
@@ -50,9 +52,22 @@ public class VideoActivity extends ListActivity implements CheckableAndFilterabl
 	}
 	
 	@Override
-	public void Filter(CharSequence strSearch){
-		if (!adapter.isEmpty()){
-			adapter.getFilter().filter(strSearch);
+	public void filter(CharSequence constraint){
+		if (! allVideos.isEmpty()){
+			showVideos.clear();
+			if (constraint != null && constraint.length() > 0){
+				constraint = constraint.toString().toLowerCase(Locale.getDefault());
+				for (FilesData video : allVideos){
+					if (video.getName().toLowerCase(Locale.getDefault()).contains(constraint)){
+						showVideos.add(video);
+					}
+				}
+			} else {
+				for (FilesData song : allVideos){
+					showVideos.add(song);
+				}
+			}
+			adapter.notifyDataSetChanged();
 		}
 	}
 }
