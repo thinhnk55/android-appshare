@@ -1,23 +1,21 @@
 package vn.vfossa.device;
 
 import java.util.ArrayList;
-import java.util.List;
 
+import vn.vfossa.additionalclass.CheckableAdapter;
 import vn.vfossa.shareapp.R;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class DeviceAdapter extends ArrayAdapter<Device> {
+public class DeviceAdapter extends CheckableAdapter<Device> {
 
 	private LayoutInflater mInflater;
-	private List<Device> checkedList = new ArrayList<Device>();
 
 	public DeviceAdapter(Context context, ArrayList<Device> objects) {
 		super(context, R.layout.device_item_layout, objects);
@@ -79,9 +77,5 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 		public ImageView imageDevice;
 		public TextView nameDevice;
 		public CheckBox checkBox;
-	}
-
-	public List<Device> getCheckedList() {
-		return checkedList;
 	}
 }

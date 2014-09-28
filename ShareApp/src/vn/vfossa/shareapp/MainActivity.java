@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import vn.vfossa.additionalclass.BluetoothShare;
+import vn.vfossa.additionalclass.CheckableAndFilterableActivity;
 import vn.vfossa.app.ApplicationActivity;
 import vn.vfossa.bluetooth.BluetoothManager;
 import vn.vfossa.database.FilesData;
@@ -18,6 +19,7 @@ import vn.vfossa.device.Device;
 import vn.vfossa.device.DeviceAdapter;
 import vn.vfossa.image.ImageActivity;
 import vn.vfossa.music.MusicActivity;
+import vn.vfossa.util.Utils;
 import vn.vfossa.video.VideoActivity;
 import android.app.TabActivity;
 import android.bluetooth.BluetoothAdapter;
@@ -38,7 +40,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -53,9 +54,22 @@ public class MainActivity extends TabActivity implements ChannelListener {
 
 	public static final String TAG = "shareApp";
 	public static final String APP_TAB = "UngDung";
+	public static final String APP_INDICATOR = "Ứng dụng";
 	public static final String IMAGE_TAB = "HinhAnh";
+	public static final String IMAGE_INDICATOR = "Hình ảnh";
 	public static final String MUSIC_TAB = "NgheNhac";
+	public static final String MUSIC_INDICATOR = "Nghe Nhạc";
 	public static final String VIDEO_TAB = "Video";
+	public static final String VIDEO_INDICATOR = "Video";
+
+	public static final String[] TABS = new String[] { APP_TAB, IMAGE_TAB,
+			MUSIC_TAB, VIDEO_TAB };
+	public static final Class<?>[] TABS_CLASS = new Class[] {
+			ApplicationActivity.class, ImageActivity.class,
+			MusicActivity.class, VideoActivity.class };
+	public static final String[] TABS_INDICATOR = new String[] { APP_INDICATOR,
+			IMAGE_INDICATOR, MUSIC_INDICATOR, VIDEO_INDICATOR };
+
 	private TabHost tabHost;
 
 	private Button btScan;
@@ -63,7 +77,6 @@ public class MainActivity extends TabActivity implements ChannelListener {
 	private static DeviceAdapter deviceAdapter;
 	private HListView listDevice;
 	private TextView etSearch;
-	public static boolean goodVersion = false;
 
 	// private static BluetoothManager bluetoothSender;
 	private Context context;
@@ -92,8 +105,6 @@ public class MainActivity extends TabActivity implements ChannelListener {
 
 		setUpTabs();
 
-		checkVersion();
-
 		// bluetoothSender = new BluetoothManager(getApplicationContext());
 		deviceAdapter = new DeviceAdapter(MainActivity.this, devices);
 		listDevice.setAdapter(deviceAdapter);
@@ -117,32 +128,13 @@ public class MainActivity extends TabActivity implements ChannelListener {
 			public void onTextChanged(CharSequence s, int start, int before,
 					int count) {
 				String tabTag = tabHost.getCurrentTabTag();
-				switch (tabTag) {
-				case APP_TAB:
-					ApplicationActivity appActivity = (ApplicationActivity) getLocalActivityManager()
-							.getActivity(APP_TAB);
-					appActivity.Filter(s);
-					break;
-				case MUSIC_TAB:
-					MusicActivity musicActivity = (MusicActivity) getLocalActivityManager()
-							.getActivity(MUSIC_TAB);
-					musicActivity.Filter(s);
-					break;
-				case IMAGE_TAB:
-					ImageActivity imageActivity = (ImageActivity) getLocalActivityManager()
-							.getActivity(IMAGE_TAB);
-					imageActivity.Filter(s);
-					break;
-				case VIDEO_TAB:
-					VideoActivity videoActivity = (VideoActivity) getLocalActivityManager()
-							.getActivity(VIDEO_TAB);
-					videoActivity.Filter(s);
-					break;
-
-				default:
-					break;
+				for (int tabId = 0; tabId < TABS.length; ++tabId) {
+					if (tabTag.equals(TABS[tabId])) {
+						CheckableAndFilterableActivity activity = (CheckableAndFilterableActivity) getLocalActivityManager()
+								.getActivity(APP_TAB);
+						activity.Filter(s);
+					}
 				}
-
 			}
 
 			@Override
@@ -161,35 +153,13 @@ public class MainActivity extends TabActivity implements ChannelListener {
 	private void setUpTabs() {
 		tabHost = getTabHost();
 
-		TabSpec appspec = tabHost.newTabSpec(APP_TAB);
-		appspec.setIndicator("Ứng dụng");
-		Intent appsIntent = new Intent(this, ApplicationActivity.class);
-		appspec.setContent(appsIntent);
+		for (int tabId = 0; tabId < TABS.length; ++tabId) {
+			TabSpec tabSpec = tabHost.newTabSpec(TABS[tabId]);
+			tabSpec.setIndicator(TABS_INDICATOR[tabId]);
+			Intent appsIntent = new Intent(this, TABS_CLASS[tabId]);
+			tabSpec.setContent(appsIntent);
 
-		TabSpec photospec = tabHost.newTabSpec(IMAGE_TAB);
-		photospec.setIndicator("Hình ảnh");
-		Intent photosIntent = new Intent(this, ImageActivity.class);
-		photospec.setContent(photosIntent);
-
-		TabSpec songspec = tabHost.newTabSpec(MUSIC_TAB);
-		songspec.setIndicator("Nghe nhạc");
-		Intent songsIntent = new Intent(this, MusicActivity.class);
-		songspec.setContent(songsIntent);
-
-		TabSpec videospec = tabHost.newTabSpec(VIDEO_TAB);
-		videospec.setIndicator("Video");
-		Intent videosIntent = new Intent(this, VideoActivity.class);
-		videospec.setContent(videosIntent);
-
-		tabHost.addTab(appspec);
-		tabHost.addTab(photospec);
-		tabHost.addTab(songspec);
-		tabHost.addTab(videospec);
-	}
-
-	private void checkVersion() {
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			goodVersion = true;
+			tabHost.addTab(tabSpec);
 		}
 	}
 
@@ -207,47 +177,20 @@ public class MainActivity extends TabActivity implements ChannelListener {
 
 		@Override
 		public void onClick(View v) {
-			List<FilesData> musicList, videoList;
-			List<Bitmap> imageList;
-			List<ApplicationInfo> appList;
-
-			MusicActivity musicActivity = (MusicActivity) getLocalActivityManager()
-					.getActivity(MUSIC_TAB);
-			ApplicationActivity appActivity = (ApplicationActivity) getLocalActivityManager()
-					.getActivity(APP_TAB);
-			ImageActivity imageActivity = (ImageActivity) getLocalActivityManager()
-					.getActivity(IMAGE_TAB);
-			VideoActivity videoActivity = (VideoActivity) getLocalActivityManager()
-					.getActivity(VIDEO_TAB);
-
-			if (musicActivity != null) {
-				musicList = musicActivity.getCheckedList();
-			} else {
-				musicList = new ArrayList<FilesData>();
+			List<?>[] lists = new List<?>[TABS.length];
+			for (int listId = 0; listId < TABS.length; ++listId) {
+				CheckableAndFilterableActivity activity = (CheckableAndFilterableActivity) getLocalActivityManager()
+						.getActivity(TABS[listId]);
+				if (activity != null) {
+					lists[listId] = activity.getCheckedList();
+				} else {
+					lists[listId] = new ArrayList<Object>();
+				}
 			}
-
-			if (imageActivity != null) {
-				imageList = imageActivity.getCheckedList();
-			} else {
-				imageList = new ArrayList<Bitmap>();
-			}
-
-			if (videoActivity != null) {
-				videoList = videoActivity.getCheckedList();
-			} else {
-				videoList = new ArrayList<FilesData>();
-			}
-
-			if (appActivity != null) {
-				appList = appActivity.getCheckedList();
-			} else {
-				appList = new ArrayList<ApplicationInfo>();
-			}
-
 			List<Device> deviceList = deviceAdapter.getCheckedList();
-
 			for (Device device : deviceList) {
-				Log.e("device", device.getName() + " : " + device.getAddress());
+				Utils.log("device",
+						device.getName() + " : " + device.getAddress());
 
 				if (!BluetoothAdapter.getDefaultAdapter().getBondedDevices()
 						.contains(device)) {
@@ -259,14 +202,18 @@ public class MainActivity extends TabActivity implements ChannelListener {
 			}
 
 			for (Device device : deviceList) {
-				for (FilesData music : musicList) {
-					sendFile(new File(music.getPath()), device.getAddress());
-				}
-				for (FilesData video : videoList) {
-					sendFile(new File(video.getPath()), device.getAddress());
-				}
-				for (ApplicationInfo app : appList) {
-					sendFile(new File(app.publicSourceDir), device.getAddress());
+				for (int listId = 0; listId < TABS.length; ++listId) {
+					for (Object object : lists[listId]) {
+						if (object instanceof FilesData) {
+							FilesData file = (FilesData) object;
+							sendFile(new File(file.getPath()),
+									device.getAddress());
+						} else if (object instanceof ApplicationInfo) {
+							ApplicationInfo app = (ApplicationInfo) object;
+							sendFile(new File(app.publicSourceDir),
+									device.getAddress());
+						}
+					}
 				}
 			}
 		}
@@ -279,7 +226,7 @@ public class MainActivity extends TabActivity implements ChannelListener {
 					.getMethod("createBond", (Class[]) null);
 			m.invoke(device, (Object[]) null);
 		} catch (Exception e) {
-			Log.e(TAG, e.getMessage());
+			Utils.log(TAG, e.getMessage());
 		}
 	}
 
@@ -350,7 +297,6 @@ public class MainActivity extends TabActivity implements ChannelListener {
 
 		registerReceiver(ActionFoundReceiver, new IntentFilter(
 				BluetoothDevice.ACTION_FOUND));
-
 	}
 
 	@Override
@@ -391,7 +337,7 @@ public class MainActivity extends TabActivity implements ChannelListener {
 	}
 
 	public void sendFile(File file, String address) {
-		if (goodVersion) {
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 			Intent sharingIntent = new Intent(
 					android.content.Intent.ACTION_SEND);
 			sharingIntent.setType("audio/*");

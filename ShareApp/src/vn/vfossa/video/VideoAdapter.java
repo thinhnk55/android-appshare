@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import vn.vfossa.additionalclass.CheckableAdapter;
 import vn.vfossa.database.DatabaseHandler;
 import vn.vfossa.database.FilesData;
 import vn.vfossa.shareapp.R;
@@ -15,18 +16,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class VideoAdapter extends ArrayAdapter<FilesData> {
+public class VideoAdapter extends CheckableAdapter<FilesData> {
 
 	private LayoutInflater mInflator;
 	private Context context;
 	private ArrayList<FilesData> videos;
-	private List<FilesData> checkedList = new ArrayList<FilesData>();
 	private static final String type = "video";
 
 	public VideoAdapter(Context context, ArrayList<FilesData> videos) {
@@ -100,10 +99,6 @@ public class VideoAdapter extends ArrayAdapter<FilesData> {
 		TextView size;
 		TextView videoTitle;
 		ImageView imageView;
-	}
-
-	public List<FilesData> getCheckedList() {
-		return checkedList;
 	}
 
 	public Filter getFilter() {

@@ -3,6 +3,7 @@ package vn.vfossa.image;
 import java.util.ArrayList;
 import java.util.List;
 
+import vn.vfossa.additionalclass.CheckableAndFilterableActivity;
 import vn.vfossa.database.DatabaseHandler;
 import vn.vfossa.database.FilesData;
 import vn.vfossa.shareapp.R;
@@ -15,7 +16,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
-public class ImageActivity extends Activity {
+public class ImageActivity extends Activity implements CheckableAndFilterableActivity {
 
 	private ImageAdapter adapter;
 	private ArrayList<Bitmap> listImage;
@@ -67,12 +68,14 @@ public class ImageActivity extends Activity {
 		}
 	}
 
+	@Override
 	public void Filter(CharSequence strSearch) {
 		if (!adapter.isEmpty()) {
 			adapter.getFilter().filter(strSearch);
 		}
 	}
 
+	@Override
 	public List<Bitmap> getCheckedList() {
 		return adapter.getCheckedList();
 	}

@@ -3,6 +3,7 @@ package vn.vfossa.music;
 import java.util.ArrayList;
 import java.util.List;
 
+import vn.vfossa.additionalclass.CheckableAndFilterableActivity;
 import vn.vfossa.database.DatabaseHandler;
 import vn.vfossa.database.FilesData;
 import vn.vfossa.shareapp.R;
@@ -12,7 +13,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.widget.ListView;
 
-public class MusicActivity extends ListActivity {
+public class MusicActivity extends ListActivity implements CheckableAndFilterableActivity {
 	public static final String TAG = MusicActivity.class.getName();
 
 	private MusicAdapter adapter;
@@ -55,10 +56,12 @@ public class MusicActivity extends ListActivity {
 		listView.setAdapter(adapter);
 	}
 
+	@Override
 	public List<FilesData> getCheckedList(){
 		return adapter.getCheckedList();
 	}
 	
+	@Override
 	public void Filter(CharSequence strSearch){
 		if (!adapter.isEmpty()){
 			adapter.getFilter().filter(strSearch);

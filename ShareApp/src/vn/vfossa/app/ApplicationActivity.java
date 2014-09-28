@@ -3,6 +3,7 @@ package vn.vfossa.app;
 import java.util.ArrayList;
 import java.util.List;
 
+import vn.vfossa.additionalclass.CheckableAndFilterableActivity;
 import vn.vfossa.shareapp.R;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -12,7 +13,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.GridView;
 
-public class ApplicationActivity extends Activity {
+public class ApplicationActivity extends Activity implements CheckableAndFilterableActivity {
 	private PackageManager packageManager = null;
 	private ArrayList<ApplicationInfo> appList = null;
 	private ApplicationAdapter listAdapter = null;
@@ -29,6 +30,7 @@ public class ApplicationActivity extends Activity {
 		new LoadApplications().execute();
 	}
 	
+	@Override
 	public List<ApplicationInfo> getCheckedList() {
 		return listAdapter.getCheckedList();
 	}
@@ -79,6 +81,7 @@ public class ApplicationActivity extends Activity {
 
 	}
 	
+	@Override
 	public void Filter(CharSequence strSearch){
 		if (!listAdapter.isEmpty()){
 			listAdapter.getFilter().filter(strSearch);

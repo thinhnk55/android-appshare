@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import vn.vfossa.additionalclass.CheckableAdapter;
 import vn.vfossa.database.DatabaseHandler;
 import vn.vfossa.database.FilesData;
 import vn.vfossa.shareapp.R;
@@ -14,19 +15,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.ImageView;
 
-public class ImageAdapter extends ArrayAdapter<Bitmap> {
+public class ImageAdapter extends CheckableAdapter<Bitmap> {
 
 	private LayoutInflater mInflator;
 
 	private Context context;
 	private ArrayList<Bitmap> listImage;
 
-	private List<Bitmap> checkedList = new ArrayList<Bitmap>();
 	private static final String type = "image";
 
 	public ImageAdapter(Context context, ArrayList<Bitmap> listImage) {
@@ -79,10 +78,6 @@ public class ImageAdapter extends ArrayAdapter<Bitmap> {
 
 		// notifyDataSetChanged();
 		return convertView;
-	}
-
-	public List<Bitmap> getCheckedList() {
-		return checkedList;
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import vn.vfossa.additionalclass.CheckableAdapter;
 import vn.vfossa.shareapp.R;
 import vn.vfossa.util.Utils;
 import android.content.Context;
@@ -13,16 +14,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.ImageView;
 
-public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
+public class ApplicationAdapter extends CheckableAdapter<ApplicationInfo> {
 
 	private Context context;
 	private ArrayList<ApplicationInfo> appsList;
-	private List<ApplicationInfo> checkedList = new ArrayList<ApplicationInfo>();
 	private LayoutInflater mInflator;
 
 	// private static final String type = "app";
@@ -79,10 +78,6 @@ public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
 		holder.checkBox.setChecked(checkedList.contains(appInfo));
 
 		return convertView;
-	}
-
-	public List<ApplicationInfo> getCheckedList() {
-		return checkedList;
 	}
 
 	@Override
