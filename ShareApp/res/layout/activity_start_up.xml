@@ -13,16 +13,16 @@
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="137dp" />
+        android:layout_centerVertical="true" />
 
     <ImageView
         android:id="@+id/imageView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="105dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="37dp"
         android:contentDescription="@null"
         android:src="@drawable/ic_launcher" />
 
