@@ -38,6 +38,7 @@ public class StartUpActivity extends Activity {
 			super.onPostExecute(result);
 			Intent intent = new Intent(StartUpActivity.this, MainActivity.class);
 			startActivity(intent);
+			finish();
 		}
 
 		private void scanDirectory(File directory) {
@@ -108,15 +109,15 @@ public class StartUpActivity extends Activity {
 						}
 						itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
 								true);
+						ByteArrayOutputStream stream = new ByteArrayOutputStream();
+						itemImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
+						byte[] byteArray = stream.toByteArray();
+
+						float size = (float) (file.length()) / (1024 * 1024);
+						db.addFileData(new FilesData("image", imageName, imagePath,
+								byteArray, size));
 					}
-
-					ByteArrayOutputStream stream = new ByteArrayOutputStream();
-					itemImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
-					byte[] byteArray = stream.toByteArray();
-
-					float size = (float) (file.length()) / (1024 * 1024);
-					db.addFileData(new FilesData("image", imageName, imagePath,
-							byteArray, size));
+					
 					db.close();
 				}
 			}

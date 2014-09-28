@@ -8,8 +8,6 @@ import vn.vfossa.database.DatabaseHandler;
 import vn.vfossa.database.FilesData;
 import vn.vfossa.shareapp.R;
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,7 +17,7 @@ import android.widget.GridView;
 public class ImageActivity extends Activity implements CheckableAndFilterableActivity {
 
 	private ImageAdapter adapter;
-	private ArrayList<Bitmap> listImage;
+	private ArrayList<FilesData> listImage;
 	private GridView gridView;
 	private static final String type = "image";
 
@@ -46,25 +44,11 @@ public class ImageActivity extends Activity implements CheckableAndFilterableAct
 	}
 
 	public void setList() {
-		listImage = new ArrayList<Bitmap>();
-
+		listImage = new ArrayList<FilesData>();
 		DatabaseHandler db = new DatabaseHandler(this);
-		List<FilesData> listApps = db.getAllFileWithType(type);
-
-		for (FilesData file : listApps) {
-
-			if (file.getImage() != null) {
-				BitmapFactory.Options options = new BitmapFactory.Options();
-				options.inPurgeable = true;
-
-				Bitmap bitmap = BitmapFactory.decodeByteArray(file.getImage(),
-						0, file.getImage().length, options);
-
-				Bitmap itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
-						true);
-
-				listImage.add(itemImage);
-			}
+		List<FilesData> listImages = db.getAllFileWithType(type);
+		for (FilesData song : listImages) {
+			listImage.add(song);
 		}
 	}
 
@@ -76,7 +60,7 @@ public class ImageActivity extends Activity implements CheckableAndFilterableAct
 	}
 
 	@Override
-	public List<Bitmap> getCheckedList() {
+	public List<FilesData> getCheckedList() {
 		return adapter.getCheckedList();
 	}
 

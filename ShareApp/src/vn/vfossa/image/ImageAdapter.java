@@ -19,16 +19,16 @@ import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.ImageView;
 
-public class ImageAdapter extends CheckableAdapter<Bitmap> {
+public class ImageAdapter extends CheckableAdapter<FilesData> {
 
 	private LayoutInflater mInflator;
 
 	private Context context;
-	private ArrayList<Bitmap> listImage;
+	private ArrayList<FilesData> listImage;
 
 	private static final String type = "image";
 
-	public ImageAdapter(Context context, ArrayList<Bitmap> listImage) {
+	public ImageAdapter(Context context, ArrayList<FilesData> listImage) {
 		super(context, R.layout.item_layout, listImage);
 		this.context = context;
 		this.listImage = listImage;
@@ -61,7 +61,24 @@ public class ImageAdapter extends CheckableAdapter<Bitmap> {
 			view = (ViewHolder) convertView.getTag();
 		}
 
-		view.imgViewItem.setImageBitmap(getItem(position));
+		if (getItem(position).getImage() != null) {
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inPurgeable = true;
+
+			Bitmap bitmap = BitmapFactory.decodeByteArray(getItem(position)
+					.getImage(), 0, getItem(position).getImage().length,
+					options);
+
+			if (bitmap != null) {
+				Bitmap itemImage = Bitmap.createScaledBitmap(bitmap, 100, 100,
+						true);
+				view.imgViewItem.setImageBitmap(itemImage);
+			} else {
+				view.imgViewItem.setImageResource(R.drawable.image);
+			}
+		} else {
+			view.imgViewItem.setImageResource(R.drawable.image);
+		}
 		view.checkBox.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
@@ -105,7 +122,7 @@ public class ImageAdapter extends CheckableAdapter<Bitmap> {
 					images.add(image);
 				}
 				FilterResults results = new FilterResults();
-				ArrayList<Bitmap> filter = new ArrayList<Bitmap>();
+				ArrayList<FilesData> filter = new ArrayList<FilesData>();
 				constraint = constraint.toString().toLowerCase(Locale.getDefault());
 
 				BitmapFactory.Options options = new BitmapFactory.Options();
@@ -116,31 +133,13 @@ public class ImageAdapter extends CheckableAdapter<Bitmap> {
 						String strName = images.get(i).getName();
 						if (strName.toLowerCase(Locale.getDefault()).contains(
 								constraint.toString())) {
-							if (images.get(i).getImage() != null) {
-
-								Bitmap bitmap = BitmapFactory.decodeByteArray(
-										images.get(i).getImage(), 0, images
-												.get(i).getImage().length,
-										options);
-
-								Bitmap itemImage = Bitmap.createScaledBitmap(
-										bitmap, 100, 100, true);
-								filter.add(itemImage);
-							} else {
-								filter.add(null);
-							}
+							filter.add(images.get(i));
 						}
 					}
 				}
 				if (constraint == null || constraint.toString().length() == 0) {
 					for (int i = 0; i < images.size(); i++) {
-						Bitmap bitmap = BitmapFactory.decodeByteArray(images
-								.get(i).getImage(), 0,
-								images.get(i).getImage().length, options);
-
-						Bitmap itemImage = Bitmap.createScaledBitmap(bitmap,
-								100, 100, true);
-						filter.add(itemImage);
+						filter.add(images.get(i));
 					}
 				}
 
@@ -155,11 +154,11 @@ public class ImageAdapter extends CheckableAdapter<Bitmap> {
 				if (results.count != 0) {
 					listImage.clear();
 					@SuppressWarnings("unchecked")
-					ArrayList<Bitmap> items = new ArrayList<Bitmap>(
-							(ArrayList<Bitmap>) results.values);
+					ArrayList<FilesData> items = new ArrayList<FilesData>(
+							(ArrayList<FilesData>) results.values);
 
 					if (items.size() > 0) {
-						for (Bitmap item : items) {
+						for (FilesData item : items) {
 							listImage.add(item);
 						}
 					}
